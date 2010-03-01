@@ -10,7 +10,7 @@ public class GenerateTestData {
 			w.write(i + "\t" + (long)(Math.random() * 100) + "\t" + (long)(Math.random() * 1000)
 					+ "\t" + (long)(Math.random() * 10000) 
 					+ "\t" + (Math.random() * 100) + "\t" + (Math.random() * 1000)
-					+ "\t" + (Math.random() * 10000) );
+					+ "\t" + (Math.random() * 10000) + "\n");
 		w.close();
 	}
 
