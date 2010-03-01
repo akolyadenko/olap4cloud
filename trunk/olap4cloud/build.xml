@@ -1,0 +1,5 @@
+<project name = "olap4cloud">
+	<!-- target name = "generate_test_data" depends = "utils_compile">
+		
+	</target -->
+</project>
