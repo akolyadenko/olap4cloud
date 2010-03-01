@@ -65,5 +65,6 @@ public class DataImport {
 		job.setOutputValueClass(LongWritable.class);
 		job.setMapperClass(DataImportMapper.class);
 		job.setReducerClass(DataImportReducer.class);
+		job.waitForCompletion(true);
 	}
 }
