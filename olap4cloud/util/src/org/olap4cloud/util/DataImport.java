@@ -12,7 +12,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -22,7 +21,8 @@ public class DataImport {
 	
 	static class DataImportMapper extends Mapper<LongWritable, Text, IntWritable, DoubleWritable>{
 		@Override
-		protected void map(LongWritable key, Text value, Context context)
+		protected void map(LongWritable key, Text value
+				, org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, IntWritable, DoubleWritable>.Context context)
 				throws IOException, InterruptedException {
 			String s = value.toString();
 			StringTokenizer st1 = new StringTokenizer(s, "\n", false);
@@ -44,7 +44,7 @@ public class DataImport {
 	
 	static class DataImportReducer extends Reducer<IntWritable, DoubleWritable, IntWritable, DoubleWritable>{
 		protected void reduce(IntWritable k, Iterable<DoubleWritable> vs,
-				org.apache.hadoop.mapreduce.Reducer.Context c)
+				org.apache.hadoop.mapreduce.Reducer<IntWritable, DoubleWritable, IntWritable, DoubleWritable>.Context c)
 				throws IOException, InterruptedException {
 			double s = 0;
 			for(Iterator<DoubleWritable> i = vs.iterator(); i.hasNext(); ) {
