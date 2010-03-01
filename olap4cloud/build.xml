@@ -1,5 +1,20 @@
 <project name = "olap4cloud">
+	<path id="lib.path.ref">
+		<fileset dir="lib" includes="*.jar"/>
+	</path>
+	
 	<!-- target name = "generate_test_data" depends = "utils_compile">
 		
 	</target -->
+	
+	<target name = "util.build" depends = "util.compile">
+		<jar destfile = "olap4cloud-util.jar" basedir = "util/classes"/>
+	</target>
+	
+	<target name = "util.compile">
+		<mkdir dir = "util/classes"/>
+		<javac destdir = "util/classes" classpathref="lib.path.ref" debug = "on">
+			<src path="util/src"/>
+		</javac>
+	</target>
 </project>
