@@ -28,10 +28,10 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class DataImport {
 	
-	static class DataImportMapper extends Mapper<LongWritable, Text, IntWritable, Put>{
+	static class DataImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put>{
 		@Override
 		protected void map(LongWritable key, Text value
-				, org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, IntWritable, Put>.Context context)
+				, org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context)
 				throws IOException, InterruptedException {
 			String s = value.toString();
 			StringTokenizer st1 = new StringTokenizer(s, "\n", false);
@@ -51,7 +51,7 @@ public class DataImport {
 						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m3")
 						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
-				context.write(new IntWritable(k), put);
+				context.write(new ImmutableBytesWritable(Bytes.toBytes(k)), put);
 			}
 		}
 	}
