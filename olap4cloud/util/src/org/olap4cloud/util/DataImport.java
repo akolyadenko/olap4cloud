@@ -38,7 +38,7 @@ public class DataImport {
 			while(st1.hasMoreTokens()) {
 				StringTokenizer st2 = new StringTokenizer(st1.nextToken());
 				int k = Integer.parseInt(st2.nextToken());
-				Put put = new Put();
+				Put put = new Put(Bytes.toBytes(k));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d1")
 						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d2")
