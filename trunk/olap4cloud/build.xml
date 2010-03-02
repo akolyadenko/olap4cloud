@@ -3,9 +3,9 @@
 		<fileset dir="lib" includes="*.jar"/>
 	</path>
 	
-	<!-- target name = "generate_test_data" depends = "utils_compile">
-		
-	</target -->
+	<target name = "util.generate_test_data" depends = "util.compile">
+		<java classname = "org.olap4cloud.util" classpath = "util/classes"/>
+	</target>
 	
 	<target name = "util.build" depends = "util.compile">
 		<jar destfile = "olap4cloud-util.jar" basedir = "util/classes"/>
