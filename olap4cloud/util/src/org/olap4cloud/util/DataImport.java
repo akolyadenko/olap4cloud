@@ -63,7 +63,7 @@ public class DataImport {
 		job.setOutputFormatClass(HFileOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path("/data.txt"));
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
-		job.setMapOutputValueClass(KeyValue.class);
+		job.setMapOutputValueClass(Put.class);
 		job.setMapperClass(DataImportMapper.class);
 		TableMapReduceUtil.initTableReducerJob("testfacttable", IdentityTableReducer.class, job);
 		job.waitForCompletion(true);
