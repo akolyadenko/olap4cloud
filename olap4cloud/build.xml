@@ -4,7 +4,7 @@
 	</path>
 	
 	<target name = "util.generate_test_data" depends = "util.compile">
-		<java classname = "org.olap4cloud.util" classpath = "util/classes"/>
+		<java classname = "org.olap4cloud.util" classpath = "./util/classes"/>
 	</target>
 	
 	<target name = "util.build" depends = "util.compile">
