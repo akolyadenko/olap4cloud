@@ -5,6 +5,15 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat;
+import org.apache.hadoop.hbase.mapreduce.IdentityTableReducer;
+import org.apache.hadoop.hbase.mapreduce.KeyValueSortReducer;
+import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
+import org.apache.hadoop.hbase.mapreduce.TableReducer;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -19,38 +28,31 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class DataImport {
 	
-	static class DataImportMapper extends Mapper<LongWritable, Text, IntWritable, DoubleWritable>{
+	static class DataImportMapper extends Mapper<LongWritable, Text, IntWritable, Put>{
 		@Override
 		protected void map(LongWritable key, Text value
-				, org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, IntWritable, DoubleWritable>.Context context)
+				, org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, IntWritable, Put>.Context context)
 				throws IOException, InterruptedException {
 			String s = value.toString();
 			StringTokenizer st1 = new StringTokenizer(s, "\n", false);
 			while(st1.hasMoreTokens()) {
 				StringTokenizer st2 = new StringTokenizer(st1.nextToken());
-				st2.nextToken();
-				int i = Integer.parseInt(st2.nextToken());
-				int i2 = Integer.parseInt(st2.nextToken());
-				if(i2 != 100)
-					continue;
-				st2.nextToken();
-				st2.nextToken();
-				st2.nextToken();
-				double d = Double.parseDouble(st2.nextToken());
-				context.write(new IntWritable(i), new DoubleWritable(d));
+				int k = Integer.parseInt(st2.nextToken());
+				Put put = new Put();
+				put.add(Bytes.toBytes("data"), Bytes.toBytes("d1")
+						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
+				put.add(Bytes.toBytes("data"), Bytes.toBytes("d2")
+						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
+				put.add(Bytes.toBytes("data"), Bytes.toBytes("d3")
+						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
+				put.add(Bytes.toBytes("data"), Bytes.toBytes("m1")
+						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
+				put.add(Bytes.toBytes("data"), Bytes.toBytes("m2")
+						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
+				put.add(Bytes.toBytes("data"), Bytes.toBytes("m3")
+						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
+				context.write(new IntWritable(k), put);
 			}
-		}
-	}
-	
-	static class DataImportReducer extends Reducer<IntWritable, DoubleWritable, IntWritable, DoubleWritable>{
-		protected void reduce(IntWritable k, Iterable<DoubleWritable> vs,
-				org.apache.hadoop.mapreduce.Reducer<IntWritable, DoubleWritable, IntWritable, DoubleWritable>.Context c)
-				throws IOException, InterruptedException {
-			double s = 0;
-			for(Iterator<DoubleWritable> i = vs.iterator(); i.hasNext(); ) {
-				s += i.next().get();
-			}
-			c.write(k, new DoubleWritable(s));
 		}
 	}
 	
@@ -58,15 +60,12 @@ public class DataImport {
 		Job job = new Job();
 		job.setJarByClass(DataImport.class);
 		job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
+		job.setOutputFormatClass(HFileOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path("/data.txt"));
-		FileOutputFormat.setOutputPath(job, new Path("/out"));
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(LongWritable.class);
+		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
+		job.setMapOutputValueClass(KeyValue.class);
 		job.setMapperClass(DataImportMapper.class);
-		job.setReducerClass(DataImportReducer.class);
-		job.setMapOutputKeyClass(IntWritable.class);
-		job.setMapOutputValueClass(DoubleWritable.class);
+		TableMapReduceUtil.initTableReducerJob("testfacttable", IdentityTableReducer.class, job);
 		job.waitForCompletion(true);
 	}
 }
