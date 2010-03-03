@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat;
 import org.apache.hadoop.hbase.mapreduce.IdentityTableReducer;
@@ -53,7 +54,7 @@ public class RangeAggregate {
 	public static void main(String argv[]) throws Exception {
 		Job job = new Job();
 		job.setJarByClass(RangeAggregate.class);
-		TableMapReduceUtil.initTableMapperJob("testfacttable", null, RangeAggregateMapper.class
+		TableMapReduceUtil.initTableMapperJob("testfacttable", new Scan(), RangeAggregateMapper.class
 				, ImmutableBytesWritable.class, DoubleWritable.class, job);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(RangeAggregateReducer.class);
