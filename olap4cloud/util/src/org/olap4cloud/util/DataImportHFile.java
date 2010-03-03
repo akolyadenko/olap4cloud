@@ -26,7 +26,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
-public class DataImport {
+public class DataImportHFile {
 	
 	static class DataImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put>{
 		@Override
@@ -58,7 +58,7 @@ public class DataImport {
 	
 	public static void main(String args[]) throws Exception {
 		Job job = new Job();
-		job.setJarByClass(DataImport.class);
+		job.setJarByClass(DataImportHFile.class);
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(HFileOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path("/data.txt"));
