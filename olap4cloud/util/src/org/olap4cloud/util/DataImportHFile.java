@@ -25,8 +25,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.log4j.Logger;
 
 public class DataImportHFile {
+	
+	static Logger logger = Logger.getLogger(DataImportHFile.class);
 	
 	static class DataImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put>{
 		@Override
@@ -38,6 +41,7 @@ public class DataImportHFile {
 			while(st1.hasMoreTokens()) {
 				StringTokenizer st2 = new StringTokenizer(st1.nextToken());
 				int k = Integer.parseInt(st2.nextToken());
+				byte b[] = null;
 				Put put = new Put(Bytes.toBytes(k));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d1")
 						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
@@ -45,8 +49,10 @@ public class DataImportHFile {
 						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d3")
 						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
+				b = Bytes.toBytes(Double.parseDouble(st2.nextToken()));
+				logger.debug("k = " + k + " m1 bytes = " + LogUtils.describe(b));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m1")
-						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
+						, b);
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m2")
 						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m3")
