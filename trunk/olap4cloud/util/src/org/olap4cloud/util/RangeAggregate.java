@@ -43,10 +43,10 @@ public class RangeAggregate {
 				, LongWritable, DoubleWritable>.Context c)
 				throws IOException, InterruptedException {
 			double s = 0;
-//			for(Iterator<DoubleWritable> i = it.iterator(); i.hasNext(); ) {
-//				DoubleWritable d = i.next();
-//				s += d.get();
-//			}
+			for(Iterator<DoubleWritable> i = it.iterator(); i.hasNext(); ) {
+				DoubleWritable d = i.next();
+				s += d.get();
+			}
 			c.write(new LongWritable(1), new DoubleWritable(s));
 		}
 	}
