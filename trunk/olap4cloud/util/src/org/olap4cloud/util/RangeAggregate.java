@@ -50,7 +50,7 @@ public class RangeAggregate {
 			double s = 0;
 			for(Iterator<DoubleWritable> i = it.iterator(); i.hasNext(); ) {
 				DoubleWritable d = i.next();
-				s += d.get();
+				s ++;
 			}
 			c.write(new LongWritable(1), new DoubleWritable(s));
 		}
