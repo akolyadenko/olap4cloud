@@ -25,21 +25,21 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.olap4cloud.util.DataImportHFile.DataImportMapper;
 
 public class RangeAggregate {
-	public static class RangeAggregateMapper extends TableMapper<ImmutableBytesWritable, DoubleWritable> {
+	public static class RangeAggregateMapper extends TableMapper<LongWritable, DoubleWritable> {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
 			double m1 = Bytes.toDouble(value.getValue(Bytes.toBytes("data"), value.getValue(Bytes.toBytes("m1"))));
-			context.write(key, new DoubleWritable(m1));
+			context.write(new LongWritable(1), new DoubleWritable(m1));
 		}
 	}
 	
-	public static class RangeAggregateReducer extends Reducer<ImmutableBytesWritable, DoubleWritable
+	public static class RangeAggregateReducer extends Reducer<LongWritable, DoubleWritable
 		, LongWritable, DoubleWritable> {
 		@Override
-		protected void reduce(ImmutableBytesWritable arg0,
+		protected void reduce(LongWritable arg0,
 				Iterable<DoubleWritable> it,
-				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, DoubleWritable
+				org.apache.hadoop.mapreduce.Reducer<LongWritable, DoubleWritable
 				, LongWritable, DoubleWritable>.Context c)
 				throws IOException, InterruptedException {
 			double s = 0;
@@ -54,8 +54,11 @@ public class RangeAggregate {
 	public static void main(String argv[]) throws Exception {
 		Job job = new Job();
 		job.setJarByClass(RangeAggregate.class);
-		TableMapReduceUtil.initTableMapperJob("testfacttable", new Scan(), RangeAggregateMapper.class
-				, ImmutableBytesWritable.class, DoubleWritable.class, job);
+		Scan s = new Scan();
+		s.setStartRow(new ImmutableBytesWritable(Bytes.toBytes(100)).get());
+		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(110)).get());
+		TableMapReduceUtil.initTableMapperJob("testfacttable", s, RangeAggregateMapper.class
+				, LongWritable.class, DoubleWritable.class, job);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(RangeAggregateReducer.class);
 		FileOutputFormat.setOutputPath(job, new Path("/out"));
