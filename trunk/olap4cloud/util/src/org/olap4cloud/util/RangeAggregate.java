@@ -22,14 +22,19 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.log4j.Logger;
 import org.olap4cloud.util.DataImportHFile.DataImportMapper;
 
 public class RangeAggregate {
+	
+	static Logger logger = Logger.getLogger(RangeAggregate.class);
+	
 	public static class RangeAggregateMapper extends TableMapper<LongWritable, DoubleWritable> {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
 			double m1 = Bytes.toDouble(value.getValue(Bytes.toBytes("data"), value.getValue(Bytes.toBytes("m1"))));
+			logger.debug("m1 = " + m1);
 			context.write(new LongWritable(1), new DoubleWritable(m1));
 		}
 	}
@@ -45,6 +50,7 @@ public class RangeAggregate {
 			double s = 0;
 			for(Iterator<DoubleWritable> i = it.iterator(); i.hasNext(); ) {
 				DoubleWritable d = i.next();
+				logger.debug("d.get() = " + d.get());
 				s += d.get();
 			}
 			c.write(new LongWritable(1), new DoubleWritable(s));
