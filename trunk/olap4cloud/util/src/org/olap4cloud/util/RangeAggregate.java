@@ -34,9 +34,7 @@ public class RangeAggregate {
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
 			byte mb1[] = value.getValue(Bytes.toBytes("data"), Bytes.toBytes("m1"));
-			logger.debug("mb1 = " + LogUtils.describe(mb1));
 			double m1 = Bytes.toDouble(value.getValue(Bytes.toBytes("data"), Bytes.toBytes("m1")));
-			logger.debug("m1 = " + m1);
 			context.write(new LongWritable(1), new DoubleWritable(m1));
 		}
 	}
@@ -52,7 +50,6 @@ public class RangeAggregate {
 			double s = 0;
 			for(Iterator<DoubleWritable> i = it.iterator(); i.hasNext(); ) {
 				DoubleWritable d = i.next();
-				logger.debug("d.get() = " + d.get());
 				s += d.get();
 			}
 			c.write(new LongWritable(1), new DoubleWritable(s));
@@ -63,8 +60,8 @@ public class RangeAggregate {
 		Job job = new Job();
 		job.setJarByClass(RangeAggregate.class);
 		Scan s = new Scan();
-		s.setStartRow(new ImmutableBytesWritable(Bytes.toBytes(100)).get());
-		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(101)).get());
+		s.setStartRow(new ImmutableBytesWritable(Bytes.toBytes(5)).get());
+		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(15)).get());
 		TableMapReduceUtil.initTableMapperJob("testfacttable", s, RangeAggregateMapper.class
 				, LongWritable.class, DoubleWritable.class, job);
 		job.setOutputFormatClass(TextOutputFormat.class);
