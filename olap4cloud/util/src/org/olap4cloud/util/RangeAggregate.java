@@ -56,7 +56,7 @@ public class RangeAggregate {
 		job.setJarByClass(RangeAggregate.class);
 		Scan s = new Scan();
 		s.setStartRow(new ImmutableBytesWritable(Bytes.toBytes(100)).get());
-		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(110)).get());
+		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(101)).get());
 		TableMapReduceUtil.initTableMapperJob("testfacttable", s, RangeAggregateMapper.class
 				, LongWritable.class, DoubleWritable.class, job);
 		job.setOutputFormatClass(TextOutputFormat.class);
