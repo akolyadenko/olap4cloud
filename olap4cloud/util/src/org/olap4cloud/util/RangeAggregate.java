@@ -33,6 +33,8 @@ public class RangeAggregate {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
+			byte mb1[] = value.getValue(Bytes.toBytes("data"), value.getValue(Bytes.toBytes("m1")));
+			logger.debug("mb1 = " + LogUtils.describe(mb1));
 			double m1 = Bytes.toDouble(value.getValue(Bytes.toBytes("data"), value.getValue(Bytes.toBytes("m1"))));
 			logger.debug("m1 = " + m1);
 			context.write(new LongWritable(1), new DoubleWritable(m1));
