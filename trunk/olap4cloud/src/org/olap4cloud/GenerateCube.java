@@ -49,7 +49,7 @@ public class GenerateCube {
 	
 	public static void generateCube(CubeDescriptor descr) throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
-		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTableName());
+		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTable());
 		String measuresFamilies[] = descr.getMeasures().toArray(new String[0]);
 		for(int i = 0; i < measuresFamilies.length; i ++)
 			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
@@ -57,9 +57,9 @@ public class GenerateCube {
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCube.class);
-		TableMapReduceUtil.initTableMapperJob(descr.getSourceTableName(), new Scan(), GenerateCubeMapper.class
+		TableMapReduceUtil.initTableMapperJob(descr.getSourceTable(), new Scan(), GenerateCubeMapper.class
 				, ImmutableBytesWritable.class, Put.class, job);
-		TableMapReduceUtil.initTableReducerJob(descr.getCubeDataTableName()
+		TableMapReduceUtil.initTableReducerJob(descr.getCubeDataTable()
 				, IdentityTableReducer.class, job);
 		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSIONS, descr.getDimensionsAsString());
 		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURES, descr.getMeasuresAsString());
@@ -68,7 +68,7 @@ public class GenerateCube {
 	
 	public static void main(String argv[]) throws Exception {
 		CubeDescriptor descr = new CubeDescriptor();
-		descr.setSourceTableName("testfacttable");
+		descr.setSourceTable("testfacttable");
 		descr.setCubeName("testcube");
 		descr.getSourceDimensions().add("data.d1");
 		descr.getSourceDimensions().add("data.d2");
@@ -77,5 +77,6 @@ public class GenerateCube {
 		descr.getMeasures().add("data.m2");
 		descr.getMeasures().add("data.m3");
 		generateCube(descr);
+		GenerateCubeIndex.generate(descr);
 	}
 }
