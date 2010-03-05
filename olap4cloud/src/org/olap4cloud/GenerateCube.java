@@ -14,77 +14,68 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.IdentityTableReducer;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
-import org.apache.hadoop.hbase.mapreduce.TableReducer;
-import org.apache.hadoop.hbase.thrift.generated.ColumnDescriptor;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCube {
-	
-	public static final String JOB_CONF_PROP_DIMENSIONS = "JOB_CONF_PROP_DIMENSIONS";
-	
-	public static final String JOB_CONF_PROP_MEASURES = "JOB_CONF_PROP_MEASURES";
-	
-	public static final String JOB_CONF_PROP_FAMILY = "JOB_CONF_PROP_FAMILY";
-	
-	public static final String DATA_CUBE_NAME_PREFIX = "_data_cube";
-	
-	public static final String DATA_CUBE_MEASURE_FAMILY_PREFIX = "family_";
 	
 	public static class GenerateCubeMapper extends TableMapper<ImmutableBytesWritable, Put>{
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			String dimensionColumns[] = context.getConfiguration().getStrings(JOB_CONF_PROP_DIMENSIONS);
-			String measuresColumns[] = context.getConfiguration().getStrings(JOB_CONF_PROP_MEASURES);
-			String family = context.getConfiguration().getStrings(JOB_CONF_PROP_FAMILY)[0];
-			byte familyBytes[] = Bytes.toBytes(family);
+			String dimensionColumns[] = context.getConfiguration().getStrings(EngineConstants.JOB_CONF_PROP_DIMENSIONS);
+			String measuresColumns[] = context.getConfiguration().getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
 			long dimensions[] = new long[dimensionColumns.length + 1];
-			for(int i = 0; i < dimensions.length - 1; i ++) 
-				dimensions[i] = Bytes.toLong(value.getValue(familyBytes, Bytes.toBytes(dimensionColumns[i])));
+			for(int i = 0; i < dimensions.length - 1; i ++) {
+				String splits[] = dimensionColumns[i].split("\\.");
+				byte family[] = Bytes.toBytes(splits[0]);
+				byte column[] = Bytes.toBytes(splits[1]);
+				dimensions[i] = Bytes.toLong(value.getValue(family, column));
+			}
 			dimensions[dimensions.length - 1] = Bytes.toLong(value.getRow());
 			byte cubeKey[] = BytesPackUtils.pack(dimensions);
 			Put put = new Put(cubeKey);
 			for(int i = 0; i < measuresColumns.length; i ++) {
-				byte column[] = Bytes.toBytes(measuresColumns[i]);
-				byte columnFamily[] = Bytes.toBytes(DATA_CUBE_MEASURE_FAMILY_PREFIX + measuresColumns[i]);
-				double measure = Bytes.toDouble(value.getValue(familyBytes, column));
+				byte column[] = Bytes.toBytes(measuresColumns[i].split("\\.")[1]);
+				byte family[] = Bytes.toBytes(measuresColumns[i].split("\\.")[0]);
+				byte columnFamily[] = Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + measuresColumns[i]);
+				double measure = Bytes.toDouble(value.getValue(family, column));
 				put.add(columnFamily, column, Bytes.toBytes(measure));
 			}
 			context.write(new ImmutableBytesWritable(cubeKey), put);
 		}
 	}
 	
-	public static void generateCube(String tableName, String family, String dimensions, String measures) 
+	public static void generateCube(CubeDescriptor descr)//String tableName, String family, String dimensions, String measures) 
 		throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
-		HTableDescriptor tableDescr = new HTableDescriptor(tableName + DATA_CUBE_NAME_PREFIX);
-		String measuresFamilies[] = getMeasuresFamilies(measures);
+		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTableName());
+		String measuresFamilies[] = descr.getMeasures().toArray(new String[0]);
 		for(int i = 0; i < measuresFamilies.length; i ++)
-			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(DATA_CUBE_MEASURE_FAMILY_PREFIX 
+			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
 					+ measuresFamilies[i])));
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCube.class);
-		TableMapReduceUtil.initTableMapperJob(tableName, new Scan(), GenerateCubeMapper.class
+		TableMapReduceUtil.initTableMapperJob(descr.getSourceTableName(), new Scan(), GenerateCubeMapper.class
 				, ImmutableBytesWritable.class, Put.class, job);
-		TableMapReduceUtil.initTableReducerJob(tableName + DATA_CUBE_NAME_PREFIX
+		TableMapReduceUtil.initTableReducerJob(descr.getCubeDataTableName()
 				, IdentityTableReducer.class, job);
-		job.getConfiguration().set(JOB_CONF_PROP_FAMILY, family);
-		job.getConfiguration().set(JOB_CONF_PROP_DIMENSIONS, dimensions);
-		job.getConfiguration().set(JOB_CONF_PROP_MEASURES, measures);
+		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSIONS, descr.getDimensionsAsString());
+		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURES, descr.getMeasuresAsString());
 		job.waitForCompletion(true);
 	}
 	
-	private static String[] getMeasuresFamilies(String measures) {
-		return measures.split(",");
-	}
-
 	public static void main(String argv[]) throws Exception {
-		generateCube("testfacttable", "data", "d1,d2,d3", "m1,m2,m3");
+		CubeDescriptor descr = new CubeDescriptor();
+		descr.setSourceTableName("testfacttable");
+		descr.setCubeName("testcube");
+		descr.getSourceDimensions().add("data.d1");
+		descr.getSourceDimensions().add("data.d2");
+		descr.getSourceDimensions().add("data.d3");
+		descr.getMeasures().add("data.m1");
+		descr.getMeasures().add("data.m2");
+		descr.getMeasures().add("data.m3");
 	}
 }
