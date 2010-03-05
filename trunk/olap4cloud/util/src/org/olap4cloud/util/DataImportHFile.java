@@ -41,18 +41,15 @@ public class DataImportHFile {
 			while(st1.hasMoreTokens()) {
 				StringTokenizer st2 = new StringTokenizer(st1.nextToken(), "\t", false);
 				int k = Integer.parseInt(st2.nextToken());
-				byte b[] = null;
 				Put put = new Put(Bytes.toBytes(k));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d1")
-						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
+						, Bytes.toBytes(Long.parseLong(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d2")
-						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
+						, Bytes.toBytes(Long.parseLong(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d3")
-						, Bytes.toBytes(Integer.parseInt(st2.nextToken())));
-				b = Bytes.toBytes(Double.parseDouble(st2.nextToken()));
-				logger.debug("k = " + k + " m1 bytes = " + LogUtils.describe(b));
+						, Bytes.toBytes(Long.parseLong(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m1")
-						, b);
+						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m2")
 						, Bytes.toBytes(Double.parseDouble(st2.nextToken())));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("m3")
