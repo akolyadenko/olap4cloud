@@ -22,7 +22,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.olap4cloud.util.BytesPackUtils;
-import org.olap4cloud.util.RangeAggregate.RangeAggregateMapper;
 
 public class GenerateCube {
 	
