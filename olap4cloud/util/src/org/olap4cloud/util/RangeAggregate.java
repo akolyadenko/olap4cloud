@@ -29,30 +29,29 @@ public class RangeAggregate {
 	
 	static Logger logger = Logger.getLogger(RangeAggregate.class);
 	
-	public static class RangeAggregateMapper extends TableMapper<LongWritable, DoubleWritable> {
+	public static class RangeAggregateMapper extends TableMapper<LongWritable, LongWritable> {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			byte mb1[] = value.getValue(Bytes.toBytes("data"), Bytes.toBytes("m1"));
-			double m1 = Bytes.toDouble(value.getValue(Bytes.toBytes("data"), Bytes.toBytes("m1")));
-			context.write(new LongWritable(1), new DoubleWritable(m1));
+			long d1 = Bytes.toLong(value.getValue(Bytes.toBytes("data"), Bytes.toBytes("d1")));
+			context.write(new LongWritable(1), new LongWritable(d1));
 		}
 	}
 	
-	public static class RangeAggregateReducer extends Reducer<LongWritable, DoubleWritable
-		, LongWritable, DoubleWritable> {
+	public static class RangeAggregateReducer extends Reducer<LongWritable, LongWritable
+		, LongWritable, LongWritable> {
 		@Override
 		protected void reduce(LongWritable arg0,
-				Iterable<DoubleWritable> it,
-				org.apache.hadoop.mapreduce.Reducer<LongWritable, DoubleWritable
-				, LongWritable, DoubleWritable>.Context c)
+				Iterable<LongWritable> it,
+				org.apache.hadoop.mapreduce.Reducer<LongWritable, LongWritable
+				, LongWritable, LongWritable>.Context c)
 				throws IOException, InterruptedException {
-			double s = 0;
-			for(Iterator<DoubleWritable> i = it.iterator(); i.hasNext(); ) {
-				DoubleWritable d = i.next();
+			long s = 0;
+			for(Iterator<LongWritable> i = it.iterator(); i.hasNext(); ) {
+				LongWritable d = i.next();
 				s ++;
 			}
-			c.write(new LongWritable(1), new DoubleWritable(s));
+			c.write(new LongWritable(1), new LongWritable(s));
 		}
 	}
 	
@@ -63,7 +62,7 @@ public class RangeAggregate {
 		s.setStartRow(new ImmutableBytesWritable(Bytes.toBytes(5)).get());
 		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(15)).get());
 		TableMapReduceUtil.initTableMapperJob("testfacttable", s, RangeAggregateMapper.class
-				, LongWritable.class, DoubleWritable.class, job);
+				, LongWritable.class, LongWritable.class, job);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(RangeAggregateReducer.class);
 		FileOutputFormat.setOutputPath(job, new Path("/out"));
