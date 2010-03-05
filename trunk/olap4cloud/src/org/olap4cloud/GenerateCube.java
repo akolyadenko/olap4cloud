@@ -33,6 +33,8 @@ public class GenerateCube {
 	
 	public static final String DATA_CUBE_NAME_PREFIX = "_data_cube";
 	
+	public static final String DATA_CUBE_MEASURE_FAMILY_PREFIX = "family_";
+	
 	public static class GenerateCubeMapper extends TableMapper<ImmutableBytesWritable, Put>{
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
@@ -49,7 +51,7 @@ public class GenerateCube {
 			Put put = new Put(cubeKey);
 			for(int i = 0; i < measuresColumns.length; i ++) {
 				byte column[] = Bytes.toBytes(measuresColumns[i]);
-				byte columnFamily[] = Bytes.toBytes(measuresColumns[i] + "f");
+				byte columnFamily[] = Bytes.toBytes(DATA_CUBE_MEASURE_FAMILY_PREFIX + measuresColumns[i]);
 				double measure = Bytes.toDouble(value.getValue(familyBytes, column));
 				put.add(columnFamily, column, Bytes.toBytes(measure));
 			}
@@ -63,7 +65,8 @@ public class GenerateCube {
 		HTableDescriptor tableDescr = new HTableDescriptor(tableName + DATA_CUBE_NAME_PREFIX);
 		String measuresFamilies[] = getMeasuresFamilies(measures);
 		for(int i = 0; i < measuresFamilies.length; i ++)
-			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(measuresFamilies[i])));
+			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(DATA_CUBE_MEASURE_FAMILY_PREFIX 
+					+ measuresFamilies[i])));
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCube.class);
