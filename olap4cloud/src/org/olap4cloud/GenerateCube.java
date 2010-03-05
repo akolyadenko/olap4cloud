@@ -16,11 +16,15 @@ import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.log4j.Logger;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCube {
 	
 	public static class GenerateCubeMapper extends TableMapper<ImmutableBytesWritable, Put>{
+		
+		static Logger logger = Logger.getLogger(GenerateCubeMapper.class);
+		
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
@@ -32,6 +36,7 @@ public class GenerateCube {
 				byte family[] = Bytes.toBytes(splits[0]);
 				byte column[] = Bytes.toBytes(splits[1]);
 				dimensions[i] = Bytes.toLong(value.getValue(family, column));
+				logger.debug("map() dimesnion[" + i + "] = " + dimensions[i]);
 			}
 			dimensions[dimensions.length - 1] = Bytes.toLong(value.getRow());
 			byte cubeKey[] = BytesPackUtils.pack(dimensions);
