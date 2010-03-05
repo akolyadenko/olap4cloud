@@ -11,6 +11,10 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 	
 	byte data[];
 	
+	public CubeIndexEntry() {
+		
+	}
+	
 	public CubeIndexEntry(int length, byte data[]) {
 		this.length = length;
 		this.data = data;
