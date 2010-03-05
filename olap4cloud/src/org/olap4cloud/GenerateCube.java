@@ -47,8 +47,7 @@ public class GenerateCube {
 		}
 	}
 	
-	public static void generateCube(CubeDescriptor descr)//String tableName, String family, String dimensions, String measures) 
-		throws Exception {
+	public static void generateCube(CubeDescriptor descr) throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
 		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTableName());
 		String measuresFamilies[] = descr.getMeasures().toArray(new String[0]);
@@ -77,5 +76,6 @@ public class GenerateCube {
 		descr.getMeasures().add("data.m1");
 		descr.getMeasures().add("data.m2");
 		descr.getMeasures().add("data.m3");
+		generateCube(descr);
 	}
 }
