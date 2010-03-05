@@ -72,6 +72,7 @@ public class GenerateCubeIndex {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
 		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeIndexTable());
 		tableDescr.addFamily(new HColumnDescriptor(EngineConstants.CUBE_INDEX_COLUMN));
+		admin.deleteTable(Bytes.toBytes(descr.getCubeIndexTable()));
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCubeIndex.class);
