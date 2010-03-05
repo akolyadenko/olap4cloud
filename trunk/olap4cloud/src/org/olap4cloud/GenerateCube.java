@@ -49,8 +49,9 @@ public class GenerateCube {
 			Put put = new Put(cubeKey);
 			for(int i = 0; i < measuresColumns.length; i ++) {
 				byte column[] = Bytes.toBytes(measuresColumns[i]);
+				byte columnFamily[] = Bytes.toBytes(measuresColumns[i] + "f");
 				double measure = Bytes.toDouble(value.getValue(familyBytes, column));
-				put.add(familyBytes, column, Bytes.toBytes(measure));
+				put.add(columnFamily, column, Bytes.toBytes(measure));
 			}
 			context.write(new ImmutableBytesWritable(cubeKey), put);
 		}
@@ -60,7 +61,9 @@ public class GenerateCube {
 		throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
 		HTableDescriptor tableDescr = new HTableDescriptor(tableName + DATA_CUBE_NAME_PREFIX);
-		tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(family)));
+		String measuresFamilies[] = getMeasuresFamilies(measures);
+		for(int i = 0; i < measuresFamilies.length; i ++)
+			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(measuresFamilies[i])));
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCube.class);
@@ -74,6 +77,10 @@ public class GenerateCube {
 		job.waitForCompletion(true);
 	}
 	
+	private static String[] getMeasuresFamilies(String measures) {
+		return measures.split(",");
+	}
+
 	public static void main(String argv[]) throws Exception {
 		generateCube("testfacttable", "data", "d1,d2,d3", "m1,m2,m3");
 	}
