@@ -5,22 +5,24 @@ import java.util.List;
 
 public class CubeDescriptor {
 	
-	String sourceTableName;
+	String sourceTable;
 	
 	String cubeName;
 	
-	String cubeDataTableName;
+	String cubeDataTable;
+	
+	String cubeIndexTable;
 	
 	List<String> measures = new ArrayList<String>();
 	
 	List<String> sourceDimensions = new ArrayList<String>();
 
-	public String getSourceTableName() {
-		return sourceTableName;
+	public String getSourceTable() {
+		return sourceTable;
 	}
 
-	public void setSourceTableName(String sourceTableName) {
-		this.sourceTableName = sourceTableName;
+	public void setSourceTable(String sourceTableName) {
+		this.sourceTable = sourceTableName;
 	}
 
 	public List<String> getMeasures() {
@@ -63,10 +65,15 @@ public class CubeDescriptor {
 
 	public void setCubeName(String cubeName) {
 		this.cubeName = cubeName;
-		this.cubeDataTableName = cubeName + EngineConstants.DATA_CUBE_NAME_SUFFIX;
+		this.cubeDataTable = cubeName + EngineConstants.DATA_CUBE_NAME_SUFFIX;
+		this.cubeIndexTable = cubeDataTable + EngineConstants.CUBE_INDEX_SUFFIX;
 	}
 
-	public String getCubeDataTableName() {
-		return cubeDataTableName;
+	public String getCubeDataTable() {
+		return cubeDataTable;
+	}
+
+	public String getCubeIndexTable() {
+		return cubeIndexTable;
 	}
 }
