@@ -61,7 +61,8 @@ public class GenerateCube {
 		for(int i = 0; i < measuresFamilies.length; i ++)
 			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
 					+ measuresFamilies[i])));
-		admin.deleteTable(Bytes.toBytes(descr.getCubeDataTable()));
+		admin.disableTable(descr.getCubeDataTable());
+		admin.deleteTable(descr.getCubeDataTable());
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCube.class);
