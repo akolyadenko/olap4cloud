@@ -34,7 +34,7 @@ public class GenerateCube {
 			for(int i = 0; i < dimensions.length - 1; i ++) {
 				String splits[] = dimensionColumns[i].split("\\.");
 				logger.debug("map() splits[0] = " + splits[0]);
-				logger.debug("map() splits[0] = " + splits[1]);
+				logger.debug("map() splits[1] = " + splits[1]);
 				byte family[] = Bytes.toBytes(splits[0]);
 				byte column[] = Bytes.toBytes(splits[1]);
 				dimensions[i] = Bytes.toLong(value.getValue(family, column));
@@ -61,6 +61,7 @@ public class GenerateCube {
 		for(int i = 0; i < measuresFamilies.length; i ++)
 			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
 					+ measuresFamilies[i])));
+		admin.deleteTable(Bytes.toBytes(descr.getCubeDataTable()));
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCube.class);
