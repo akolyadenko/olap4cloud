@@ -40,7 +40,7 @@ public class DataImportHFile {
 			StringTokenizer st1 = new StringTokenizer(s, "\n", false);
 			while(st1.hasMoreTokens()) {
 				StringTokenizer st2 = new StringTokenizer(st1.nextToken(), "\t", false);
-				int k = Integer.parseInt(st2.nextToken());
+				long k = Long.parseLong(st2.nextToken());
 				Put put = new Put(Bytes.toBytes(k));
 				put.add(Bytes.toBytes("data"), Bytes.toBytes("d1")
 						, Bytes.toBytes(Long.parseLong(st2.nextToken())));
