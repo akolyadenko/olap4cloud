@@ -59,8 +59,8 @@ public class GenerateCube {
 		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTable());
 		String measuresFamilies[] = descr.getMeasures().toArray(new String[0]);
 		for(int i = 0; i < measuresFamilies.length; i ++)
-			tableDescr.addFamily(new HColumnDescriptor(Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
-					+ measuresFamilies[i])));
+			tableDescr.addFamily(new HColumnDescriptor(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
+					+ measuresFamilies[i]));
 		if(admin.tableExists(descr.getCubeDataTable())) {
 			admin.disableTable(descr.getCubeDataTable());
 			admin.deleteTable(descr.getCubeDataTable());
