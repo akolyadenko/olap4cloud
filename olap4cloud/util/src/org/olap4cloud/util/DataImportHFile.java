@@ -5,7 +5,11 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat;
@@ -60,6 +64,14 @@ public class DataImportHFile {
 	}
 	
 	public static void main(String args[]) throws Exception {
+		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
+		HTableDescriptor tableDescr = new HTableDescriptor("testfacttable");
+		tableDescr.addFamily(new HColumnDescriptor("data"));
+		if(admin.tableExists("testfacttable")) {
+			admin.disableTable("testfacttable");
+			admin.deleteTable("testfacttable");
+		}
+		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(DataImportHFile.class);
 		job.setInputFormatClass(TextInputFormat.class);
