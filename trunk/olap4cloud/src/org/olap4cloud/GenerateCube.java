@@ -28,8 +28,12 @@ public class GenerateCube {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			String dimensionColumns[] = context.getConfiguration().getStrings(EngineConstants.JOB_CONF_PROP_DIMENSIONS);
-			String measuresColumns[] = context.getConfiguration().getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
+			String dimensionColumns[] = context.getConfiguration()
+				.getStrings(EngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS);
+			String measuresColumns[] = context.getConfiguration()
+				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS);
+			String measuresNames[] = context.getConfiguration()
+				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
 			long dimensions[] = new long[dimensionColumns.length + 1];
 			for(int i = 0; i < dimensions.length - 1; i ++) {
 				String splits[] = dimensionColumns[i].split("\\.");
@@ -46,9 +50,11 @@ public class GenerateCube {
 			for(int i = 0; i < measuresColumns.length; i ++) {
 				byte column[] = Bytes.toBytes(measuresColumns[i].split("\\.")[1]);
 				byte family[] = Bytes.toBytes(measuresColumns[i].split("\\.")[0]);
-				byte columnFamily[] = Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + measuresColumns[i]);
+				byte measureName[] = Bytes.toBytes(measuresNames[i]);
+				byte measureFamily[] = Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
+						+ measuresNames[i]);
 				double measure = Bytes.toDouble(value.getValue(family, column));
-				put.add(columnFamily, column, Bytes.toBytes(measure));
+				put.add(measureFamily, measureName, Bytes.toBytes(measure));
 			}
 			context.write(new ImmutableBytesWritable(cubeKey), put);
 		}
@@ -72,21 +78,64 @@ public class GenerateCube {
 				, ImmutableBytesWritable.class, Put.class, job);
 		TableMapReduceUtil.initTableReducerJob(descr.getCubeDataTable()
 				, IdentityTableReducer.class, job);
-		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSIONS, descr.getDimensionsAsString());
-		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURES, descr.getMeasuresAsString());
+		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSIONS
+				, getDimensionsAsString(descr));
+		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS
+				, getDimensionSourceFieldsAsString(descr));
+		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURES
+				, getMeasuresAsString(descr));
+		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS
+				, getMeasureSourceFields(descr));
 		job.waitForCompletion(true);
 	}
 	
+	private static String getMeasureSourceFields(CubeDescriptor descr) {
+		StringBuilder sb = new StringBuilder("");
+		if(descr.getMeasures().size() > 0)
+			sb.append(descr.getMeasures().get(0).getSourceField());
+		for(int i = 1; i < descr.getMeasures().size(); i ++)
+			sb.append(",").append(descr.getMeasures().get(i).getSourceField());
+		return sb.toString();
+	}
+
+	private static String getMeasuresAsString(CubeDescriptor descr) {
+		StringBuilder sb = new StringBuilder("");
+		if(descr.getMeasures().size() > 0)
+			sb.append(descr.getMeasures().get(0).getName());
+		for(int i = 1; i < descr.getMeasures().size(); i ++)
+			sb.append(",").append(descr.getMeasures().get(i).getName());
+		return sb.toString();
+	}
+
+	private static String getDimensionSourceFieldsAsString(CubeDescriptor descr) {
+		StringBuilder sb = new StringBuilder("");
+		if(descr.getDimensions().size() > 0)
+			sb.append(descr.getDimensions().get(0).getSourceField());
+		for(int i = 1; i < descr.getDimensions().size(); i ++)
+			sb.append(",").append(descr.getDimensions().get(i).getSourceField());
+		return sb.toString();
+
+	}
+
+	private static String getDimensionsAsString(CubeDescriptor descr) {
+		StringBuilder sb = new StringBuilder("");
+		if(descr.getDimensions().size() > 0)
+			sb.append(descr.getDimensions().get(0).getName());
+		for(int i = 1; i < descr.getDimensions().size(); i ++)
+			sb.append(",").append(descr.getDimensions().get(i).getName());
+		return sb.toString();
+	}
+
 	public static void main(String argv[]) throws Exception {
 		CubeDescriptor descr = new CubeDescriptor();
 		descr.setSourceTable("testfacttable");
 		descr.setCubeName("testcube");
-		descr.getSourceDimensions().add("data.d1");
-		descr.getSourceDimensions().add("data.d2");
-		descr.getSourceDimensions().add("data.d3");
-		descr.getMeasures().add("data.m1");
-		descr.getMeasures().add("data.m2");
-		descr.getMeasures().add("data.m3");
+		descr.getDimensions().add(new CubeDimension("data.d1", "d1"));
+		descr.getDimensions().add(new CubeDimension("data.d2", "d2"));
+		descr.getDimensions().add(new CubeDimension("data.d3", "d3"));
+		descr.getMeasures().add(new CubeMeasure("data.m1", "m1"));
+		descr.getMeasures().add(new CubeMeasure("data.m2", "m2"));
+		descr.getMeasures().add(new CubeMeasure("data.m3", "m3"));
 		generateCube(descr);
 		GenerateCubeIndex.generate(descr);
 	}
