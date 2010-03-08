@@ -16,6 +16,7 @@ import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.log4j.Logger;
 import org.olap4cloud.util.BytesPackUtils;
 
@@ -25,15 +26,27 @@ public class GenerateCube {
 		
 		static Logger logger = Logger.getLogger(GenerateCubeMapper.class);
 		
+		String dimensionColumns[] = null;
+		
+		String measuresNames[] = null;
+		
+		String measuresColumns[] = null;
+		
+		@Override
+		protected void setup(Context context) throws IOException,
+				InterruptedException {
+			super.setup(context);
+			dimensionColumns = context.getConfiguration()
+				.getStrings(EngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS);
+			measuresColumns = context.getConfiguration()
+				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS);
+			measuresNames = context.getConfiguration()
+				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
+		}
+		
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			String dimensionColumns[] = context.getConfiguration()
-				.getStrings(EngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS);
-			String measuresColumns[] = context.getConfiguration()
-				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS);
-			String measuresNames[] = context.getConfiguration()
-				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
 			long dimensions[] = new long[dimensionColumns.length + 1];
 			for(int i = 0; i < dimensions.length - 1; i ++) {
 				String splits[] = dimensionColumns[i].split("\\.");
