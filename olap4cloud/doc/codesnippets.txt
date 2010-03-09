@@ -1,0 +1,3 @@
+ create table facts (key bigint, d1 create table facts (key bigint, d1 bigint, d2 bigint, d3 bigint, m1 double, m2 double, m3 double) clustered by (d1,d2,d3) into 1000 buckets;
+ 
+ create external table facts_data (key bigint, d1 bigint, d2 bigint, d3 bigint, m1 double, m2 double, m3 double) row format delimited fields terminated by '\t' lines terminated by '\n' location "/data.txt";
