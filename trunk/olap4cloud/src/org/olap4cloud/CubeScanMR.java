@@ -26,7 +26,6 @@ import org.apache.log4j.Logger;
 import org.olap4cloud.GenerateCubeIndex.GenerateCubeIndexMapper;
 import org.olap4cloud.util.LogUtils;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class CubeScanMR {
 	
