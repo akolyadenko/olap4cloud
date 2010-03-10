@@ -76,7 +76,7 @@ public class DataImportHFile {
 		job.setJarByClass(DataImportHFile.class);
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(HFileOutputFormat.class);
-		FileInputFormat.addInputPath(job, new Path("/data.txt"));
+		FileInputFormat.addInputPath(job, new Path("/data/data.txt"));
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);
 		job.setMapperClass(DataImportMapper.class);
