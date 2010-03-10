@@ -55,12 +55,12 @@ public class GenerateCube {
 				Context context) throws IOException, InterruptedException {
 			long dimensions[] = new long[dimensionColumns.length + 1];
 			for(int i = 0; i < dimensions.length - 1; i ++) {
-				logger.debug("map() splits[0] = " + dimensionColumnSplits.get(i)[0]);
-				logger.debug("map() splits[1] = " + dimensionColumnSplits.get(i)[1]);
+//				logger.debug("map() splits[0] = " + dimensionColumnSplits.get(i)[0]);
+//				logger.debug("map() splits[1] = " + dimensionColumnSplits.get(i)[1]);
 				byte family[] = Bytes.toBytes(dimensionColumnSplits.get(i)[0]);
 				byte column[] = Bytes.toBytes(dimensionColumnSplits.get(i)[1]);
 				dimensions[i] = Bytes.toLong(value.getValue(family, column));
-				logger.debug("map() dimesnion[" + i + "] = " + dimensions[i]);
+//				logger.debug("map() dimesnion[" + i + "] = " + dimensions[i]);
 			}
 			dimensions[dimensions.length - 1] = Bytes.toLong(value.getRow());
 			byte cubeKey[] = BytesPackUtils.pack(dimensions);
