@@ -1,6 +1,8 @@
 package org.olap4cloud;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
@@ -32,6 +34,8 @@ public class GenerateCube {
 		
 		String measuresColumns[] = null;
 		
+		List<String[]> dimensionColumnSplits = new ArrayList<String[]>();
+		
 		@Override
 		protected void setup(Context context) throws IOException,
 				InterruptedException {
@@ -42,6 +46,8 @@ public class GenerateCube {
 				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS);
 			measuresNames = context.getConfiguration()
 				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
+			for(int i = 0; i < dimensionColumns.length; i ++)
+				dimensionColumnSplits.add(dimensionColumns[i].split("\\."));
 		}
 		
 		@Override
@@ -49,11 +55,10 @@ public class GenerateCube {
 				Context context) throws IOException, InterruptedException {
 			long dimensions[] = new long[dimensionColumns.length + 1];
 			for(int i = 0; i < dimensions.length - 1; i ++) {
-				String splits[] = dimensionColumns[i].split("\\.");
-				logger.debug("map() splits[0] = " + splits[0]);
-				logger.debug("map() splits[1] = " + splits[1]);
-				byte family[] = Bytes.toBytes(splits[0]);
-				byte column[] = Bytes.toBytes(splits[1]);
+				logger.debug("map() splits[0] = " + dimensionColumnSplits.get(i)[0]);
+				logger.debug("map() splits[1] = " + dimensionColumnSplits.get(i)[1]);
+				byte family[] = Bytes.toBytes(dimensionColumnSplits.get(i)[0]);
+				byte column[] = Bytes.toBytes(dimensionColumnSplits.get(i)[1]);
 				dimensions[i] = Bytes.toLong(value.getValue(family, column));
 				logger.debug("map() dimesnion[" + i + "] = " + dimensions[i]);
 			}
