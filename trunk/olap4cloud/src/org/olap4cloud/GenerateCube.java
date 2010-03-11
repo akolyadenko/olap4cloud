@@ -74,7 +74,7 @@ public class GenerateCube {
 				double measure = Bytes.toDouble(value.getValue(family, column));
 				put.add(measureFamily, measureName, Bytes.toBytes(measure));
 			}
-//			context.write(new ImmutableBytesWritable(cubeKey), put);
+			context.write(new ImmutableBytesWritable(cubeKey), put);
 		}
 	}
 	
