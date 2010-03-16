@@ -95,6 +95,7 @@ public class CubeScanMR {
 		Scan scan = new Scan();
 		scan.setStartRow(startRow);
 		scan.setStopRow(stopRow);
+		scan.addColumn(Bytes.toBytes("family_m1"), Bytes.toBytes("m1"));
 		scans.add(scan);
 		return scans;
 	}
