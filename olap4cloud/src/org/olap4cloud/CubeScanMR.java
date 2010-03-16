@@ -54,7 +54,7 @@ public class CubeScanMR {
 			for(Iterator<DoubleWritable> i = inVal.iterator(); i.hasNext(); ) {
 				s += i.next().get();
 			}
-			context.write(new ImmutableBytesWritable(), new DoubleWritable(s));
+			context.write(new ImmutableBytesWritable(new byte[]{1}), new DoubleWritable(s));
 		}
 	}
 	
