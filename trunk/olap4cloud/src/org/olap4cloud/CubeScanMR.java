@@ -41,19 +41,20 @@ public class CubeScanMR {
 		}
 	}
 	
-	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, Text
+	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, ImmutableBytesWritable
 		, DoubleWritable> {
 		@Override
 		protected void reduce(ImmutableBytesWritable inKey,
 				Iterable<DoubleWritable> inVal,
-				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, DoubleWritable, Text
+				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, DoubleWritable
+				, ImmutableBytesWritable
 				, DoubleWritable>.Context context)
 				throws IOException, InterruptedException {
 			double s = 0;
 			for(Iterator<DoubleWritable> i = inVal.iterator(); i.hasNext(); ) {
 				s += i.next().get();
 			}
-			context.write(new Text("sum = "), new DoubleWritable(s));
+			context.write(new ImmutableBytesWritable(), new DoubleWritable(s));
 		}
 	}
 	
@@ -63,10 +64,11 @@ public class CubeScanMR {
 		List<Scan> scans = getScans(descr);
 		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), scans.get(0), CubeScanMRMapper.class
 				, ImmutableBytesWritable.class, DoubleWritable.class, job);
-		job.setOutputKeyClass(Text.class);
+		job.setOutputKeyClass(ImmutableBytesWritable.class);
 		job.setOutputValueClass(DoubleWritable.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(CubeScanMRReducer.class);
+		job.setCombinerClass(CubeScanMRReducer.class);
 		FileOutputFormat.setOutputPath(job, new Path("/out"));
 		job.waitForCompletion(true);
 	}
