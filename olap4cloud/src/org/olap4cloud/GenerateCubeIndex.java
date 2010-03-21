@@ -71,12 +71,22 @@ public class GenerateCubeIndex {
 		}
 
 		private Set<CubeIndexEntry> reduceIndex(Set<CubeIndexEntry> index) {
-			Set<CubeIndexEntry> r = new TreeSet<CubeIndexEntry>();
-			for(CubeIndexEntry e: index) {
-				e.length --;
-				r.add(e);
+			while(index.size() > 900) {
+				int maxLen = 0;
+				for(CubeIndexEntry e: index) 
+					if(maxLen < e.length)
+						maxLen = e.length;
+				if(maxLen == 0)
+					return new TreeSet<CubeIndexEntry>();
+				Set<CubeIndexEntry> r = new TreeSet<CubeIndexEntry>();
+				for(CubeIndexEntry e: index) {
+					if(e.length == maxLen)
+						e.length --;
+					r.add(e);
+				}
+				index = r;
 			}
-			return r;
+			return index;
 		}
 	}
 	
