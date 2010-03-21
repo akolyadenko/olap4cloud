@@ -52,8 +52,11 @@ public class GenerateCubeIndex {
 				Context context)
 				throws IOException, InterruptedException {
 			Set<CubeIndexEntry> index = new TreeSet<CubeIndexEntry>();
-			for(Iterator<CubeIndexEntry> i = vals.iterator(); i.hasNext(); ) 
+			for(Iterator<CubeIndexEntry> i = vals.iterator(); i.hasNext(); ) { 
 				index.add(i.next());
+				if(index.size() > 1000)
+					index = reduceIndex(index);
+			}
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			DataOutputStream dout = new DataOutputStream(bout);
 			for(Iterator<CubeIndexEntry> i = index.iterator(); i.hasNext();)
@@ -65,6 +68,15 @@ public class GenerateCubeIndex {
 			put.add(Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN), Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN),
 					indexData);
 			context.write(inKey, put);
+		}
+
+		private Set<CubeIndexEntry> reduceIndex(Set<CubeIndexEntry> index) {
+			Set<CubeIndexEntry> r = new TreeSet<CubeIndexEntry>();
+			for(CubeIndexEntry e: index) {
+				e.length --;
+				r.add(e);
+			}
+			return r;
 		}
 	}
 	
