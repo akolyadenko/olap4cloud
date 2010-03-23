@@ -144,6 +144,12 @@ public class GenerateCube {
 	}
 
 	public static void main(String argv[]) throws Exception {
+		CubeDescriptor descr = createTestCubeDescriptor();
+		generateCube(descr);
+		GenerateCubeIndex.generate(descr);
+	}
+
+	public static CubeDescriptor createTestCubeDescriptor() {
 		CubeDescriptor descr = new CubeDescriptor();
 		descr.setSourceTable("testfacttable");
 		descr.setCubeName("testcube");
@@ -153,7 +159,6 @@ public class GenerateCube {
 		descr.getMeasures().add(new CubeMeasure("data.m1", "m1"));
 		descr.getMeasures().add(new CubeMeasure("data.m2", "m2"));
 		descr.getMeasures().add(new CubeMeasure("data.m3", "m3"));
-		generateCube(descr);
-		GenerateCubeIndex.generate(descr);
+		return descr;
 	}
 }
