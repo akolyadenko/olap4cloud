@@ -107,4 +107,8 @@ public class GenerateCubeIndex {
 				, GenerateCubeIndexReducer.class, job);
 		job.waitForCompletion(true);
 	}
+	
+	public static void main(String argv[]) throws Exception {
+		generate(GenerateCube.createTestCubeDescriptor());
+	}
 }
