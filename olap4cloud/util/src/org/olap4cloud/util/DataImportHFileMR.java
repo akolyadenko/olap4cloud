@@ -31,9 +31,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
 
-public class DataImportHFile {
+public class DataImportHFileMR {
 	
-	static Logger logger = Logger.getLogger(DataImportHFile.class);
+	static Logger logger = Logger.getLogger(DataImportHFileMR.class);
 	
 	static class DataImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put>{
 		@Override
@@ -73,7 +73,7 @@ public class DataImportHFile {
 		}
 		admin.createTable(tableDescr);
 		Job job = new Job();
-		job.setJarByClass(DataImportHFile.class);
+		job.setJarByClass(DataImportHFileMR.class);
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(HFileOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path("/data/data.txt"));

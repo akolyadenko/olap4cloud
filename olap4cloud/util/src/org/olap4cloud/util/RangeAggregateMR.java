@@ -23,11 +23,11 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
-import org.olap4cloud.util.DataImportHFile.DataImportMapper;
+import org.olap4cloud.util.DataImportHFileMR.DataImportMapper;
 
-public class RangeAggregate {
+public class RangeAggregateMR {
 	
-	static Logger logger = Logger.getLogger(RangeAggregate.class);
+	static Logger logger = Logger.getLogger(RangeAggregateMR.class);
 	
 	public static class RangeAggregateMapper extends TableMapper<LongWritable, LongWritable> {
 		@Override
@@ -58,7 +58,7 @@ public class RangeAggregate {
 	
 	public static void main(String argv[]) throws Exception {
 		Job job = new Job();
-		job.setJarByClass(RangeAggregate.class);
+		job.setJarByClass(RangeAggregateMR.class);
 		Scan s = new Scan();
 		s.setStartRow(new ImmutableBytesWritable(Bytes.toBytes(5)).get());
 		s.setStopRow(new ImmutableBytesWritable(Bytes.toBytes(15)).get());
