@@ -24,10 +24,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.log4j.Logger;
-import org.olap4cloud.util.DataImportHFile.DataImportMapper;
+import org.olap4cloud.util.DataImportHFileMR.DataImportMapper;
 
-public class DataImportHIdxFile {
-	static Logger logger = Logger.getLogger(DataImportHFile.class);
+public class DataImportHIdxFileMR {
+	static Logger logger = Logger.getLogger(DataImportHFileMR.class);
 	
 	static class DataImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put>{
 		@Override
@@ -74,7 +74,7 @@ public class DataImportHIdxFile {
 		}
 		admin.createTable(tableDescr);
 		Job job = new Job();
-		job.setJarByClass(DataImportHIdxFile.class);
+		job.setJarByClass(DataImportHIdxFileMR.class);
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(HFileOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path("/data/data.txt"));

@@ -23,10 +23,10 @@ import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.olap4cloud.GenerateCube.GenerateCubeMapper;
+import org.olap4cloud.GenerateCubeMR.GenerateCubeMapper;
 import org.olap4cloud.util.BytesPackUtils;
 
-public class GenerateCubeIndex {
+public class GenerateCubeIndexMR {
 	public static class GenerateCubeIndexMapper extends TableMapper<ImmutableBytesWritable, CubeIndexEntry> {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
@@ -100,7 +100,7 @@ public class GenerateCubeIndex {
 		}
 		admin.createTable(tableDescr);
 		Job job = new Job();
-		job.setJarByClass(GenerateCubeIndex.class);
+		job.setJarByClass(GenerateCubeIndexMR.class);
 		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), new Scan(), GenerateCubeIndexMapper.class
 				, ImmutableBytesWritable.class, CubeIndexEntry.class, job);
 		TableMapReduceUtil.initTableReducerJob(descr.getCubeIndexTable()
@@ -109,6 +109,6 @@ public class GenerateCubeIndex {
 	}
 	
 	public static void main(String argv[]) throws Exception {
-		generate(GenerateCube.createTestCubeDescriptor());
+		generate(GenerateCubeMR.createTestCubeDescriptor());
 	}
 }
