@@ -1,11 +1,11 @@
-package org.olap4cloud;
+package org.olap4cloud.impl;
 
-public class CubeMeasure {
+public class CubeDimension {
 	String sourceField;
-
+	
 	String name;
 	
-	public CubeMeasure(String sourceField, String name) {
+	public CubeDimension(String sourceField, String name) {
 		this.sourceField = sourceField;
 		this.name = name;
 	}

@@ -1,4 +1,4 @@
-package org.olap4cloud;
+package org.olap4cloud.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -23,7 +23,7 @@ import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.olap4cloud.GenerateCubeMR.GenerateCubeMapper;
+import org.olap4cloud.impl.GenerateCubeMR.GenerateCubeMapper;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCubeIndexMR {

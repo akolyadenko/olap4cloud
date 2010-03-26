@@ -1,4 +1,4 @@
-package org.olap4cloud;
+package org.olap4cloud.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
