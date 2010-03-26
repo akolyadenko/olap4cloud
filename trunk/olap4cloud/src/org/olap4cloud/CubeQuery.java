@@ -1,12 +1,19 @@
 package org.olap4cloud;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CubeQuery {
 	
-	CubeQueryCondition condition;
+	List<CubeQueryCondition> conditions = new ArrayList<CubeQueryCondition>();
 	
-	List<String> grouping;
+	List<CubeQueryAggregate> aggregate = new ArrayList<CubeQueryAggregate>();
 	
-	
+	public CubeQuery() {
+		
+	}
+
+	public List<CubeQueryCondition> getConditions() {
+		return conditions;
+	}
 }
