@@ -1,7 +1,9 @@
-package org.olap4cloud.impl;
+package org.olap4cloud.client;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.olap4cloud.impl.EngineConstants;
 
 public class CubeDescriptor {
 	
