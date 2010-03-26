@@ -20,6 +20,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.log4j.Logger;
+import org.olap4cloud.client.CubeDescriptor;
+import org.olap4cloud.client.CubeDimension;
+import org.olap4cloud.client.CubeMeasure;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCubeMR {

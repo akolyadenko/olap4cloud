@@ -1,6 +1,5 @@
-package org.olap4cloud;
+package org.olap4cloud.client;
 
-import org.olap4cloud.impl.CubeDescriptor;
 
 public class OLAPEngine {
 	public static CubeQueryResult executeQuery(CubeQuery query, CubeDescriptor descriptor) {

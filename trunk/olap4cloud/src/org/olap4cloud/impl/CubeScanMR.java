@@ -23,6 +23,9 @@ import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
+import org.olap4cloud.client.CubeDescriptor;
+import org.olap4cloud.client.CubeDimension;
+import org.olap4cloud.client.CubeMeasure;
 import org.olap4cloud.impl.GenerateCubeIndexMR.GenerateCubeIndexMapper;
 import org.olap4cloud.util.LogUtils;
 
