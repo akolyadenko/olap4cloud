@@ -1,7 +1,9 @@
 package org.olap4cloud;
 
+import org.olap4cloud.impl.CubeDescriptor;
+
 public class OLAPEngine {
-	public static double executeQuery() {
-		return 0;
+	public static CubeQueryResult executeQuery(CubeQuery query, CubeDescriptor descriptor) {
+		return null;
 	}
 }
