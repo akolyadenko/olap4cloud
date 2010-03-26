@@ -16,4 +16,8 @@ public class CubeQueryCondition {
 	public List<Long> getDimensionValues() {
 		return dimensionValues;
 	}
+
+	public String getDimensionName() {
+		return dimensionName;
+	}
 }

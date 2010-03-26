@@ -58,12 +58,9 @@ public class GenerateCubeMR {
 				Context context) throws IOException, InterruptedException {
 			long dimensions[] = new long[dimensionColumns.length + 1];
 			for(int i = 0; i < dimensions.length - 1; i ++) {
-//				logger.debug("map() splits[0] = " + dimensionColumnSplits.get(i)[0]);
-//				logger.debug("map() splits[1] = " + dimensionColumnSplits.get(i)[1]);
 				byte family[] = Bytes.toBytes(dimensionColumnSplits.get(i)[0]);
 				byte column[] = Bytes.toBytes(dimensionColumnSplits.get(i)[1]);
 				dimensions[i] = Bytes.toLong(value.getValue(family, column));
-//				logger.debug("map() dimesnion[" + i + "] = " + dimensions[i]);
 			}
 			dimensions[dimensions.length - 1] = Bytes.toLong(value.getRow());
 			byte cubeKey[] = BytesPackUtils.pack(dimensions);
@@ -74,8 +71,7 @@ public class GenerateCubeMR {
 				byte measureName[] = Bytes.toBytes(measuresNames[i]);
 				byte measureFamily[] = Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
 						+ measuresNames[i]);
-				double measure = Bytes.toDouble(value.getValue(family, column));
-				put.add(measureFamily, measureName, Bytes.toBytes(measure));
+				put.add(measureFamily, measureName, value.getValue(family, column));
 			}
 			context.write(new ImmutableBytesWritable(cubeKey), put);
 		}
