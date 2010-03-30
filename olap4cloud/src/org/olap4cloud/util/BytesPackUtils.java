@@ -19,4 +19,11 @@ public class BytesPackUtils {
 		Bytes.putBytes(r, 4, b, 0, b.length);
 		return r;
 	}
+	
+	public static byte[] pack(int i, long l) {
+		byte r[] = new byte[12];
+		Bytes.putInt(r, 0, i);
+		Bytes.putLong(r, 4, l);
+		return r;
+	}
 }

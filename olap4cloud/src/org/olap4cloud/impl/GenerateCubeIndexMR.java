@@ -75,14 +75,14 @@ public class GenerateCubeIndexMR {
 			while(index.size() > 900) {
 				int maxLen = 0;
 				for(CubeIndexEntry e: index) 
-					if(maxLen < e.length)
-						maxLen = e.length;
+					if(maxLen < e.getLength())
+						maxLen = e.getLength();
 				if(maxLen == 0)
 					return new TreeSet<CubeIndexEntry>();
 				Set<CubeIndexEntry> r = new TreeSet<CubeIndexEntry>();
 				for(CubeIndexEntry e: index) {
-					if(e.length == maxLen)
-						e.length --;
+					if(e.getLength() == maxLen)
+						e.setLength(e.getLength() - 1);
 					r.add(e);
 				}
 				index = r;
