@@ -7,9 +7,9 @@ import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 
 public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
-	int length = 0;
+	private int length = 0;
 	
-	byte data[];
+	private byte data[];
 	
 	public CubeIndexEntry() {
 		
@@ -39,6 +39,15 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 			if(data[i] != o.data[i])
 				return data[i] - o.data[i];
 		return length - o.length;
+	}
+	
+	public boolean contain(CubeIndexEntry e) {
+		if(e.length < length)
+			return false;
+		for(int i = 0; i < length; i ++)
+			if(data[i] != e.data[i])
+				return false;
+		return true;
 	}
 
 	public int getLength() {
