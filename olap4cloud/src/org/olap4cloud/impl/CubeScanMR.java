@@ -1,7 +1,5 @@
 package org.olap4cloud.impl;
 
-import java.io.IOException;
-
 import org.apache.hadoop.mapreduce.Job;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQueryResult;
