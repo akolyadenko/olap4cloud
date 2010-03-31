@@ -16,16 +16,12 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
-import org.apache.hadoop.hbase.mapreduce.IdentityTableReducer;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.olap4cloud.client.CubeDescriptor;
-import org.olap4cloud.impl.GenerateCubeMR.GenerateCubeMapper;
-import org.olap4cloud.test.TestCubeUtils;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCubeIndexMR {
