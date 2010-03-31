@@ -6,7 +6,7 @@ import java.io.FileWriter;
 public class GenerateTestData {
 
 	public static void main(String[] args) throws Exception {
-		BufferedWriter w = new BufferedWriter(new FileWriter("util/data/data.txt"));
+		BufferedWriter w = new BufferedWriter(new FileWriter("test/data/data.txt"));
 		for(long i = 10; i < 10000; i ++)
 			w.write(i + "\t" + (long)(Math.random() * 100) + "\t" + (long)(Math.random() * 1000)
 					+ "\t" + (long)(Math.random() * 10000) 
