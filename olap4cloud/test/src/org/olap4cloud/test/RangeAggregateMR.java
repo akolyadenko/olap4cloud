@@ -1,4 +1,4 @@
-package org.olap4cloud.util;
+package org.olap4cloud.test;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -23,7 +23,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
-import org.olap4cloud.util.DataImportHFileMR.DataImportMapper;
+import org.olap4cloud.test.DataImportHFileMR.DataImportMapper;
 
 public class RangeAggregateMR {
 	

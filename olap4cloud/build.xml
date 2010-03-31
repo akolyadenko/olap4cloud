@@ -14,18 +14,18 @@
 		</javac>
 	</target>
 	
-	<target name = "util.generate_test_data" depends = "util.compile">
-		<java classname = "org.olap4cloud.util.GenerateTestData" classpath = "./util/classes"/>
+	<target name = "test.generate_test_data" depends = "test.compile">
+		<java classname = "org.olap4cloud.test.GenerateTestData" classpath = "./test/classes"/>
 	</target>
 	
-	<target name = "util.build" depends = "util.compile">
-		<jar destfile = "olap4cloud-util.jar" basedir = "util/classes"/>
+	<target name = "test.build" depends = "test.compile">
+		<jar destfile = "olap4cloud-test.jar" basedir = "test/classes"/>
 	</target>
 	
-	<target name = "util.compile">
-		<mkdir dir = "util/classes"/>
-		<javac destdir = "util/classes" classpathref="lib.path.ref" debug = "on">
-			<src path="util/src"/>
+	<target name = "test.compile">
+		<mkdir dir = "test/classes"/>
+		<javac destdir = "test/classes" classpathref="lib.path.ref" debug = "on">
+			<src path="test/src"/>
 		</javac>
 	</target>
 </project>

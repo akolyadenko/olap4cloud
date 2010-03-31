@@ -10,14 +10,18 @@ import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.io.DataInputBuffer;
+import org.apache.log4j.Logger;
 import org.olap4cloud.impl.CubeIndexEntry;
 import org.olap4cloud.impl.CubeScan;
 import org.olap4cloud.impl.CubeScanMR;
 import org.olap4cloud.impl.EngineConstants;
 import org.olap4cloud.util.BytesPackUtils;
+import org.olap4cloud.util.LogUtils;
 
 
 public class OLAPEngine {
+	
+	static Logger logger = Logger.getLogger(OLAPEngine.class);
 	
 	HBaseConfiguration config = new HBaseConfiguration();
 	
@@ -35,6 +39,7 @@ public class OLAPEngine {
 	}
 	
 	CubeScan getCubeScan(CubeQuery query, CubeDescriptor cubeDescriptor) throws Exception{
+		String methodName  = "getCubeScan() ";
 		CubeScan scan = new CubeScan();
 		List<CubeIndexEntry> index = null;
 		for(CubeQueryCondition condition: query.getConditions()) {
@@ -53,6 +58,8 @@ public class OLAPEngine {
 		for(CubeIndexEntry indexEntry: index) {
 			byte startRow[] = getStartRow(indexEntry, cubeDescriptor.dimensions.size());
 			byte stopRow[] = getStopRow(indexEntry, cubeDescriptor.dimensions.size());
+			if(logger.isDebugEnabled()) logger.debug(methodName + "add range [" + LogUtils.describe(startRow)
+					+ ", " + LogUtils.describe(stopRow) + "]  to scan.");
 			Pair<byte[], byte[]> range = new Pair<byte[], byte[]>(startRow, stopRow);
 			scan.getRanges().add(range);
 		}

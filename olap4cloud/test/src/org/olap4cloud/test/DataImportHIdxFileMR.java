@@ -1,38 +1,32 @@
-package org.olap4cloud.util;
+package org.olap4cloud.test;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.idx.IdxColumnDescriptor;
+import org.apache.hadoop.hbase.client.idx.IdxIndexDescriptor;
+import org.apache.hadoop.hbase.client.idx.IdxQualifierType;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat;
 import org.apache.hadoop.hbase.mapreduce.IdentityTableReducer;
-import org.apache.hadoop.hbase.mapreduce.KeyValueSortReducer;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
-import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
+import org.olap4cloud.test.DataImportHFileMR.DataImportMapper;
 
-public class DataImportHFileMR {
-	
+public class DataImportHIdxFileMR {
 	static Logger logger = Logger.getLogger(DataImportHFileMR.class);
 	
 	static class DataImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put>{
@@ -66,14 +60,21 @@ public class DataImportHFileMR {
 	public static void main(String args[]) throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
 		HTableDescriptor tableDescr = new HTableDescriptor("testfacttable");
-		tableDescr.addFamily(new HColumnDescriptor("data"));
+		IdxColumnDescriptor idxColumnDescriptor = new IdxColumnDescriptor(Bytes.toBytes("data"));
+		IdxIndexDescriptor indexDescriptor1  = new IdxIndexDescriptor(Bytes.toBytes("d1"), IdxQualifierType.LONG);
+		IdxIndexDescriptor indexDescriptor2  = new IdxIndexDescriptor(Bytes.toBytes("d2"), IdxQualifierType.LONG);
+		IdxIndexDescriptor indexDescriptor3  = new IdxIndexDescriptor(Bytes.toBytes("d3"), IdxQualifierType.LONG);
+		idxColumnDescriptor.addIndexDescriptor(indexDescriptor1);
+		idxColumnDescriptor.addIndexDescriptor(indexDescriptor2);
+		idxColumnDescriptor.addIndexDescriptor(indexDescriptor3);
+		tableDescr.addFamily(idxColumnDescriptor);
 		if(admin.tableExists("testfacttable")) {
 			admin.disableTable("testfacttable");
 			admin.deleteTable("testfacttable");
 		}
 		admin.createTable(tableDescr);
 		Job job = new Job();
-		job.setJarByClass(DataImportHFileMR.class);
+		job.setJarByClass(DataImportHIdxFileMR.class);
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(HFileOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path("/data/data.txt"));
@@ -83,4 +84,5 @@ public class DataImportHFileMR {
 		TableMapReduceUtil.initTableReducerJob("testfacttable", IdentityTableReducer.class, job);
 		job.waitForCompletion(true);
 	}
+
 }
