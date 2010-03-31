@@ -1,4 +1,4 @@
-package org.olap4cloud.util;
+package org.olap4cloud.test;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
