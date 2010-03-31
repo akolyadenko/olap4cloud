@@ -20,7 +20,10 @@
 	</target>
 	
 	<target name = "test.build" depends = "test.compile">
-		<jar destfile = "olap4cloud-test.jar" basedir = "test/classes"/>
+		<jar destfile = "olap4cloud-test.jar" basedir = "test/classes">
+			<fileset dir = "test/classes"/>
+			<fileset dir = "classes"/>
+		</jar>
 	</target>
 	
 	<target name = "test.compile" depends = "build">
@@ -28,5 +31,11 @@
 		<javac destdir = "test/classes" classpathref="lib.path.ref" debug = "on">
 			<src path="test/src"/>
 		</javac>
+	</target>
+	
+	<target name = "clean">
+		<delete file = "*.jar"/>
+		<delete dir = "test/classes"/>
+		<delete dir = "classes"/>
 	</target>
 </project>
