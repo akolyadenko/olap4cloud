@@ -21,8 +21,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
-import org.olap4cloud.client.CubeDimension;
-import org.olap4cloud.client.CubeMeasure;
+import org.olap4cloud.test.TestCubeUtils;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCubeMR {
@@ -140,24 +139,5 @@ public class GenerateCubeMR {
 		for(int i = 1; i < descr.getDimensions().size(); i ++)
 			sb.append(",").append(descr.getDimensions().get(i).getName());
 		return sb.toString();
-	}
-
-	public static void main(String argv[]) throws Exception {
-		CubeDescriptor descr = createTestCubeDescriptor();
-		generateCube(descr);
-		GenerateCubeIndexMR.generate(descr);
-	}
-
-	public static CubeDescriptor createTestCubeDescriptor() {
-		CubeDescriptor descr = new CubeDescriptor();
-		descr.setSourceTable("testfacttable");
-		descr.setCubeName("testcube");
-		descr.getDimensions().add(new CubeDimension("data.d1", "d1"));
-		descr.getDimensions().add(new CubeDimension("data.d2", "d2"));
-		descr.getDimensions().add(new CubeDimension("data.d3", "d3"));
-		descr.getMeasures().add(new CubeMeasure("data.m1", "m1"));
-		descr.getMeasures().add(new CubeMeasure("data.m2", "m2"));
-		descr.getMeasures().add(new CubeMeasure("data.m3", "m3"));
-		return descr;
 	}
 }

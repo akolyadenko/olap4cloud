@@ -25,6 +25,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.impl.GenerateCubeMR.GenerateCubeMapper;
+import org.olap4cloud.test.TestCubeUtils;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class GenerateCubeIndexMR {
@@ -107,9 +108,5 @@ public class GenerateCubeIndexMR {
 		TableMapReduceUtil.initTableReducerJob(descr.getCubeIndexTable()
 				, GenerateCubeIndexReducer.class, job);
 		job.waitForCompletion(true);
-	}
-	
-	public static void main(String argv[]) throws Exception {
-		generate(GenerateCubeMR.createTestCubeDescriptor());
 	}
 }
