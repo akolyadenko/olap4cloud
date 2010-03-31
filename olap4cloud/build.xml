@@ -34,7 +34,9 @@
 	</target>
 	
 	<target name = "clean">
-		<delete file = "*.jar"/>
+		<delete>
+			<fileset dir="." includes="*.jar"/>
+		</delete>
 		<delete dir = "test/classes"/>
 		<delete dir = "classes"/>
 	</target>
