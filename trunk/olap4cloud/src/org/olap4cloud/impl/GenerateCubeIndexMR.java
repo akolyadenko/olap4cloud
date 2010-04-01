@@ -21,10 +21,14 @@ import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.mapreduce.TableReducer;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.util.BytesPackUtils;
+import org.olap4cloud.util.LogUtils;
 
 public class GenerateCubeIndexMR {
+	static Logger logger = Logger.getLogger(GenerateCubeIndexMR.class);
+	
 	public static class GenerateCubeIndexMapper extends TableMapper<ImmutableBytesWritable, CubeIndexEntry> {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
@@ -49,6 +53,7 @@ public class GenerateCubeIndexMR {
 				Iterable<CubeIndexEntry> vals,
 				Context context)
 				throws IOException, InterruptedException {
+			String methodName = "GenerateCubeIndexReducer.reduce() ";
 			Set<CubeIndexEntry> index = new TreeSet<CubeIndexEntry>();
 			for(Iterator<CubeIndexEntry> i = vals.iterator(); i.hasNext(); ) { 
 				index.add(i.next());
@@ -62,6 +67,8 @@ public class GenerateCubeIndexMR {
 			dout.close();
 			bout.close();
 			byte indexData[] = bout.toByteArray();
+			if(logger.isDebugEnabled()) logger.debug(methodName + "generate index entry with key = " 
+					+ LogUtils.describe(inKey.get()));
 			Put put = new Put(inKey.get());
 			put.add(Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN), Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN),
 					indexData);
