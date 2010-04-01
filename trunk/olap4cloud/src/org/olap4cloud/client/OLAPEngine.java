@@ -139,6 +139,7 @@ public class OLAPEngine {
 				dimensionNumber + " dimVal = " + dimVal);
 		HTable hTable = new HTable(cubeDescriptor.getCubeIndexTable());
 		byte key[] = BytesPackUtils.pack(dimensionNumber, dimVal);
+		if(logger.isDebugEnabled()) logger.debug(methodName + "index key = " + LogUtils.describe(key));
 		Get get = new Get(key);
 		byte indexColumn[] = Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN);
 		get.addColumn(indexColumn, indexColumn);
