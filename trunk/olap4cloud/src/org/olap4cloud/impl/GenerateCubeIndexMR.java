@@ -61,10 +61,11 @@ public class GenerateCubeIndexMR {
 			String methodName = "GenerateCubeIndexReducer.reduce() ";
 			Set<CubeIndexEntry> index = new TreeSet<CubeIndexEntry>();
 			for(Iterator<CubeIndexEntry> i = vals.iterator(); i.hasNext(); ) { 
-				index.add(i.next());
+				CubeIndexEntry e = i.next();
+				index.add(e);
 				if(logger.isDebugEnabled())
 					logger.debug(methodName + "added entry to index for key " + LogUtils.describe(inKey.get()) 
-							+ " index size is " + index.size());
+							+ " index size is " + index.size() + " indexentry: " + LogUtils.describe(e));
 				if(index.size() > 1000)
 					index = reduceIndex(index);
 			}
