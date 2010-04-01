@@ -71,7 +71,7 @@ public class GenerateCubeIndexMR {
 			bout.close();
 			byte indexData[] = bout.toByteArray();
 			if(logger.isDebugEnabled()) logger.debug(methodName + "generate index entry with key = " 
-					+ LogUtils.describe(inKey.get()));
+					+ LogUtils.describe(inKey.get()) + " size of index is: " + index.size());
 			Put put = new Put(inKey.get());
 			put.add(Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN), Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN),
 					indexData);
