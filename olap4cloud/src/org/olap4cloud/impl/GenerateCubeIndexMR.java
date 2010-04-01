@@ -44,6 +44,8 @@ public class GenerateCubeIndexMR {
 				byte outKey[] = BytesPackUtils.pack(dimNumber, keyData);
 				int indexLength = (i + 1) * 8;
 				byte indexData[] = Arrays.copyOfRange(keyBytes, 0, (i + 1) * 8);
+				if(logger.isDebugEnabled()) logger.debug(methodName + "map index for key: " 
+						+ LogUtils.describe(outKey));
 				context.write(new ImmutableBytesWritable(outKey), new CubeIndexEntry(indexLength, indexData));
 			} 
 		}
