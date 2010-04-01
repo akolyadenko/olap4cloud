@@ -37,10 +37,10 @@ public class GenerateCubeIndexMR {
 			byte keyBytes[] = key.get();
 			if(logger.isDebugEnabled()) logger.debug(methodName + "generate index for data row with key =  " 
 					+ LogUtils.describe(keyBytes));
-			int len = (keyBytes.length - 16) / 8;
+			int len = (keyBytes.length) / 8;
 			for(int i = 0; i < len; i ++) {
 				int dimNumber = i + 1;
-				byte keyData[] = Arrays.copyOfRange(keyBytes, (i + 1) * 8, (i + 2) * 8);
+				byte keyData[] = Arrays.copyOfRange(keyBytes, i * 8, (i + 1) * 8);
 				byte outKey[] = BytesPackUtils.pack(dimNumber, keyData);
 				int indexLength = (i + 1) * 8;
 				byte indexData[] = Arrays.copyOfRange(keyBytes, 0, (i + 1) * 8);
