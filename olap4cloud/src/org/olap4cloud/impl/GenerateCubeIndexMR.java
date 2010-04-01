@@ -59,7 +59,7 @@ public class GenerateCubeIndexMR {
 				Context context)
 				throws IOException, InterruptedException {
 			String methodName = "GenerateCubeIndexReducer.reduce() ";
-			Set<CubeIndexEntry> index = new TreeSet<CubeIndexEntry>();
+			Set<CubeIndexEntry> index = new TreeSet<CubeIndexEntry>(new CubeIndexEntryComparator());
 			for(Iterator<CubeIndexEntry> i = vals.iterator(); i.hasNext(); ) { 
 				CubeIndexEntry e = i.next();
 				index.add(e);
