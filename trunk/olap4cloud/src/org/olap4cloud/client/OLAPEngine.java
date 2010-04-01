@@ -44,7 +44,9 @@ public class OLAPEngine {
 		List<CubeIndexEntry> index = null;
 		for(CubeQueryCondition condition: query.getConditions()) {
 			String dimensionName = condition.getDimensionName();
+			if(logger.isDebugEnabled()) logger.debug(methodName + "process dimension " + dimensionName);
 			int dimensionNumber = getDimensionNumber(dimensionName, cubeDescriptor);
+			if(logger.isDebugEnabled()) logger.debug(methodName + "dimensionNumber = " + dimensionNumber);
 			List<CubeIndexEntry> dimIndex = new ArrayList<CubeIndexEntry>();
 			for(long dimVal: condition.dimensionValues) {
 				List<CubeIndexEntry> dimValIndex = getIndexForDimensionValue(dimensionNumber, dimVal, cubeDescriptor);
@@ -55,6 +57,7 @@ public class OLAPEngine {
 			else
 				index = joinIndexes(index, dimIndex);
 		}
+		if(logger.isDebugEnabled()) logger.debug(methodName + "final index size: " + index.size());
 		for(CubeIndexEntry indexEntry: index) {
 			byte startRow[] = getStartRow(indexEntry, cubeDescriptor.dimensions.size());
 			byte stopRow[] = getStopRow(indexEntry, cubeDescriptor.dimensions.size());
@@ -131,12 +134,16 @@ public class OLAPEngine {
 
 	private List<CubeIndexEntry> getIndexForDimensionValue(int dimensionNumber,
 			long dimVal, CubeDescriptor cubeDescriptor) throws Exception {
+		String methodName = "getIndexForDimensionValue() ";
+		if(logger.isDebugEnabled()) logger.debug(methodName + "dimensionNumber = " + 
+				dimensionNumber + " dimVal = " + dimVal);
 		HTable hTable = new HTable(cubeDescriptor.getCubeIndexTable());
 		byte key[] = BytesPackUtils.pack(dimensionNumber, dimVal);
 		Get get = new Get(key);
 		byte indexColumn[] = Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN);
 		get.addColumn(indexColumn, indexColumn);
 		byte index[] = hTable.get(get).getValue(indexColumn, indexColumn);
+		if(logger.isDebugEnabled()) logger.debug(methodName + "index = " + LogUtils.describe(index));
 		if(index == null)
 			return new ArrayList<CubeIndexEntry>();
 		DataInputBuffer buf = new DataInputBuffer();
