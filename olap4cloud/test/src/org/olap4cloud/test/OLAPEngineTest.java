@@ -15,7 +15,7 @@ public class OLAPEngineTest {
 		CubeDescriptor cubeDescriptor = TestCubeUtils.createTestCubeDescriptor();
 		CubeQuery cubeQuery = new CubeQuery();
 		CubeQueryCondition condition = new CubeQueryCondition("d2");
-		condition.getDimensionValues().add(35l);
+		condition.getDimensionValues().add(602l);
 		cubeQuery.getConditions().add(condition);
 		OLAPEngine olapEngine = new OLAPEngine();
 		olapEngine.executeQuery(cubeQuery, cubeDescriptor);
