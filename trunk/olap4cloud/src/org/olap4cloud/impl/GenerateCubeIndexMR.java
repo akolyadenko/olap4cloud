@@ -33,7 +33,10 @@ public class GenerateCubeIndexMR {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
+			String methodName = "GenerateCubeIndexMapper.map() ";
 			byte keyBytes[] = key.get();
+			if(logger.isDebugEnabled()) logger.debug(methodName + "generate index for data row with key =  " 
+					+ LogUtils.describe(keyBytes));
 			int len = (keyBytes.length - 16) / 8;
 			for(int i = 0; i < len; i ++) {
 				int dimNumber = i + 1;
