@@ -14,8 +14,8 @@ public class OLAPEngineTest {
 	static void executeQueryTest() throws Exception {
 		CubeDescriptor cubeDescriptor = TestCubeUtils.createTestCubeDescriptor();
 		CubeQuery cubeQuery = new CubeQuery();
-		CubeQueryCondition condition = new CubeQueryCondition("d2");
-		condition.getDimensionValues().add(602l);
+		CubeQueryCondition condition = new CubeQueryCondition("d3");
+		condition.getDimensionValues().add(1l);
 		cubeQuery.getConditions().add(condition);
 		OLAPEngine olapEngine = new OLAPEngine();
 		olapEngine.executeQuery(cubeQuery, cubeDescriptor);
