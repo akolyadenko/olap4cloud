@@ -137,6 +137,8 @@ public class OLAPEngine {
 		byte indexColumn[] = Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN);
 		get.addColumn(indexColumn, indexColumn);
 		byte index[] = hTable.get(get).getValue(indexColumn, indexColumn);
+		if(index == null)
+			return new ArrayList<CubeIndexEntry>();
 		DataInputBuffer buf = new DataInputBuffer();
 		buf.reset(index, index.length);
 		List<CubeIndexEntry> result = new ArrayList<CubeIndexEntry>();
