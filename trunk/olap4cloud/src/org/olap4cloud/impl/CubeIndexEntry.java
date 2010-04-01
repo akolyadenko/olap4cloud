@@ -3,6 +3,7 @@ package org.olap4cloud.impl;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Comparator;
 
 import org.apache.hadoop.io.Writable;
 
@@ -64,5 +65,14 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	
+	public class CubeIndexEntryComparator implements Comparator<CubeIndexEntry> {
+
+		@Override
+		public int compare(CubeIndexEntry o1, CubeIndexEntry o2) {
+			return o1.compareTo(o2);
+		}
+		
 	}
 }
