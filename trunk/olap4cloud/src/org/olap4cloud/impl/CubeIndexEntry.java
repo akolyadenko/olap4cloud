@@ -6,8 +6,13 @@ import java.io.IOException;
 import java.util.Comparator;
 
 import org.apache.hadoop.io.Writable;
+import org.apache.log4j.Logger;
+import org.olap4cloud.util.LogUtils;
 
 public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
+	
+	static Logger logger = Logger.getLogger(CubeIndexEntry.class);
+	
 	private int length = 0;
 	
 	private byte data[];
@@ -36,9 +41,16 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 
 	@Override
 	public int compareTo(CubeIndexEntry o) {
+		String methodName = "CubeIndexEntry.compareTo() ";
+		logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this));
 		for(int i = 0; i < o.length && i < length; i ++) 
-			if(data[i] != o.data[i])
+			if(data[i] != o.data[i]) {
+				logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this)
+						+ " result = " + (data[i] - o.data[i]));
 				return data[i] - o.data[i];
+			}
+		logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this)
+				+ " result = " + (length - o.length));
 		return length - o.length;
 	}
 	
