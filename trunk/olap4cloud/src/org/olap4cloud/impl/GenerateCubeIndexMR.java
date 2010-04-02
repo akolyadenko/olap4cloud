@@ -62,7 +62,7 @@ public class GenerateCubeIndexMR {
 			Set<CubeIndexEntry> index = new TreeSet<CubeIndexEntry>(new CubeIndexEntryComparator());
 			for(Iterator<CubeIndexEntry> i = vals.iterator(); i.hasNext(); ) { 
 				CubeIndexEntry e = i.next();
-				index.add(e);
+				index.add(new CubeIndexEntry(e.getLength(), e.getData()));
 				if(logger.isDebugEnabled())
 					logger.debug(methodName + "added entry to index for key " + LogUtils.describe(inKey.get()) 
 							+ " index size is " + index.size() + " indexentry: " + LogUtils.describe(e));
