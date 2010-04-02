@@ -41,15 +41,10 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 
 	@Override
 	public int compareTo(CubeIndexEntry o) {
-		String methodName = "CubeIndexEntry.compareTo() ";
 		for(int i = 0; i < o.getLength() && i < getLength(); i ++) 
 			if(getData()[i] != o.getData()[i]) {
-				logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this)
-						+ " result = " + (getData()[i] - o.getData()[i]));
 				return getData()[i] - o.getData()[i];
 			}
-		logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this)
-				+ " result = " + (getLength() - o.getLength()));
 		return getLength() - o.getLength();
 	}
 	
