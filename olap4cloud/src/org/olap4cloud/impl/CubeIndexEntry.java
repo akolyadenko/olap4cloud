@@ -42,16 +42,15 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 	@Override
 	public int compareTo(CubeIndexEntry o) {
 		String methodName = "CubeIndexEntry.compareTo() ";
-		logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this));
-		for(int i = 0; i < o.length && i < length; i ++) 
-			if(data[i] != o.data[i]) {
+		for(int i = 0; i < o.getLength() && i < getLength(); i ++) 
+			if(getData()[i] != o.getData()[i]) {
 				logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this)
-						+ " result = " + (data[i] - o.data[i]));
-				return data[i] - o.data[i];
+						+ " result = " + (getData()[i] - o.getData()[i]));
+				return getData()[i] - o.getData()[i];
 			}
 		logger.debug(methodName + "o = " + LogUtils.describe(o) + " this = " + LogUtils.describe(this)
-				+ " result = " + (length - o.length));
-		return length - o.length;
+				+ " result = " + (getLength() - o.getLength()));
+		return getLength() - o.getLength();
 	}
 	
 	public boolean contain(CubeIndexEntry e) {
