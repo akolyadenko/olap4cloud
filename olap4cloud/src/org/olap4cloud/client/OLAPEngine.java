@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.olap4cloud.impl.CubeIndexEntry;
 import org.olap4cloud.impl.CubeScan;
 import org.olap4cloud.impl.CubeScanMR;
-import org.olap4cloud.impl.EngineConstants;
+import org.olap4cloud.impl.OLAPEngineConstants;
 import org.olap4cloud.util.BytesPackUtils;
 import org.olap4cloud.util.LogUtils;
 
@@ -141,7 +141,7 @@ public class OLAPEngine {
 		byte key[] = BytesPackUtils.pack(dimensionNumber, dimVal);
 		if(logger.isDebugEnabled()) logger.debug(methodName + "index key = " + LogUtils.describe(key));
 		Get get = new Get(key);
-		byte indexColumn[] = Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN);
+		byte indexColumn[] = Bytes.toBytes(OLAPEngineConstants.CUBE_INDEX_COLUMN);
 		get.addColumn(indexColumn, indexColumn);
 		byte index[] = hTable.get(get).getValue(indexColumn, indexColumn);
 		if(logger.isDebugEnabled()) logger.debug(methodName + "index = " + LogUtils.describe(index));

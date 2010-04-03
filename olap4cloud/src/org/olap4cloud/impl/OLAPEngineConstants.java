@@ -1,6 +1,6 @@
 package org.olap4cloud.impl;
 
-public class EngineConstants {
+public class OLAPEngineConstants {
 
 	public static final String JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS = "JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS";
 	public static final String JOB_CONF_PROP_DIMENSIONS = "JOB_CONF_PROP_DIMENSIONS";

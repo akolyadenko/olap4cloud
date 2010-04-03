@@ -1,6 +1,8 @@
 package org.olap4cloud.client;
 
-public class CubeMeasure {
+import java.io.Serializable;
+
+public class CubeMeasure implements Serializable {
 	String sourceField;
 
 	String name;
