@@ -40,11 +40,11 @@ public class GenerateCubeMR {
 				InterruptedException {
 			super.setup(context);
 			dimensionColumns = context.getConfiguration()
-				.getStrings(EngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS);
+				.getStrings(OLAPEngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS);
 			measuresColumns = context.getConfiguration()
-				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS);
+				.getStrings(OLAPEngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS);
 			measuresNames = context.getConfiguration()
-				.getStrings(EngineConstants.JOB_CONF_PROP_MEASURES);
+				.getStrings(OLAPEngineConstants.JOB_CONF_PROP_MEASURES);
 			for(int i = 0; i < dimensionColumns.length; i ++)
 				dimensionColumnSplits.add(dimensionColumns[i].split("\\."));
 		}
@@ -65,7 +65,7 @@ public class GenerateCubeMR {
 				byte column[] = Bytes.toBytes(measuresColumns[i].split("\\.")[1]);
 				byte family[] = Bytes.toBytes(measuresColumns[i].split("\\.")[0]);
 				byte measureName[] = Bytes.toBytes(measuresNames[i]);
-				byte measureFamily[] = Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
+				byte measureFamily[] = Bytes.toBytes(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
 						+ measuresNames[i]);
 				put.add(measureFamily, measureName, value.getValue(family, column));
 			}
@@ -77,7 +77,7 @@ public class GenerateCubeMR {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
 		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTable());
 		for(int i = 0; i < descr.getMeasures().size(); i ++)
-			tableDescr.addFamily(new HColumnDescriptor(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
+			tableDescr.addFamily(new HColumnDescriptor(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
 					+ descr.getMeasures().get(i).getName()));
 		if(admin.tableExists(descr.getCubeDataTable())) {
 			admin.disableTable(descr.getCubeDataTable());
@@ -90,13 +90,13 @@ public class GenerateCubeMR {
 				, ImmutableBytesWritable.class, Put.class, job);
 		TableMapReduceUtil.initTableReducerJob(descr.getCubeDataTable()
 				, IdentityTableReducer.class, job);
-		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSIONS
+		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_DIMENSIONS
 				, getDimensionsAsString(descr));
-		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS
+		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_DIMENSION_SOURCE_FIELDS
 				, getDimensionSourceFieldsAsString(descr));
-		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURES
+		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_MEASURES
 				, getMeasuresAsString(descr));
-		job.getConfiguration().set(EngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS
+		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_MEASURE_SOURCE_FIELDS
 				, getMeasureSourceFields(descr));
 		job.waitForCompletion(true);
 	}

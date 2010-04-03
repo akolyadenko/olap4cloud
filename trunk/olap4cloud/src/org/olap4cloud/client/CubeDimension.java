@@ -1,6 +1,8 @@
 package org.olap4cloud.client;
 
-public class CubeDimension {
+import java.io.Serializable;
+
+public class CubeDimension implements Serializable {
 	String sourceField;
 	
 	String name;

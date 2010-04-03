@@ -1,11 +1,12 @@
 package org.olap4cloud.client;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.olap4cloud.impl.EngineConstants;
+import org.olap4cloud.impl.OLAPEngineConstants;
 
-public class CubeDescriptor {
+public class CubeDescriptor implements Serializable {
 	
 	String sourceTable;
 	
@@ -45,8 +46,8 @@ public class CubeDescriptor {
 	
 	public void setCubeName(String cubeName) {
 		this.cubeName = cubeName;
-		this.cubeDataTable = cubeName + EngineConstants.DATA_CUBE_NAME_SUFFIX;
-		this.cubeIndexTable = cubeDataTable + EngineConstants.CUBE_INDEX_SUFFIX;
+		this.cubeDataTable = cubeName + OLAPEngineConstants.DATA_CUBE_NAME_SUFFIX;
+		this.cubeIndexTable = cubeDataTable + OLAPEngineConstants.CUBE_INDEX_SUFFIX;
 	}
 
 	public String getCubeDataTable() {

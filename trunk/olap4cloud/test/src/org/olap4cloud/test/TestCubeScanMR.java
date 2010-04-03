@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeDimension;
 import org.olap4cloud.client.CubeMeasure;
-import org.olap4cloud.impl.EngineConstants;
+import org.olap4cloud.impl.OLAPEngineConstants;
 import org.olap4cloud.impl.GenerateCubeIndexMR.GenerateCubeIndexMapper;
 import org.olap4cloud.util.LogUtils;
 
@@ -35,17 +35,17 @@ public class TestCubeScanMR {
 	
 	static Logger logger = Logger.getLogger(TestCubeScanMR.class);
 	
-	public static class CubeScanMRMapper extends TableMapper<ImmutableBytesWritable, DoubleWritable>{
+	public static class TestCubeScanMRMapper extends TableMapper<ImmutableBytesWritable, DoubleWritable>{
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			double m = Bytes.toDouble(value.getValue(Bytes.toBytes(EngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + "m1")
+			double m = Bytes.toDouble(value.getValue(Bytes.toBytes(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + "m1")
 					, Bytes.toBytes("m1")));
 			context.write(new ImmutableBytesWritable(new byte[]{1}), new DoubleWritable(m));
 		}
 	}
 	
-	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, ImmutableBytesWritable
+	public static class TestCubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, ImmutableBytesWritable
 		, DoubleWritable> {
 		@Override
 		protected void reduce(ImmutableBytesWritable inKey,
@@ -66,13 +66,13 @@ public class TestCubeScanMR {
 		Job job = new Job();
 		job.setJarByClass(TestCubeScanMR.class);
 		List<Scan> scans = getScans(descr);
-		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), scans.get(0), CubeScanMRMapper.class
+		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), scans.get(0), TestCubeScanMRMapper.class
 				, ImmutableBytesWritable.class, DoubleWritable.class, job);
 		job.setOutputKeyClass(ImmutableBytesWritable.class);
 		job.setOutputValueClass(DoubleWritable.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
-		job.setReducerClass(CubeScanMRReducer.class);
-		job.setCombinerClass(CubeScanMRReducer.class);
+		job.setReducerClass(TestCubeScanMRReducer.class);
+		job.setCombinerClass(TestCubeScanMRReducer.class);
 		FileOutputFormat.setOutputPath(job, new Path("/out"));
 		job.waitForCompletion(true);
 	}

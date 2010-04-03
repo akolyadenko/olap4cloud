@@ -79,7 +79,7 @@ public class GenerateCubeIndexMR {
 			if(logger.isDebugEnabled()) logger.debug(methodName + "generate index entry with key = " 
 					+ LogUtils.describe(inKey.get()) + " size of index is: " + index.size());
 			Put put = new Put(inKey.get());
-			put.add(Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN), Bytes.toBytes(EngineConstants.CUBE_INDEX_COLUMN),
+			put.add(Bytes.toBytes(OLAPEngineConstants.CUBE_INDEX_COLUMN), Bytes.toBytes(OLAPEngineConstants.CUBE_INDEX_COLUMN),
 					indexData);
 			context.write(inKey, put);
 		}
@@ -107,7 +107,7 @@ public class GenerateCubeIndexMR {
 	public static void generate(CubeDescriptor descr) throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
 		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeIndexTable());
-		tableDescr.addFamily(new HColumnDescriptor(EngineConstants.CUBE_INDEX_COLUMN));
+		tableDescr.addFamily(new HColumnDescriptor(OLAPEngineConstants.CUBE_INDEX_COLUMN));
 		if(admin.tableExists(descr.getCubeIndexTable())) {
 			admin.disableTable(descr.getCubeIndexTable());
 			admin.deleteTable(descr.getCubeIndexTable());
