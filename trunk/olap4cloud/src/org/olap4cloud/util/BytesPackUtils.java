@@ -33,7 +33,7 @@ public class BytesPackUtils {
 		return r;
 	}
 	
-	public String objectToString(Object o) throws Exception {
+	public static String objectToString(Object o) throws Exception {
 		ByteOutputStream bout = new ByteOutputStream();
 		ObjectOutputStream oout = new ObjectOutputStream(bout);
 		oout.writeObject(o);
@@ -42,7 +42,7 @@ public class BytesPackUtils {
 		return Base64.encodeBytes(bout.toByteArray());
 	}
 	
-	public Object stringToObject(String str) throws Exception {
+	public static Object stringToObject(String str) throws Exception {
 		byte buf[] = Base64.decode(str);
 		ByteInputStream bin = new ByteInputStream(buf, buf.length);
 		ObjectInputStream oin = new ObjectInputStream(bin);
