@@ -11,14 +11,11 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQueryResult;
-import org.olap4cloud.test.TestCubeScanMR.TestCubeScanMRMapper;
-import org.olap4cloud.test.TestCubeScanMR.TestCubeScanMRReducer;
 import org.olap4cloud.util.BytesPackUtils;
 
 public class CubeScanMR {
