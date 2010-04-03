@@ -19,6 +19,6 @@ public class CubeScan {
 	}
 	
 	public Scan getHBaseScan() {
-		return null;
+		return new Scan();
 	}
 }
