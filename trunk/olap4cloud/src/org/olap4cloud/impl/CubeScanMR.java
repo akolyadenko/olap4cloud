@@ -23,6 +23,7 @@ public class CubeScanMR {
 	static Logger logger = Logger.getLogger(CubeScanMR.class);
 	
 	public static CubeQueryResult scan(CubeScan scan, CubeDescriptor cubeDescriptor) throws Exception {
+		String methodName = "CubeScanMR.scan() ";
 		Job job = new Job();
 		job.setJarByClass(CubeScanMR.class);
 		TableMapReduceUtil.initTableMapperJob(cubeDescriptor.getCubeDataTable(), scan.getHBaseScan()
@@ -35,8 +36,10 @@ public class CubeScanMR {
 		job.setCombinerClass(CubeScanMRReducer.class);
 		String outPath = OLAPEngineConstants.MR_OUT_DIRECTORY_PREFIX + job.getJobID();
 		FileOutputFormat.setOutputPath(job, new Path(outPath));
+		String sCubeDescriptor = BytesPackUtils.objectToString(cubeDescriptor);
+		logger.debug(methodName + "sCubeDescriptor = " + sCubeDescriptor);
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR
-				, BytesPackUtils.objectToString(cubeDescriptor));
+				, sCubeDescriptor);
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY
 				, BytesPackUtils.objectToString(scan));
 		job.waitForCompletion(true);
