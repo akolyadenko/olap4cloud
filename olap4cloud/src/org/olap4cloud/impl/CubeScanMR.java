@@ -59,7 +59,7 @@ public class CubeScanMR {
 				cubeDescriptor = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
-						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
+						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());
