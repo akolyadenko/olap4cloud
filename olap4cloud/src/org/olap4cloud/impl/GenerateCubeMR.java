@@ -19,7 +19,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
-import org.olap4cloud.util.BytesPackUtils;
+import org.olap4cloud.util.DataUtils;
 
 public class GenerateCubeMR {
 	
@@ -59,7 +59,7 @@ public class GenerateCubeMR {
 				dimensions[i] = Bytes.toLong(value.getValue(family, column));
 			}
 			dimensions[dimensions.length - 1] = Bytes.toLong(value.getRow());
-			byte cubeKey[] = BytesPackUtils.pack(dimensions);
+			byte cubeKey[] = DataUtils.pack(dimensions);
 			Put put = new Put(cubeKey);
 			for(int i = 0; i < measuresColumns.length; i ++) {
 				byte column[] = Bytes.toBytes(measuresColumns[i].split("\\.")[1]);

@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQueryResult;
-import org.olap4cloud.util.BytesPackUtils;
+import org.olap4cloud.util.DataUtils;
 
 public class CubeScanMR {
 
@@ -37,9 +37,9 @@ public class CubeScanMR {
 		String outPath = OLAPEngineConstants.MR_OUT_DIRECTORY_PREFIX + System.currentTimeMillis();
 		FileOutputFormat.setOutputPath(job, new Path(outPath));
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR
-				, BytesPackUtils.objectToString(cubeDescriptor));
+				, DataUtils.objectToString(cubeDescriptor));
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY
-				, BytesPackUtils.objectToString(scan));
+				, DataUtils.objectToString(scan));
 		job.waitForCompletion(true);
 		return null;
 	}
@@ -50,12 +50,16 @@ public class CubeScanMR {
 		
 		CubeDescriptor cubeDescriptor = null;
 		
+		CubeScan cubeScan = null;
+		
 		@Override
 		protected void setup(Mapper<ImmutableBytesWritable,Result,ImmutableBytesWritable
 				,DoubleWritable>.Context context) throws IOException ,InterruptedException {
 			try {
-				cubeDescriptor = (CubeDescriptor)BytesPackUtils.stringToObject(context.getConfiguration().get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
-				logger.debug("map for the table: " + cubeDescriptor.getCubeDataTable());
+				cubeDescriptor = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
+						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
+				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
+						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());

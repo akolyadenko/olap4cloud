@@ -10,7 +10,7 @@ import org.apache.hadoop.hbase.util.Base64;
 import org.apache.hadoop.hbase.util.Bytes;
 
 
-public class BytesPackUtils {
+public class DataUtils {
 	public static byte[] pack(long l[]) {
 		byte r[] = new byte[l.length * 8];
 		for(int i = 0; i < l.length; i ++)
@@ -46,5 +46,12 @@ public class BytesPackUtils {
 		ByteArrayInputStream bin = new ByteArrayInputStream(buf);
 		ObjectInputStream oin = new ObjectInputStream(bin);
 		return oin.readObject();
+	}
+	
+	public static int compareRowKeys(byte b1[], byte b2[]) {
+		for(int i = 0; i < b1.length && i < b2.length; i ++)
+			if(b1[i] != b2[i])
+				return b1[i] - b2[i];
+		return b1.length - b2.length;
 	}
 }
