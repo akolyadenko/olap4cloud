@@ -23,7 +23,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
-import org.olap4cloud.util.BytesPackUtils;
+import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
 public class GenerateCubeIndexMR {
@@ -41,7 +41,7 @@ public class GenerateCubeIndexMR {
 			for(int i = 0; i < len; i ++) {
 				int dimNumber = i + 1;
 				byte keyData[] = Arrays.copyOfRange(keyBytes, i * 8, (i + 1) * 8);
-				byte outKey[] = BytesPackUtils.pack(dimNumber, keyData);
+				byte outKey[] = DataUtils.pack(dimNumber, keyData);
 				int indexLength = (i + 1) * 8;
 				byte indexData[] = Arrays.copyOfRange(keyBytes, 0, (i + 1) * 8);
 				if(logger.isDebugEnabled()) logger.debug(methodName + "map index for key: " 
