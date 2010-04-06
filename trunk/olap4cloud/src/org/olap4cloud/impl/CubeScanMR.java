@@ -90,10 +90,9 @@ public class CubeScanMR {
 			String methodName = "CubeScanMRReducer.reduce() ";
 			logger.debug(methodName + "map key: " + inKey.get());
 			long t = 0; 
-			Iterator i = inVal.iterator();
+			Iterator<DoubleWritable> i = inVal.iterator();
 			while(i.hasNext()) {
-				i.next();
-				t ++;
+				 t += i.next().get();
 			}
 			context.write(new LongWritable(1), new DoubleWritable(t));
 		}
