@@ -16,8 +16,8 @@ public class CubeScan implements Serializable {
 	
 	List<Pair<byte[], byte[]>> ranges = new ArrayList<Pair<byte[],byte[]>>();
 	
-	List<CubeScanCondition> conditions = new ArrayList<CubeScanCondition>();
 	
+	List<CubeScanCondition> conditions = new ArrayList<CubeScanCondition>();
 	public CubeScan() {
 		
 	}
