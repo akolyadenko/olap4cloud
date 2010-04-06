@@ -1,6 +1,7 @@
 package org.olap4cloud.impl;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.Result;
@@ -8,6 +9,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -29,7 +31,7 @@ public class CubeScanMR {
 		TableMapReduceUtil.initTableMapperJob(cubeDescriptor.getCubeDataTable(), scan.getHBaseScan()
 				, CubeScanMRMapper.class
 				, ImmutableBytesWritable.class, DoubleWritable.class, job);
-		job.setOutputKeyClass(ImmutableBytesWritable.class);
+		job.setOutputKeyClass(LongWritable.class);
 		job.setOutputValueClass(DoubleWritable.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(CubeScanMRReducer.class);
@@ -69,20 +71,23 @@ public class CubeScanMR {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			
+			context.write(key, new DoubleWritable(1));
 		}
 	}
 	
-	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, ImmutableBytesWritable
+	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, LongWritable
 	, DoubleWritable> {
 		@Override
 		protected void reduce(ImmutableBytesWritable inKey,
 				Iterable<DoubleWritable> inVal,
 				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, DoubleWritable
-				, ImmutableBytesWritable
+				, LongWritable
 				, DoubleWritable>.Context context)
 				throws IOException, InterruptedException {
-			
+			long t = 0; 
+			Iterator i = inVal.iterator();
+			while(i.hasNext()) t ++;
+			context.write(new LongWritable(1), new DoubleWritable(t));
 		}
 		
 	}

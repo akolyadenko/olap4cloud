@@ -13,6 +13,7 @@ import org.apache.hadoop.io.DataInputBuffer;
 import org.apache.log4j.Logger;
 import org.olap4cloud.impl.CubeIndexEntry;
 import org.olap4cloud.impl.CubeScan;
+import org.olap4cloud.impl.CubeScanCondition;
 import org.olap4cloud.impl.CubeScanMR;
 import org.olap4cloud.impl.OLAPEngineConstants;
 import org.olap4cloud.util.DataUtils;
@@ -56,6 +57,10 @@ public class OLAPEngine {
 				index = dimIndex;
 			else
 				index = joinIndexes(index, dimIndex);
+			long values[] = new long[condition.getDimensionValues().size()];
+			for(int i = 0; i < values.length; i ++)
+				values[i] = condition.getDimensionValues().get(i);
+			scan.getConditions().add(new CubeScanCondition(dimensionNumber, values));
 		}
 		if(logger.isDebugEnabled()) logger.debug(methodName + "final index size: " + index.size());
 		for(CubeIndexEntry indexEntry: index) {
