@@ -8,8 +8,12 @@ import java.util.Arrays;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.log4j.Logger;
+import org.olap4cloud.util.DataUtils;
 
 public class CubeScanFilter implements Filter {
+	
+	static Logger logger = Logger.getLogger(CubeScanFilter.class);
 
 	CubeScan scan;
 	
@@ -49,11 +53,21 @@ public class CubeScanFilter implements Filter {
 	}
 
 	@Override
-	public void readFields(DataInput arg0) throws IOException {
+	public void readFields(DataInput in) throws IOException {
+		try {
+			scan = (CubeScan)DataUtils.stringToObject(in.readLine());
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
-	public void write(DataOutput arg0) throws IOException {
+	public void write(DataOutput out) throws IOException {
+		try {
+			out.writeBytes(DataUtils.objectToString(scan));
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 }
