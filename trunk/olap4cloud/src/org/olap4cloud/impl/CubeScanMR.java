@@ -91,7 +91,10 @@ public class CubeScanMR {
 			logger.debug(methodName + "map key: " + LogUtils.describe(inKey.get()));
 			long t = 0; 
 			Iterator i = inVal.iterator();
-			while(i.hasNext()) t ++;
+			while(i.hasNext()) {
+				i.next();
+				t ++;
+			}
 			context.write(new LongWritable(1), new DoubleWritable(t));
 		}
 		
