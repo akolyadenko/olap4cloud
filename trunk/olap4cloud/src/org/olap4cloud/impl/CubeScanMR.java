@@ -31,7 +31,7 @@ public class CubeScanMR {
 		job.setJarByClass(CubeScanMR.class);
 		TableMapReduceUtil.initTableMapperJob(cubeDescriptor.getCubeDataTable(), scan.getHBaseScan()
 				, CubeScanMRMapper.class
-				, ImmutableBytesWritable.class, DoubleWritable.class, job);
+				, LongWritable.class, DoubleWritable.class, job);
 		job.setOutputKeyClass(LongWritable.class);
 		job.setOutputValueClass(DoubleWritable.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
@@ -49,14 +49,14 @@ public class CubeScanMR {
 	
 	
 	
-	public static class CubeScanMRMapper extends TableMapper<ImmutableBytesWritable, DoubleWritable>{
+	public static class CubeScanMRMapper extends TableMapper<LongWritable, DoubleWritable>{
 		
 		CubeDescriptor cubeDescriptor = null;
 		
 		CubeScan cubeScan = null;
 		
 		@Override
-		protected void setup(Mapper<ImmutableBytesWritable,Result,ImmutableBytesWritable
+		protected void setup(Mapper<ImmutableBytesWritable,Result,LongWritable
 				,DoubleWritable>.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeDescriptor = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
@@ -74,21 +74,21 @@ public class CubeScanMR {
 				Context context) throws IOException, InterruptedException {
 			String methodName = "CubeScanMRMapper.map() ";
 			logger.debug(methodName + "map key: " + LogUtils.describe(key.get()));
-			context.write(key, new DoubleWritable(1));
+			context.write(new LongWritable(1), new DoubleWritable(1));
 		}
 	}
 	
-	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, DoubleWritable, LongWritable
+	public static class CubeScanMRReducer extends Reducer<LongWritable, DoubleWritable, LongWritable
 	, DoubleWritable> {
 		@Override
-		protected void reduce(ImmutableBytesWritable inKey,
+		protected void reduce(LongWritable inKey,
 				Iterable<DoubleWritable> inVal,
-				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, DoubleWritable
+				org.apache.hadoop.mapreduce.Reducer<LongWritable, DoubleWritable
 				, LongWritable
 				, DoubleWritable>.Context context)
 				throws IOException, InterruptedException {
 			String methodName = "CubeScanMRReducer.reduce() ";
-			logger.debug(methodName + "map key: " + LogUtils.describe(inKey.get()));
+			logger.debug(methodName + "map key: " + inKey.get());
 			long t = 0; 
 			Iterator i = inVal.iterator();
 			while(i.hasNext()) {
