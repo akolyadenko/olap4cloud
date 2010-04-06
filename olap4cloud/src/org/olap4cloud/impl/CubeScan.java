@@ -16,10 +16,16 @@ public class CubeScan implements Serializable {
 	
 	List<Pair<byte[], byte[]>> ranges = new ArrayList<Pair<byte[],byte[]>>();
 	
+	List<CubeScanCondition> conditions = new ArrayList<CubeScanCondition>();
+	
 	public CubeScan() {
 		
 	}
 
+	public List<CubeScanCondition> getConditions() {
+		return conditions;
+	}
+	
 	public List<Pair<byte[], byte[]>> getRanges() {
 		return ranges;
 	}
@@ -40,6 +46,7 @@ public class CubeScan implements Serializable {
 					+ LogUtils.describe(minRow) + ", " + LogUtils.describe(maxRow) + "]");
 			scan.setStartRow(minRow);
 			scan.setStopRow(maxRow);
+//			scan.setFilter(new CubeScanFilter(this));
 		}
 		return scan;
 	}
