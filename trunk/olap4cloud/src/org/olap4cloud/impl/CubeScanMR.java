@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQueryResult;
 import org.olap4cloud.util.DataUtils;
+import org.olap4cloud.util.LogUtils;
 
 public class CubeScanMR {
 
@@ -71,6 +72,8 @@ public class CubeScanMR {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
+			String methodName = "CubeScanMRMapper.map() ";
+			logger.debug(methodName + "map key: " + LogUtils.describe(key.get()));
 			context.write(key, new DoubleWritable(1));
 		}
 	}
@@ -84,6 +87,8 @@ public class CubeScanMR {
 				, LongWritable
 				, DoubleWritable>.Context context)
 				throws IOException, InterruptedException {
+			String methodName = "CubeScanMRReducer.reduce() ";
+			logger.debug(methodName + "map key: " + LogUtils.describe(inKey.get()));
 			long t = 0; 
 			Iterator i = inVal.iterator();
 			while(i.hasNext()) t ++;
