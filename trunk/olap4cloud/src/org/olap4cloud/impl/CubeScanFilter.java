@@ -30,12 +30,10 @@ public class CubeScanFilter implements Filter {
 	public ReturnCode filterKeyValue(KeyValue keyVal) {
 		byte buf[] = keyVal.getBuffer();
 		int keyOffset = keyVal.getKeyOffset();
-		for(CubeScanCondition condition: scan.getConditions()) {
-			long dimValue = Bytes.toLong(buf, keyOffset + 8 * (condition.getDimensionNumber() - 1));
-			if(Arrays.binarySearch(condition.getValues(), dimValue) < 0)
-				return ReturnCode.SKIP;
-		}
-		return ReturnCode.INCLUDE;
+		if(filterRowKey(buf, keyOffset, -1))
+			return ReturnCode.SKIP;
+		else
+			return ReturnCode.INCLUDE;
 	}
 
 	@Override
@@ -44,7 +42,12 @@ public class CubeScanFilter implements Filter {
 	}
 
 	@Override
-	public boolean filterRowKey(byte[] arg0, int arg1, int arg2) {
+	public boolean filterRowKey(byte[] buf, int keyOffset, int length) {
+		for(CubeScanCondition condition: scan.getConditions()) {
+			long dimValue = Bytes.toLong(buf, keyOffset + 8 * (condition.getDimensionNumber() - 1));
+			if(Arrays.binarySearch(condition.getValues(), dimValue) < 0)
+				return true;
+		}
 		return false;
 	}
 
