@@ -55,6 +55,8 @@ public class CubeScanMR {
 		
 		CubeScan cubeScan = null;
 		
+		CubeScanFilter cubeScanFilter = null;
+		
 		@Override
 		protected void setup(Mapper<ImmutableBytesWritable,Result,LongWritable
 				,DoubleWritable>.Context context) throws IOException ,InterruptedException {
@@ -63,6 +65,7 @@ public class CubeScanMR {
 						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
+				cubeScanFilter = new CubeScanFilter(cubeScan);
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());
@@ -72,6 +75,8 @@ public class CubeScanMR {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
+			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
+				return;
 			String methodName = "CubeScanMRMapper.map() ";
 			logger.debug(methodName + "map key: " + LogUtils.describe(key.get()));
 			context.write(new LongWritable(1), new DoubleWritable(1));

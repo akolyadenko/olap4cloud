@@ -46,7 +46,7 @@ public class CubeScan implements Serializable {
 					+ LogUtils.describe(minRow) + ", " + LogUtils.describe(maxRow) + "]");
 			scan.setStartRow(minRow);
 			scan.setStopRow(maxRow);
-			scan.setFilter(new CubeScanFilter(this));
+//			scan.setFilter(new CubeScanFilter(this));
 		}
 		return scan;
 	}
