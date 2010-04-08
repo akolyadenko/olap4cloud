@@ -2,8 +2,10 @@ package org.olap4cloud.test;
 
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQuery;
+import org.olap4cloud.client.CubeQueryAggregate;
 import org.olap4cloud.client.CubeQueryCondition;
 import org.olap4cloud.client.OLAPEngine;
+import org.olap4cloud.impl.SumCubeScanAggregate;
 
 public class OLAPEngineTest {
 	
@@ -17,6 +19,7 @@ public class OLAPEngineTest {
 		CubeQueryCondition condition = new CubeQueryCondition("d3");
 		condition.getDimensionValues().add(1l);
 		cubeQuery.getConditions().add(condition);
+		cubeQuery.getAggregates().add(new CubeQueryAggregate("sum(m1)"));
 		OLAPEngine olapEngine = new OLAPEngine();
 		olapEngine.executeQuery(cubeQuery, cubeDescriptor);
 	}
