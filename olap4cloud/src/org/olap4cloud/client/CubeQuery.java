@@ -7,7 +7,7 @@ public class CubeQuery {
 	
 	List<CubeQueryCondition> conditions = new ArrayList<CubeQueryCondition>();
 	
-	List<CubeQueryAggregate> aggregate = new ArrayList<CubeQueryAggregate>();
+	List<CubeQueryAggregate> aggregates = new ArrayList<CubeQueryAggregate>();
 	
 	public CubeQuery() {
 		
@@ -15,5 +15,9 @@ public class CubeQuery {
 
 	public List<CubeQueryCondition> getConditions() {
 		return conditions;
+	}
+	
+	public List<CubeQueryAggregate> getAggregates() {
+		return aggregates;
 	}
 }

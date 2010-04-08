@@ -13,9 +13,11 @@ import org.apache.hadoop.io.DataInputBuffer;
 import org.apache.log4j.Logger;
 import org.olap4cloud.impl.CubeIndexEntry;
 import org.olap4cloud.impl.CubeScan;
+import org.olap4cloud.impl.CubeScanAggregate;
 import org.olap4cloud.impl.CubeScanCondition;
 import org.olap4cloud.impl.CubeScanMR;
 import org.olap4cloud.impl.OLAPEngineConstants;
+import org.olap4cloud.impl.SumCubeScanAggregate;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
@@ -71,7 +73,17 @@ public class OLAPEngine {
 			Pair<byte[], byte[]> range = new Pair<byte[], byte[]>(startRow, stopRow);
 			scan.getRanges().add(range);
 		}
+		for(CubeQueryAggregate aggregate: query.getAggregates()) 
+			scan.getCubeScanAggregates().add(getCubeScanAggregate(aggregate, cubeDescriptor));
+		scan.prepare();
 		return scan;
+	}
+
+	private CubeScanAggregate getCubeScanAggregate(CubeQueryAggregate aggregate, CubeDescriptor cubeDescriptor) 
+		throws OLAPEngineException {
+		if(aggregate.getAggregate().toLowerCase().startsWith("sum("))
+			return new SumCubeScanAggregate(aggregate.getAggregate(), cubeDescriptor);
+		throw new OLAPEngineException("can't process aggregate " + aggregate.getAggregate());
 	}
 
 	private byte[] getStopRow(CubeIndexEntry index, int size) {

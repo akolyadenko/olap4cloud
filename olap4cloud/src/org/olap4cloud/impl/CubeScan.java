@@ -2,6 +2,7 @@ package org.olap4cloud.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.hadoop.hbase.client.Scan;
@@ -18,6 +19,11 @@ public class CubeScan implements Serializable {
 	
 	
 	List<CubeScanCondition> conditions = new ArrayList<CubeScanCondition>();
+	
+	List<CubeScanAggregate> cubeScanAggregates = new ArrayList<CubeScanAggregate>();
+	
+	List<Pair<byte[], byte[]>> columns = null;
+
 	public CubeScan() {
 		
 	}
@@ -49,5 +55,25 @@ public class CubeScan implements Serializable {
 //			scan.setFilter(new CubeScanFilter(this));
 		}
 		return scan;
+	}
+	
+	public List<CubeScanAggregate> getCubeScanAggregates() {
+		return cubeScanAggregates;
+	}
+	
+	public void prepare() {
+		columns = new ArrayList<Pair<byte[],byte[]>>();
+		HashSet<Pair<byte[], byte[]>> columnsSet = new HashSet<Pair<byte[],byte[]>>();
+		for(CubeScanAggregate aggregate:  getCubeScanAggregates()) 
+			columnsSet.add(aggregate.getColumn());
+		columns.addAll(columnsSet);
+		for(int i = 0; i < columns.size(); i ++)
+			for(CubeScanAggregate aggregate:  getCubeScanAggregates())
+				if(columns.get(i).equals(aggregate.getColumn()))
+					aggregate.setColumnNumber(i);
+	}
+	
+	public List<Pair<byte[], byte[]>> getColumns() {
+		return columns;
 	}
 }
