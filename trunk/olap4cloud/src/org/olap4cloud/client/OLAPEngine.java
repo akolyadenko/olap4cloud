@@ -33,7 +33,10 @@ public class OLAPEngine {
 	}
 	
 	public CubeQueryResult executeQuery(CubeQuery query, CubeDescriptor cubeDescriptor) throws OLAPEngineException {
+		String methodName = "executeQuery() ";
 		try {
+			if(logger.isDebugEnabled()) logger.debug(methodName + "cubeDescriptor = " 
+					+ cubeDescriptor.toString());
 			CubeScan scan = getCubeScan(query, cubeDescriptor);
 			return CubeScanMR.scan(scan, cubeDescriptor);
 		} catch(Exception e) {

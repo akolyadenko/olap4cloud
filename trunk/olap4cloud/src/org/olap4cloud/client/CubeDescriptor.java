@@ -57,4 +57,18 @@ public class CubeDescriptor implements Serializable {
 	public String getCubeIndexTable() {
 		return cubeIndexTable;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Cube[name = ")
+			.append(cubeName)
+			.append(" sourceTable = ")
+			.append(sourceTable)
+			.append(" measures = {");
+		for(CubeMeasure measure: measures)
+			sb.append("(name = ").append(measure.getName()).append(", sourceField = ").append(measure.getSourceField())
+				.append(") ");
+		return sb.toString();
+	}
 }
