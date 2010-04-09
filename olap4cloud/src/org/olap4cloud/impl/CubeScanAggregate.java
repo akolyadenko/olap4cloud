@@ -33,9 +33,8 @@ public abstract class CubeScanAggregate implements Serializable {
 		String measureName = st.nextToken();
 		for(CubeMeasure measure: cubeDescriptor.getMeasures()) {
 			if(measureName.equals(measure.getName())) {
-				StringTokenizer st2 = new StringTokenizer(measure.getSourceField(), ".", false);
-				String family = st2.nextToken();
-				String columnName = st2.nextToken();
+				String family = OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + measure.getName();
+				String columnName = measure.getName();
 				if(logger.isDebugEnabled()) logger.debug(methodName + "family =  " + family + " columnName = "
 						+ columnName);
 				column = new Pair<byte[], byte[]>(Bytes.toBytes(family), Bytes.toBytes(columnName));
