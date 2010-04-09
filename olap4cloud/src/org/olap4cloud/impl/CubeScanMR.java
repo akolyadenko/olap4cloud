@@ -207,7 +207,7 @@ public class CubeScanMR {
 			for(ImmutableBytesWritable inWritable: inVals) {
 				byte buf[] = inWritable.get();
 				for(int i = 0; i < inN; i ++)
-					aggregates.get(i).collect(Bytes.toLong(buf, i * 8));
+					aggregates.get(i).collect(Bytes.toDouble(buf, i * 8));
 			}
 			sb.setLength(0);
 			for(CubeScanAggregate aggregate: aggregates)
