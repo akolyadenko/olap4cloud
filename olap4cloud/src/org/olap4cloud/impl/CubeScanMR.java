@@ -153,6 +153,7 @@ public class CubeScanMR {
 					inValues[i] = Bytes.toLong(buf, i * 8);
 				for(CubeScanAggregate aggregate: aggregates)
 					aggregate.collect(inValues[aggregate.getColumnNuber()]);
+				if(logger.isDebugEnabled()) logger.debug(methodName + " combined values: " + LogUtils.describe(inValues));
 			}
 			for(int i = 0; i < outN; i ++)
 				Bytes.putDouble(outValues, i * 8, aggregates.get(i).getResult());
