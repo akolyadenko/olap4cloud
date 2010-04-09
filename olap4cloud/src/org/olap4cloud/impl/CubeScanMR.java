@@ -94,7 +94,7 @@ public class CubeScanMR {
 			for(int i = 0; i < n; i ++) {
 				Pair<byte[], byte[]> column = cubeScan.getColumns().get(i);
 				byte val[] = value.getValue(column.getFirst(), column.getSecond());
-				if(logger.isDebugEnabled()) logger.debug(methodName + " map measure: " + Bytes.toLong(val));
+				if(logger.isDebugEnabled()) logger.debug(methodName + " map measure: " + Bytes.toDouble(val));
 				Bytes.putBytes(outValues, i * 8, val, 0, 8);
 			}
 			outValuesWritable.set(outValues);
