@@ -25,13 +25,10 @@ public abstract class CubeScanAggregate {
 
 	public CubeScanAggregate(String aggregate, CubeDescriptor cubeDescriptor) throws OLAPEngineException {
 		String methodName = "constructor() ";
-		if(logger.isDebugEnabled()) logger.debug(methodName + "aggregate = " + aggregate);
 		StringTokenizer st = new StringTokenizer(aggregate, "()", false);
 		st.nextToken();
 		String measureName = st.nextToken();
-		if(logger.isDebugEnabled()) logger.debug(methodName + "measureName = " + measureName);
 		for(CubeMeasure measure: cubeDescriptor.getMeasures()) {
-			if(logger.isDebugEnabled()) logger.debug(methodName + "measure.getName() = " + measure.getName());
 			if(measureName.equals(measure.getName())) {
 				StringTokenizer st2 = new StringTokenizer(measure.getSourceField(), ".", false);
 				String family = st2.nextToken();
@@ -40,7 +37,8 @@ public abstract class CubeScanAggregate {
 				break;
 			}
 		}
-		throw new OLAPEngineException("Invalid measure in " + aggregate);
+		if(column == null)
+			throw new OLAPEngineException("Invalid measure in " + aggregate);
 	}
 	
 	public Pair<byte[], byte[]> getColumn() {
