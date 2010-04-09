@@ -144,6 +144,7 @@ public class CubeScanMR {
 				, ImmutableBytesWritable>.Context context)
 				throws IOException, InterruptedException {
 			String methodName = "CubeScanMRCombiner.reduce() ";
+			if(logger.isDebugEnabled()) logger.debug(methodName + "reduce key: " + inKey.get());
 			for(CubeScanAggregate aggregate: aggregates)
 				aggregate.reset();
 			for(ImmutableBytesWritable inVal: inValIter) {
