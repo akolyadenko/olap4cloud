@@ -42,7 +42,7 @@ public class CubeScanMR {
 		job.setOutputValueClass(DoubleWritable.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(CubeScanMRReducer.class);
-		job.setCombinerClass(CubeScanMRReducer.class);
+		job.setCombinerClass(CubeScanMRCombiner.class);
 		String outPath = OLAPEngineConstants.MR_OUT_DIRECTORY_PREFIX + System.currentTimeMillis();
 		FileOutputFormat.setOutputPath(job, new Path(outPath));
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR
