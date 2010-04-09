@@ -36,6 +36,8 @@ public abstract class CubeScanAggregate implements Serializable {
 				StringTokenizer st2 = new StringTokenizer(measure.getSourceField(), ".", false);
 				String family = st2.nextToken();
 				String columnName = st2.nextToken();
+				if(logger.isDebugEnabled()) logger.debug(methodName + "family =  " + family + " columnName = "
+						+ columnName);
 				column = new Pair<byte[], byte[]>(Bytes.toBytes(family), Bytes.toBytes(columnName));
 				break;
 			}
