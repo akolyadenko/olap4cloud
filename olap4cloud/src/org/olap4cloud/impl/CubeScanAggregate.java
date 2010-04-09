@@ -1,5 +1,6 @@
 package org.olap4cloud.impl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -11,8 +12,10 @@ import org.olap4cloud.client.CubeDimension;
 import org.olap4cloud.client.CubeMeasure;
 import org.olap4cloud.client.OLAPEngineException;
 
-public abstract class CubeScanAggregate {
+public abstract class CubeScanAggregate implements Serializable {
 	
+	private static final long serialVersionUID = -9180589182756514579L;
+
 	static Logger logger = Logger.getLogger(CubeScanAggregate.class);
 	
 	Pair<byte[], byte[]> column;
