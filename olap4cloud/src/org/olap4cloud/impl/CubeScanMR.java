@@ -211,6 +211,7 @@ public class CubeScanMR {
 			for(CubeScanAggregate aggregate: aggregates)
 				sb.append(aggregate.getResult() + "\t");
 			outVal.set(sb.toString());
+			context.write(inKey, outVal);
 		}
 		
 	}
