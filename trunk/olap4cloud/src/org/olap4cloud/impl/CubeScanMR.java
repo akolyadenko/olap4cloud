@@ -151,7 +151,7 @@ public class CubeScanMR {
 			for(ImmutableBytesWritable inVal: inValIter) {
 				byte buf[] = inVal.get();
 				for(int i = 0; i < inN; i ++)
-					inValues[i] = Bytes.toLong(buf, i * 8);
+					inValues[i] = Bytes.toDouble(buf, i * 8);
 				for(CubeScanAggregate aggregate: aggregates)
 					aggregate.collect(inValues[aggregate.getColumnNuber()]);
 				if(logger.isDebugEnabled()) logger.debug(methodName + " combined values: " + LogUtils.describe(inValues));
