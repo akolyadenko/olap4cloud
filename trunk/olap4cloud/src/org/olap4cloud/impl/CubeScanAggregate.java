@@ -5,12 +5,15 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
+import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeDimension;
 import org.olap4cloud.client.CubeMeasure;
 import org.olap4cloud.client.OLAPEngineException;
 
 public abstract class CubeScanAggregate {
+	
+	static Logger logger = Logger.getLogger(CubeScanAggregate.class);
 	
 	Pair<byte[], byte[]> column;
 	
@@ -21,10 +24,14 @@ public abstract class CubeScanAggregate {
 	}
 
 	public CubeScanAggregate(String aggregate, CubeDescriptor cubeDescriptor) throws OLAPEngineException {
+		String methodName = "constructor() ";
+		if(logger.isDebugEnabled()) logger.debug(methodName + "aggregate = " + aggregate);
 		StringTokenizer st = new StringTokenizer(aggregate, "()", false);
 		st.nextToken();
 		String measureName = st.nextToken();
-		for(CubeMeasure measure: cubeDescriptor.getMeasures()) 
+		if(logger.isDebugEnabled()) logger.debug(methodName + "measureName = " + measureName);
+		for(CubeMeasure measure: cubeDescriptor.getMeasures()) {
+			if(logger.isDebugEnabled()) logger.debug(methodName + "measure.getName() = " + measure.getName());
 			if(measureName.equals(measure.getName())) {
 				StringTokenizer st2 = new StringTokenizer(measure.getSourceField(), ".", false);
 				String family = st2.nextToken();
@@ -32,6 +39,7 @@ public abstract class CubeScanAggregate {
 				column = new Pair<byte[], byte[]>(Bytes.toBytes(family), Bytes.toBytes(columnName));
 				break;
 			}
+		}
 		throw new OLAPEngineException("Invalid measure in " + aggregate);
 	}
 	
