@@ -49,6 +49,7 @@ public class CubeScanMR {
 				, DataUtils.objectToString(cubeDescriptor));
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY
 				, DataUtils.objectToString(scan));
+		job.getConfiguration().setInt("mapred.map.tasks", 10000);
 		job.waitForCompletion(true);
 		return null;
 	}
