@@ -84,8 +84,8 @@ public class CubeScanMR {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
-				return;
+//			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
+//				return;
 /*			String methodName = "CubeScanMRMapper.map() ";
 			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
                 return;
