@@ -1,0 +1,4 @@
+full scan:
+	olap4cloud:
+		plain - no calculation - 1000 rows caching - 30 min.
+

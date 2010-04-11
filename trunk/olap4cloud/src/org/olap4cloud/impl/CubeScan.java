@@ -54,7 +54,7 @@ public class CubeScan implements Serializable {
 			scan.setStopRow(maxRow);
 //			scan.setFilter(new CubeScanFilter(this));
 		}
-		scan.setCaching(1000);
+		scan.setCaching(10000);
 		return scan;
 	}
 	
