@@ -185,7 +185,7 @@ public class OLAPEngine {
 			CubeDescriptor cubeDescriptor) throws OLAPEngineException {
 		for(int i = 0; i < cubeDescriptor.dimensions.size(); i ++) {
 			if(cubeDescriptor.dimensions.get(i).getName().equals(dimensionName))
-				return i + 1;
+				return i;
 		}
 		throw new OLAPEngineException("Can't find dimension " + dimensionName);
 	}
