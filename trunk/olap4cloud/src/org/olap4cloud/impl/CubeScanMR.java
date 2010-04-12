@@ -85,9 +85,9 @@ public class CubeScanMR {
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
 				Context context) throws IOException, InterruptedException {
-//			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
-//				return;
-/*			String methodName = "CubeScanMRMapper.map() ";
+			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
+				return;
+			String methodName = "CubeScanMRMapper.map() ";
 			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
                 return;
 			if(logger.isDebugEnabled()) logger.debug(methodName + "map key: " + LogUtils.describe(key.get()));
@@ -99,7 +99,7 @@ public class CubeScanMR {
 				Bytes.putBytes(outValues, i * 8, val, 0, 8);
 			}
 			outValuesWritable.set(outValues);
-			context.write(outKey, outValuesWritable); */
+			context.write(outKey, outValuesWritable); 
 		}
 	}
 	

@@ -16,7 +16,7 @@ public class OLAPEngineTest {
 	static void executeQueryTest() throws Exception {
 		CubeDescriptor cubeDescriptor = TestCubeUtils.createTestCubeDescriptor();
 		CubeQuery cubeQuery = new CubeQuery();
-		CubeQueryCondition condition = new CubeQueryCondition("d3");
+		CubeQueryCondition condition = new CubeQueryCondition("d1");
 		condition.getDimensionValues().add(1l);
 		cubeQuery.getConditions().add(condition);
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("sum(m1)"));
