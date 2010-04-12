@@ -56,7 +56,7 @@ public class CubeScanMR {
 	
 	
 	
-	public static class CubeScanMRMapper extends TableMapper<LongWritable, ImmutableBytesWritable>{
+	public static class CubeScanMRMapper extends TableMapper<ImmutableBytesWritable, ImmutableBytesWritable>{
 		
 		CubeScan cubeScan = null;
 		
@@ -66,16 +66,26 @@ public class CubeScanMR {
 		
 		ImmutableBytesWritable outValuesWritable = new ImmutableBytesWritable();
 		
-		LongWritable outKey = new LongWritable(1);
+		ImmutableBytesWritable outKeyWritable = new ImmutableBytesWritable();
+		
+		byte outKey[];
+		
+		int groupBy[];
 		
 		@Override
-		protected void setup(Mapper<ImmutableBytesWritable,Result,LongWritable
+		protected void setup(Mapper<ImmutableBytesWritable,Result,ImmutableBytesWritable
 				,ImmutableBytesWritable>.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
 				cubeScanFilter = new CubeScanFilter(cubeScan);
 				outValues = new byte[cubeScan.getColumns().size() * 8];
+				groupBy = cubeScan.getGroupBy();
+				if(groupBy.length == 0) {
+					outKey = new byte[1];
+					outKey[0] = 0;
+				} else 
+					outKey = new byte[groupBy.length];
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());
@@ -98,12 +108,16 @@ public class CubeScanMR {
 				if(logger.isDebugEnabled()) logger.debug(methodName + " map measure: " + Bytes.toDouble(val));
 				Bytes.putBytes(outValues, i * 8, val, 0, 8);
 			}
+			byte inKey[] = key.get();
+			for(int i = 0; i < groupBy.length; i ++)
+				Bytes.putBytes(outKey, i * 8, inKey, groupBy[i] * 8, 8);
+			outKeyWritable.set(outKey);
 			outValuesWritable.set(outValues);
-			context.write(outKey, outValuesWritable); 
+			context.write(outKeyWritable, outValuesWritable); 
 		}
 	}
 	
-	public static class CubeScanMRCombiner extends Reducer<LongWritable, ImmutableBytesWritable, LongWritable
+	public static class CubeScanMRCombiner extends Reducer<ImmutableBytesWritable, ImmutableBytesWritable, ImmutableBytesWritable
 	, ImmutableBytesWritable> {
 		
 		CubeScan cubeScan = null;
@@ -122,8 +136,8 @@ public class CubeScanMR {
 		
 		int outN = 0;
 		
-		protected void setup(org.apache.hadoop.mapreduce.Reducer<LongWritable,ImmutableBytesWritable
-				,LongWritable,ImmutableBytesWritable>.Context context) throws IOException ,InterruptedException {
+		protected void setup(org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable,ImmutableBytesWritable
+				,ImmutableBytesWritable,ImmutableBytesWritable>.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
@@ -139,10 +153,10 @@ public class CubeScanMR {
 		};
 				
 		@Override
-		protected void reduce(LongWritable inKey,
+		protected void reduce(ImmutableBytesWritable inKey,
 				Iterable<ImmutableBytesWritable> inValIter,
-				org.apache.hadoop.mapreduce.Reducer<LongWritable, ImmutableBytesWritable
-				, LongWritable
+				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, ImmutableBytesWritable
+				, ImmutableBytesWritable
 				, ImmutableBytesWritable>.Context context)
 				throws IOException, InterruptedException {
 			String methodName = "CubeScanMRCombiner.reduce() ";
@@ -165,8 +179,8 @@ public class CubeScanMR {
 		
 	}
 	
-	public static class CubeScanMRReducer extends Reducer<LongWritable, ImmutableBytesWritable, LongWritable
-	, Text> {
+	public static class CubeScanMRReducer extends Reducer<ImmutableBytesWritable, ImmutableBytesWritable
+		, Text, Text> {
 		
 		CubeScan cubeScan = null;
 		
@@ -178,10 +192,16 @@ public class CubeScanMR {
 		
 		Text outVal = new Text();
 		
-		StringBuilder sb = new StringBuilder();
+		Text outKey = new Text();
+		
+		StringBuilder outValSB = new StringBuilder();
+		
+		StringBuilder outKeySB = new StringBuilder();
+		
+		int groupBy[];
 
-		protected void setup(org.apache.hadoop.mapreduce.Reducer<LongWritable,ImmutableBytesWritable
-				,LongWritable,Text>
+		protected void setup(org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable,ImmutableBytesWritable
+				,Text,Text>
 			.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
@@ -189,6 +209,7 @@ public class CubeScanMR {
 				aggregates = cubeScan.getCubeScanAggregates();
 				inN = aggregates.size();
 				inValues = new double[inN];
+				groupBy = cubeScan.getGroupBy();
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());
@@ -196,10 +217,10 @@ public class CubeScanMR {
 		};
 		
 		@Override
-		protected void reduce(LongWritable inKey,
+		protected void reduce(ImmutableBytesWritable inKey,
 				Iterable<ImmutableBytesWritable> inVals,
-				org.apache.hadoop.mapreduce.Reducer<LongWritable, ImmutableBytesWritable
-				, LongWritable
+				org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable, ImmutableBytesWritable
+				, Text
 				, Text>.Context context)
 				throws IOException, InterruptedException {
 			String methodName = "CubeScanMRReducer.reduce() ";
@@ -210,11 +231,16 @@ public class CubeScanMR {
 				for(int i = 0; i < inN; i ++)
 					aggregates.get(i).collect(Bytes.toDouble(buf, i * 8));
 			}
-			sb.setLength(0);
+			outKeySB.setLength(0);
+			byte inKeyVal[] = inKey.get();
+			for(int i = 0; i < groupBy.length; i ++)
+				outKeySB.append(Bytes.toLong(inKeyVal, i * 8)).append("\t");
+			outValSB.setLength(0);
 			for(CubeScanAggregate aggregate: aggregates)
-				sb.append(aggregate.getResult() + "\t");
-			outVal.set(sb.toString());
-			context.write(inKey, outVal);
+				outValSB.append(aggregate.getResult() + "\t");
+			outKey.set(outKeySB.toString());
+			outVal.set(outValSB.toString());
+			context.write(outKey, outVal);
 		}
 		
 	}

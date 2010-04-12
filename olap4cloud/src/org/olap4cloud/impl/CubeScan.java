@@ -23,6 +23,8 @@ public class CubeScan implements Serializable {
 	List<CubeScanAggregate> cubeScanAggregates = new ArrayList<CubeScanAggregate>();
 	
 	List<Pair<byte[], byte[]>> columns = null;
+	
+	int groupBy[];
 
 	public CubeScan() {
 		
@@ -52,7 +54,6 @@ public class CubeScan implements Serializable {
 					+ LogUtils.describe(minRow) + ", " + LogUtils.describe(maxRow) + "]");
 			scan.setStartRow(minRow);
 			scan.setStopRow(maxRow);
-//			scan.setFilter(new CubeScanFilter(this));
 		}
 		scan.setCaching(10000);
 		return scan;
@@ -76,5 +77,13 @@ public class CubeScan implements Serializable {
 	
 	public List<Pair<byte[], byte[]>> getColumns() {
 		return columns;
+	}
+	
+	public int[] getGroupBy() {
+		return groupBy;
+	}
+
+	public void setGroupBy(int[] groupBy) {
+		this.groupBy = groupBy;
 	}
 }
