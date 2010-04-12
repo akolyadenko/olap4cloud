@@ -78,7 +78,7 @@ public class OLAPEngine {
 		}
 		for(CubeQueryAggregate aggregate: query.getAggregates()) 
 			scan.getCubeScanAggregates().add(getCubeScanAggregate(aggregate, cubeDescriptor));
-		int groupBy[] = new int[query.getAggregates().size()];
+		int groupBy[] = new int[query.getGroupBy().size()];
 		for(int i = 0; i < groupBy.length; i ++)
 			groupBy[i] = getDimensionNumber(query.getGroupBy().get(i), cubeDescriptor);
 		scan.setGroupBy(groupBy);
