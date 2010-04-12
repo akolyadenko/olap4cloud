@@ -37,9 +37,7 @@ public class CubeScanMR {
 		Job job = new Job();
 		job.setJarByClass(CubeScanMR.class);
 		TableMapReduceUtil.initTableMapperJob(cubeDescriptor.getCubeDataTable(), scan.getHBaseScan()
-				, CubeScanMRMapper.class, LongWritable.class, ImmutableBytesWritable.class, job);
-		job.setOutputKeyClass(LongWritable.class);
-		job.setOutputValueClass(DoubleWritable.class);
+				, CubeScanMRMapper.class, ImmutableBytesWritable.class, ImmutableBytesWritable.class, job);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setReducerClass(CubeScanMRReducer.class);
 		job.setCombinerClass(CubeScanMRCombiner.class);
