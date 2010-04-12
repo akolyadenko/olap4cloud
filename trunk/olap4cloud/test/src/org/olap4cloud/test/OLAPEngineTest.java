@@ -27,6 +27,7 @@ public class OLAPEngineTest {
 		condition.getDimensionValues().add(12l);
 		cubeQuery.getConditions().add(condition);
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("sum(m1)"));
+		cubeQuery.getGroupBy().add("d3");
 		OLAPEngine olapEngine = new OLAPEngine();
 		olapEngine.executeQuery(cubeQuery, cubeDescriptor);
 	}
