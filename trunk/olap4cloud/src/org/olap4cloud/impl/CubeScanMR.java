@@ -85,7 +85,7 @@ public class CubeScanMR {
 					outKey = new byte[1];
 					outKey[0] = 0;
 				} else 
-					outKey = new byte[groupBy.length];
+					outKey = new byte[groupBy.length * 8];
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());
