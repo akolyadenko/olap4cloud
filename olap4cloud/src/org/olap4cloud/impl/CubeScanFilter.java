@@ -44,7 +44,7 @@ public class CubeScanFilter implements Filter {
 	@Override
 	public boolean filterRowKey(byte[] buf, int keyOffset, int length) {
 		for(CubeScanCondition condition: scan.getConditions()) {
-			long dimValue = Bytes.toLong(buf, keyOffset + 8 * (condition.getDimensionNumber() - 1));
+			long dimValue = Bytes.toLong(buf, keyOffset + 8 * condition.getDimensionNumber());
 			if(Arrays.binarySearch(condition.getValues(), dimValue) < 0)
 				return true;
 		}

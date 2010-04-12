@@ -9,6 +9,8 @@ public class CubeQuery {
 	
 	List<CubeQueryAggregate> aggregates = new ArrayList<CubeQueryAggregate>();
 	
+	List<String> groupBy = new ArrayList<String>();
+	
 	public CubeQuery() {
 		
 	}
@@ -19,5 +21,9 @@ public class CubeQuery {
 	
 	public List<CubeQueryAggregate> getAggregates() {
 		return aggregates;
+	}
+	
+	public List<String> getGroupBy() {
+		return groupBy;
 	}
 }

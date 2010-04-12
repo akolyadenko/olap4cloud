@@ -39,7 +39,7 @@ public class GenerateCubeIndexMR {
 					+ LogUtils.describe(keyBytes));
 			int len = (keyBytes.length) / 8;
 			for(int i = 0; i < len; i ++) {
-				int dimNumber = i + 1;
+				int dimNumber = i;
 				byte keyData[] = Arrays.copyOfRange(keyBytes, i * 8, (i + 1) * 8);
 				byte outKey[] = DataUtils.pack(dimNumber, keyData);
 				int indexLength = (i + 1) * 8;
