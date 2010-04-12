@@ -1,4 +1,8 @@
 full scan:
 	olap4cloud:
 		plain - no calculation - 1000 rows caching - 30 min.
+		
+hive:
+	select sum(m1) from ... - 25 min
+	select sum(m1) from ... where d1 = 1 - 20 min res = 5.0011376479961134E7
 
