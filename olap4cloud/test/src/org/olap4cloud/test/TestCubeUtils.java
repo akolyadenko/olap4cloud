@@ -9,9 +9,9 @@ import org.olap4cloud.impl.GenerateCubeMR;
 public class TestCubeUtils {
 
 	public static void generateTestCube() throws Exception {
-		DataImportHFileMR.main(new String[]{});
+//		DataImportHFileMR.main(new String[]{});
 		CubeDescriptor descr = TestCubeUtils.createTestCubeDescriptor();
-		GenerateCubeMR.generateCube(descr);
+//		GenerateCubeMR.generateCube(descr);
 		GenerateCubeIndexMR.generate(descr);
 	}
 	
