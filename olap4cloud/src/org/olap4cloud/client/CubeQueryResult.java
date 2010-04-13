@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CubeQueryResult {
-	List<Double> result = new ArrayList<Double>();
+
+	List<CubeQueryResultRow> rows = new ArrayList<CubeQueryResultRow>();
 	
 	public CubeQueryResult() {
 		
 	}
-
-	public List<Double> getResult() {
-		return result;
+	
+	public List<CubeQueryResultRow> getRows() {
+		return rows;
 	}
 }

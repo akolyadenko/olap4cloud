@@ -1,10 +1,17 @@
 package org.olap4cloud.impl;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
@@ -17,6 +24,7 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.OutputLogFilter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -25,6 +33,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQueryResult;
+import org.olap4cloud.client.CubeQueryResultRow;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
@@ -49,11 +58,40 @@ public class CubeScanMR {
 				, DataUtils.objectToString(scan));
 		job.getConfiguration().setInt("mapred.map.tasks", 10000);
 		job.waitForCompletion(true);
-		return null;
+		return getCubeQueryResult(outPath, scan);
 	}
 	
 	
 	
+	private static CubeQueryResult getCubeQueryResult(String outPath,
+			CubeScan scan) throws Exception {
+		CubeQueryResult cubeQueryResult = new CubeQueryResult();
+		Configuration conf = new Configuration();
+		FileSystem fs = FileSystem.get(conf);
+		Path[] fileList = FileUtil.stat2Paths(fs.listStatus(new Path(outPath), new OutputLogFilter()));
+		for(Path path: fileList) {
+			FSDataInputStream fsin = fs.open(path);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fsin));
+			String s = null;
+			do {
+				s = reader.readLine();
+				if(s != null) {
+					StringTokenizer sb = new StringTokenizer(s, "\t", false);
+					CubeQueryResultRow row = new CubeQueryResultRow();
+					for(int i = 0; i < scan.getGroupBy().length; i ++)
+						row.getGroupBy().add(Long.parseLong(sb.nextToken()));
+					for(int i = 0; i < scan.getCubeScanAggregates().size(); i ++)
+						row.getValues().add(Double.parseDouble(sb.nextToken()));
+				}
+			} while(s != null);
+			reader.close();
+			fsin.close();
+		}
+		return cubeQueryResult;
+	}
+
+
+
 	public static class CubeScanMRMapper extends TableMapper<ImmutableBytesWritable, ImmutableBytesWritable>{
 		
 		CubeScan cubeScan = null;
