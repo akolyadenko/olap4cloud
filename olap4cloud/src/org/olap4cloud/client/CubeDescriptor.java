@@ -8,13 +8,13 @@ import org.olap4cloud.impl.OLAPEngineConstants;
 
 public class CubeDescriptor implements Serializable {
 	
-	String sourceTable;
-	
 	String cubeName;
 	
 	String cubeDataTable;
 	
 	String cubeIndexTable;
+	
+	String sourceDataDir;
 	
 	List<CubeMeasure> measures = new ArrayList<CubeMeasure>();
 	
@@ -35,14 +35,6 @@ public class CubeDescriptor implements Serializable {
 	public void setDimensions(List<CubeDimension> dimensions) {
 		this.dimensions = dimensions;
 	}
-
-	public String getSourceTable() {
-		return sourceTable;
-	}
-
-	public void setSourceTable(String sourceTableName) {
-		this.sourceTable = sourceTableName;
-	}
 	
 	public void setCubeName(String cubeName) {
 		this.cubeName = cubeName;
@@ -58,13 +50,19 @@ public class CubeDescriptor implements Serializable {
 		return cubeIndexTable;
 	}
 	
+	public String getSourceDataDir() {
+		return sourceDataDir;
+	}
+
+	public void setSourceDataDir(String sourceDataDir) {
+		this.sourceDataDir = sourceDataDir;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Cube[name = ")
 			.append(cubeName)
-			.append(" sourceTable = ")
-			.append(sourceTable)
 			.append(" measures = {");
 		for(CubeMeasure measure: measures)
 			sb.append("(name = ").append(measure.getName()).append(", sourceField = ").append(measure.getSourceField())
