@@ -4,6 +4,8 @@ import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeQuery;
 import org.olap4cloud.client.CubeQueryAggregate;
 import org.olap4cloud.client.CubeQueryCondition;
+import org.olap4cloud.client.CubeQueryResult;
+import org.olap4cloud.client.CubeQueryResultRow;
 import org.olap4cloud.client.OLAPEngine;
 import org.olap4cloud.impl.SumCubeScanAggregate;
 
@@ -23,6 +25,13 @@ public class OLAPEngineTest {
 //		cubeQuery.getGroupBy().add("d2");
 //		cubeQuery.getGroupBy().add("d3");
 		OLAPEngine olapEngine = new OLAPEngine();
-		olapEngine.executeQuery(cubeQuery, cubeDescriptor);
+		CubeQueryResult r = olapEngine.executeQuery(cubeQuery, cubeDescriptor);
+		for(CubeQueryResultRow row: r.getRows()) {
+			for(long l: row.getGroupBy())
+				System.out.print(l + "\t");
+			for(double d: row.getValues())
+				System.out.print(d + "\t");
+			System.out.println();
+		}
 	}
 }
