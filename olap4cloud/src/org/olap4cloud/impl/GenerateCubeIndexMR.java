@@ -115,7 +115,9 @@ public class GenerateCubeIndexMR {
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCubeIndexMR.class);
-		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), new Scan(), GenerateCubeIndexMapper.class
+		Scan scan = new Scan();
+		scan.setCaching(1000);
+		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), scan, GenerateCubeIndexMapper.class
 				, ImmutableBytesWritable.class, CubeIndexEntry.class, job);
 		TableMapReduceUtil.initTableReducerJob(descr.getCubeIndexTable()
 				, GenerateCubeIndexReducer.class, job);
