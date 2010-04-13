@@ -17,7 +17,6 @@ public class TestCubeUtils {
 	
 	public static CubeDescriptor createTestCubeDescriptor() {
 		CubeDescriptor descr = new CubeDescriptor();
-		descr.setSourceTable("testfacttable");
 		descr.setCubeName("testcube");
 		descr.getDimensions().add(new CubeDimension("data.d1", "d1"));
 		descr.getDimensions().add(new CubeDimension("data.d2", "d2"));
