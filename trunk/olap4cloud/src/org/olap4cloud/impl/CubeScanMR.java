@@ -82,6 +82,7 @@ public class CubeScanMR {
 						row.getGroupBy().add(Long.parseLong(sb.nextToken()));
 					for(int i = 0; i < scan.getCubeScanAggregates().size(); i ++)
 						row.getValues().add(Double.parseDouble(sb.nextToken()));
+					cubeQueryResult.getRows().add(row);
 				}
 			} while(s != null);
 			reader.close();
