@@ -84,24 +84,26 @@ public class GenerateCubeMR {
 		}
 	}
 	
-	public static void generateCube(CubeDescriptor descr) throws Exception {
+	public static void generateCube(CubeDescriptor cubeDescriptor) throws Exception {
 		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
-		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeDataTable());
-		for(int i = 0; i < descr.getMeasures().size(); i ++)
+		HTableDescriptor tableDescr = new HTableDescriptor(cubeDescriptor.getCubeDataTable());
+		for(int i = 0; i < cubeDescriptor.getMeasures().size(); i ++)
 			tableDescr.addFamily(new HColumnDescriptor(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
-					+ descr.getMeasures().get(i).getName()));
-		if(admin.tableExists(descr.getCubeDataTable())) {
-			admin.disableTable(descr.getCubeDataTable());
-			admin.deleteTable(descr.getCubeDataTable());
+					+ cubeDescriptor.getMeasures().get(i).getName()));
+		if(admin.tableExists(cubeDescriptor.getCubeDataTable())) {
+			admin.disableTable(cubeDescriptor.getCubeDataTable());
+			admin.deleteTable(cubeDescriptor.getCubeDataTable());
 		}
 		admin.createTable(tableDescr);
 		Job job = new Job();
 		job.setJarByClass(GenerateCubeMR.class);
 		job.setMapperClass(GenerateCubeMapper.class);
 		job.setInputFormatClass(TextInputFormat.class);
-		FileInputFormat.setInputPaths(job, new Path(descr.getSourceDataDir()));
-		TableMapReduceUtil.initTableReducerJob(descr.getCubeDataTable()
+		FileInputFormat.setInputPaths(job, new Path(cubeDescriptor.getSourceDataDir()));
+		TableMapReduceUtil.initTableReducerJob(cubeDescriptor.getCubeDataTable()
 				, IdentityTableReducer.class, job);
+		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR
+				, DataUtils.objectToString(cubeDescriptor));
 		job.waitForCompletion(true);
 	}
 }
