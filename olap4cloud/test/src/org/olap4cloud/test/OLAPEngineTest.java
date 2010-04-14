@@ -21,9 +21,9 @@ public class OLAPEngineTest {
 		CubeQueryCondition condition = new CubeQueryCondition("d1");
 		condition.getDimensionValues().add(1l);
 		cubeQuery.getConditions().add(condition);
-		condition = new CubeQueryCondition("d2");
-		condition.getDimensionValues().add(1l);
-		cubeQuery.getConditions().add(condition);
+//		condition = new CubeQueryCondition("d2");
+//		condition.getDimensionValues().add(1l);
+//		cubeQuery.getConditions().add(condition);
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("min(m1)"));
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("max(m2)"));
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("count(m3)"));
