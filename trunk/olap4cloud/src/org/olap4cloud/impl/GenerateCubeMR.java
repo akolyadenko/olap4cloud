@@ -27,6 +27,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.util.DataUtils;
+import org.olap4cloud.util.LogUtils;
 
 public class GenerateCubeMR {
 	
@@ -71,6 +72,7 @@ public class GenerateCubeMR {
 		@Override
 		protected void map(LongWritable key, Text value,
 				Context context) throws IOException, InterruptedException {
+			String methodName = "GenerateCubeMapper.map() ";
 			long dimensions[] = new long[dimensionN + 1];
 			String tokens[] = value.toString().split("\t");
 			for(int i = 0; i < dimensionN; i ++)
@@ -79,8 +81,12 @@ public class GenerateCubeMR {
 			byte cubeKey[] = DataUtils.pack(dimensions);
 			Put put = new Put(cubeKey);
 			for(int i = 0; i < measureN; i ++) {		
+				byte putValue[] = Bytes.toBytes(Double.parseDouble(tokens[dimensionN + i]));
 				put.add(measureFamilies[i], measureNames[i], 
-						Bytes.toBytes(Double.parseDouble(tokens[dimensionN + i])));
+						putValue);
+				if(logger.isDebugEnabled()) logger.debug(methodName + "added value: " + LogUtils.describe(putValue)
+						+ " to column: " + LogUtils.describe(measureFamilies[i]) + " : "
+						+ LogUtils.describe(measureNames[i]));
 			}
 			context.write(new ImmutableBytesWritable(cubeKey), put);
 		}
