@@ -7,7 +7,7 @@ import org.olap4cloud.client.CubeQueryCondition;
 import org.olap4cloud.client.CubeQueryResult;
 import org.olap4cloud.client.CubeQueryResultRow;
 import org.olap4cloud.client.OLAPEngine;
-import org.olap4cloud.impl.SumCubeScanAggregate;
+import org.olap4cloud.impl.aggr.SumCubeScanAggregate;
 
 public class OLAPEngineTest {
 	

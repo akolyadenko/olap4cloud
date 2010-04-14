@@ -17,7 +17,10 @@ import org.olap4cloud.impl.CubeScanAggregate;
 import org.olap4cloud.impl.CubeScanCondition;
 import org.olap4cloud.impl.CubeScanMR;
 import org.olap4cloud.impl.OLAPEngineConstants;
-import org.olap4cloud.impl.SumCubeScanAggregate;
+import org.olap4cloud.impl.aggr.CountCubeScanAggregate;
+import org.olap4cloud.impl.aggr.MaxCubeScanAggregate;
+import org.olap4cloud.impl.aggr.MinCubeScanAggregate;
+import org.olap4cloud.impl.aggr.SumCubeScanAggregate;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
@@ -90,6 +93,12 @@ public class OLAPEngine {
 		throws OLAPEngineException {
 		if(aggregate.getAggregate().toLowerCase().startsWith("sum("))
 			return new SumCubeScanAggregate(aggregate.getAggregate(), cubeDescriptor);
+		if(aggregate.getAggregate().toLowerCase().startsWith("max("))
+			return new MaxCubeScanAggregate(aggregate.getAggregate(), cubeDescriptor);
+		if(aggregate.getAggregate().toLowerCase().startsWith("min("))
+			return new MinCubeScanAggregate(aggregate.getAggregate(), cubeDescriptor);
+		if(aggregate.getAggregate().toLowerCase().startsWith("count("))
+			return new CountCubeScanAggregate(aggregate.getAggregate(), cubeDescriptor);
 		throw new OLAPEngineException("can't process aggregate " + aggregate.getAggregate());
 	}
 
