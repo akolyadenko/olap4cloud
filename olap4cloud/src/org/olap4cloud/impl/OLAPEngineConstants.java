@@ -7,6 +7,6 @@ public class OLAPEngineConstants {
 	public static final String DATA_CUBE_NAME_SUFFIX = "_data_cube";
 	public static final String CUBE_INDEX_SUFFIX = "_index";
 	public static final String CUBE_INDEX_COLUMN = "index";
-	public static final String DATA_CUBE_MEASURE_FAMILY_PREFIX = "f_";
+	public static final String DATA_CUBE_MEASURE_FAMILY_PREFIX = "family_";
 	public static final String MR_OUT_DIRECTORY_PREFIX = "/olap4cloud/out";
 }
