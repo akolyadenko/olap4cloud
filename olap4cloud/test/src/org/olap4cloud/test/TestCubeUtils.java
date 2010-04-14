@@ -19,12 +19,12 @@ public class TestCubeUtils {
 		CubeDescriptor descr = new CubeDescriptor();
 		descr.setSourceDataDir("/data");
 		descr.setCubeName("testcube");
-		descr.getDimensions().add(new CubeDimension("data.d1", "d1"));
-		descr.getDimensions().add(new CubeDimension("data.d2", "d2"));
-		descr.getDimensions().add(new CubeDimension("data.d3", "d3"));
-		descr.getMeasures().add(new CubeMeasure("data.m1", "m1"));
-		descr.getMeasures().add(new CubeMeasure("data.m2", "m2"));
-		descr.getMeasures().add(new CubeMeasure("data.m3", "m3"));
+		descr.getDimensions().add(new CubeDimension("d1"));
+		descr.getDimensions().add(new CubeDimension("d2"));
+		descr.getDimensions().add(new CubeDimension("d3"));
+		descr.getMeasures().add(new CubeMeasure("m1"));
+		descr.getMeasures().add(new CubeMeasure("m2"));
+		descr.getMeasures().add(new CubeMeasure("m3"));
 		return descr;
 	}
 
