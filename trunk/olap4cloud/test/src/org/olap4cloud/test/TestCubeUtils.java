@@ -11,12 +11,13 @@ public class TestCubeUtils {
 	public static void generateTestCube() throws Exception {
 //		DataImportHFileMR.main(new String[]{});
 		CubeDescriptor descr = TestCubeUtils.createTestCubeDescriptor();
-//		GenerateCubeMR.generateCube(descr);
+		GenerateCubeMR.generateCube(descr);
 		GenerateCubeIndexMR.generate(descr);
 	}
 	
 	public static CubeDescriptor createTestCubeDescriptor() {
 		CubeDescriptor descr = new CubeDescriptor();
+		descr.setSourceDataDir("/data");
 		descr.setCubeName("testcube");
 		descr.getDimensions().add(new CubeDimension("data.d1", "d1"));
 		descr.getDimensions().add(new CubeDimension("data.d2", "d2"));
