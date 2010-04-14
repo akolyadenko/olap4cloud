@@ -22,6 +22,7 @@
 	<target name = "test.build" depends = "test.compile">
 		<jar destfile = "olap4cloud-test.jar" basedir = "test/classes">
 			<fileset dir = "test/classes"/>
+			<fileset dir = "test/resource"/>
 			<fileset dir = "classes"/>
 		</jar>
 	</target>
