@@ -54,7 +54,7 @@ public class GenerateCubeMR {
 				cubeDescriptor = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 					.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
 				dimensionN = cubeDescriptor.getDimensions().size();
-				int measureN = cubeDescriptor.getMeasures().size();
+				measureN = cubeDescriptor.getMeasures().size();
 				if(logger.isDebugEnabled()) logger.debug(methodName + "retrieved measureN = " + measureN);
 				measureNames = new byte[measureN][];
 				measureFamilies = new byte[measureN][];
