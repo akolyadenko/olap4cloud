@@ -48,11 +48,13 @@ public class GenerateCubeMR {
 		protected void setup(Context context) throws IOException,
 				InterruptedException {
 			super.setup(context);
+			String methodName = "GenerateCubeMapper.setup() ";
 			try {
 				cubeDescriptor = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 					.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR));
 				dimensionN = cubeDescriptor.getDimensions().size();
 				int measureN = cubeDescriptor.getMeasures().size();
+				if(logger.isDebugEnabled()) logger.debug(methodName + "retrieved measureN = " + measureN);
 				measureNames = new byte[measureN][];
 				measureFamilies = new byte[measureN][];
 				for(int i = 0; i < measureN; i ++) {
