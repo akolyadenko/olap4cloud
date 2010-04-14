@@ -14,7 +14,7 @@ public class CountCubeScanAggregate extends CubeScanAggregate {
 	
 	@Override
 	public void collect(double v) {
-		v += 1;
+		value += 1;
 	}
 
 	@Override
