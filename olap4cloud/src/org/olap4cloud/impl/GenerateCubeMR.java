@@ -99,6 +99,8 @@ public class GenerateCubeMR {
 		job.setJarByClass(GenerateCubeMR.class);
 		job.setMapperClass(GenerateCubeMapper.class);
 		job.setInputFormatClass(TextInputFormat.class);
+		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
+		job.setMapOutputValueClass(Put.class);
 		FileInputFormat.setInputPaths(job, new Path(cubeDescriptor.getSourceDataDir()));
 		TableMapReduceUtil.initTableReducerJob(cubeDescriptor.getCubeDataTable()
 				, IdentityTableReducer.class, job);
