@@ -1,8 +1,8 @@
-package org.olap4cloud.impl;
+package org.olap4cloud.impl.aggr;
 
-import org.apache.hadoop.hbase.util.Pair;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.OLAPEngineException;
+import org.olap4cloud.impl.CubeScanAggregate;
 
 public class SumCubeScanAggregate extends CubeScanAggregate {
 

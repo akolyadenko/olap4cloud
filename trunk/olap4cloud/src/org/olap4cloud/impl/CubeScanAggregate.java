@@ -43,6 +43,7 @@ public abstract class CubeScanAggregate implements Serializable {
 		}
 		if(column == null)
 			throw new OLAPEngineException("Invalid measure in " + aggregate);
+		reset();
 	}
 	
 	public Pair<byte[], byte[]> getColumn() {
