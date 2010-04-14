@@ -15,16 +15,17 @@ public class TestCubeUtils {
 		GenerateCubeIndexMR.generate(descr);
 	}
 	
-	public static CubeDescriptor createTestCubeDescriptor() {
+	public static CubeDescriptor createTestCubeDescriptor() throws Exception {
 		CubeDescriptor descr = new CubeDescriptor();
-		descr.setSourceDataDir("/data");
+		descr.loadFromClassPath("testcube.xml");
+/*		descr.setSourceDataDir("/data");
 		descr.setCubeName("testcube");
 		descr.getDimensions().add(new CubeDimension("d1"));
 		descr.getDimensions().add(new CubeDimension("d2"));
 		descr.getDimensions().add(new CubeDimension("d3"));
 		descr.getMeasures().add(new CubeMeasure("m1"));
 		descr.getMeasures().add(new CubeMeasure("m2"));
-		descr.getMeasures().add(new CubeMeasure("m3"));
+		descr.getMeasures().add(new CubeMeasure("m3")); */
 		return descr;
 	}
 
