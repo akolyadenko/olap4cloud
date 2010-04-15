@@ -91,7 +91,8 @@ public class CubeDescriptor implements Serializable {
 			load(in);
 		} finally {
 			try {
-				in.close();
+				if(in != null)
+					in.close();
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 				throw new OLAPEngineException(e);
