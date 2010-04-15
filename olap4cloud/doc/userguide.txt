@@ -1,1 +1,54 @@
 1. What is olap4cloud?
+
+olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containging 
+grouping and aggregations.
+The typical query which can be served by olap4cloud looks like following: 
+select d3, sum(m1), min(m2) from facts where d1 in (1,2) and d2 in (2,3) group by d3;
+The main features of olap4cloud which allows to outperform the brute-force map/reduce competitors(Hive, Pig) are:
+- data defragmentation - olap4cloud stores data in the order where rows with the same dimensions will be stored closely. 
+- intensive indexing - olap4cloud constructs special indexes. These indexes helps to locate where data stored and 
+avoid full scan during query execution.
+- preaggregations - olap4cloud uses classic lattice model to construct aggregation cuboids. It allows to achive 
+lower latency on queries where aggregations are already calculated.
+
+2. How to build.
+
+At this time the olap4cloud project is in the highly experimental stage. So we don't have any stable builds yet, 
+and recomended way to get the jar file is to get the fresh source code from SVN and build it.
+
+2.1. Prerequisites.
+
+You need to have installed svn client, jdk 6 and ant on your computer in order to build the olap4cloud.
+
+2.2. Getting the code.
+
+Obtain the code by using the one of SVN checkout commands listed on Source tab (you will need an SVN client installed 
+on your computer).
+
+2.3. Build the code.
+
+olap4cloud can be built by simply running the "ant" command in the root directory of the project. 
+After build is done you will see the olap4cloud.jar file in the root directory of the project.
+
+Other helpful ant targets are:
+- clean - remove all compiled java classes and jars.
+- test.build - build tests
+- test.generate_test_data - generate test data for tests.
+
+3. Installing.
+
+3.1. Prerequesites.
+
+You need to have Hadoop and HBase up and running on your cluster. 
+
+Additionally olap4cloud intensively uses Hadoop & HBase Map/Reduce 
+facility, so you need to have Hadoop and HBase configured to be able run Map/Reduce jobs against HBase tables. 
+This part can be done using instructions available on the following address: 
+http://hadoop.apache.org/hbase/docs/current/api/org/apache/hadoop/hbase/mapreduce/package-summary.html#classpath
+
+3.2. Installing olap4cloud.
+
+You need to add olap4cloud.jar to Hadoop classpath, for example you can define HADOOP_CLASSPATH variable in hadoop-env.sh.
+
+4. Using olap4cloud API.
+
