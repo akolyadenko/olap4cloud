@@ -26,6 +26,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
+import org.olap4cloud.client.OLAPEngineException;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
@@ -92,28 +93,38 @@ public class GenerateCubeMR {
 		}
 	}
 	
-	public static void generateCube(CubeDescriptor cubeDescriptor) throws Exception {
-		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
-		HTableDescriptor tableDescr = new HTableDescriptor(cubeDescriptor.getCubeDataTable());
-		for(int i = 0; i < cubeDescriptor.getMeasures().size(); i ++)
-			tableDescr.addFamily(new HColumnDescriptor(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX 
-					+ cubeDescriptor.getMeasures().get(i).getName()));
-		if(admin.tableExists(cubeDescriptor.getCubeDataTable())) {
-			admin.disableTable(cubeDescriptor.getCubeDataTable());
-			admin.deleteTable(cubeDescriptor.getCubeDataTable());
+	public static void generateCube(CubeDescriptor cubeDescriptor) throws OLAPEngineException {
+		try {
+			HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
+			HTableDescriptor tableDescr = new HTableDescriptor(cubeDescriptor
+					.getCubeDataTable());
+			for (int i = 0; i < cubeDescriptor.getMeasures().size(); i++)
+				tableDescr
+						.addFamily(new HColumnDescriptor(
+								OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX
+										+ cubeDescriptor.getMeasures().get(i)
+												.getName()));
+			if (admin.tableExists(cubeDescriptor.getCubeDataTable())) {
+				admin.disableTable(cubeDescriptor.getCubeDataTable());
+				admin.deleteTable(cubeDescriptor.getCubeDataTable());
+			}
+			admin.createTable(tableDescr);
+			Job job = new Job();
+			job.setJarByClass(GenerateCubeMR.class);
+			job.setMapperClass(GenerateCubeMapper.class);
+			job.setInputFormatClass(TextInputFormat.class);
+			job.setMapOutputKeyClass(ImmutableBytesWritable.class);
+			job.setMapOutputValueClass(Put.class);
+			FileInputFormat.setInputPaths(job, new Path(cubeDescriptor
+					.getSourceDataDir()));
+			TableMapReduceUtil.initTableReducerJob(cubeDescriptor
+					.getCubeDataTable(), IdentityTableReducer.class, job);
+			job.getConfiguration().set(
+					OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR,
+					DataUtils.objectToString(cubeDescriptor));
+			job.waitForCompletion(true);
+		} catch (Exception e) {
+			throw new OLAPEngineException(e);
 		}
-		admin.createTable(tableDescr);
-		Job job = new Job();
-		job.setJarByClass(GenerateCubeMR.class);
-		job.setMapperClass(GenerateCubeMapper.class);
-		job.setInputFormatClass(TextInputFormat.class);
-		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
-		job.setMapOutputValueClass(Put.class);
-		FileInputFormat.setInputPaths(job, new Path(cubeDescriptor.getSourceDataDir()));
-		TableMapReduceUtil.initTableReducerJob(cubeDescriptor.getCubeDataTable()
-				, IdentityTableReducer.class, job);
-		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR
-				, DataUtils.objectToString(cubeDescriptor));
-		job.waitForCompletion(true);
 	}
 }

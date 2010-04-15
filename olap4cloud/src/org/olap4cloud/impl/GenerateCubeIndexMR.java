@@ -23,6 +23,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.log4j.Logger;
 import org.olap4cloud.client.CubeDescriptor;
+import org.olap4cloud.client.OLAPEngineException;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
@@ -104,23 +105,30 @@ public class GenerateCubeIndexMR {
 		}
 	}
 	
-	public static void generate(CubeDescriptor descr) throws Exception {
-		HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
-		HTableDescriptor tableDescr = new HTableDescriptor(descr.getCubeIndexTable());
-		tableDescr.addFamily(new HColumnDescriptor(OLAPEngineConstants.CUBE_INDEX_COLUMN));
-		if(admin.tableExists(descr.getCubeIndexTable())) {
-			admin.disableTable(descr.getCubeIndexTable());
-			admin.deleteTable(descr.getCubeIndexTable());
+	public static void generate(CubeDescriptor descr) throws OLAPEngineException {
+		try {
+			HBaseAdmin admin = new HBaseAdmin(new HBaseConfiguration());
+			HTableDescriptor tableDescr = new HTableDescriptor(descr
+					.getCubeIndexTable());
+			tableDescr.addFamily(new HColumnDescriptor(
+					OLAPEngineConstants.CUBE_INDEX_COLUMN));
+			if (admin.tableExists(descr.getCubeIndexTable())) {
+				admin.disableTable(descr.getCubeIndexTable());
+				admin.deleteTable(descr.getCubeIndexTable());
+			}
+			admin.createTable(tableDescr);
+			Job job = new Job();
+			job.setJarByClass(GenerateCubeIndexMR.class);
+			Scan scan = new Scan();
+			scan.setCaching(1000);
+			TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(),
+					scan, GenerateCubeIndexMapper.class,
+					ImmutableBytesWritable.class, CubeIndexEntry.class, job);
+			TableMapReduceUtil.initTableReducerJob(descr.getCubeIndexTable(),
+					GenerateCubeIndexReducer.class, job);
+			job.waitForCompletion(true);
+		} catch (Exception e) {
+			throw new OLAPEngineException(e);
 		}
-		admin.createTable(tableDescr);
-		Job job = new Job();
-		job.setJarByClass(GenerateCubeIndexMR.class);
-		Scan scan = new Scan();
-		scan.setCaching(1000);
-		TableMapReduceUtil.initTableMapperJob(descr.getCubeDataTable(), scan, GenerateCubeIndexMapper.class
-				, ImmutableBytesWritable.class, CubeIndexEntry.class, job);
-		TableMapReduceUtil.initTableReducerJob(descr.getCubeIndexTable()
-				, GenerateCubeIndexReducer.class, job);
-		job.waitForCompletion(true);
 	}
 }
