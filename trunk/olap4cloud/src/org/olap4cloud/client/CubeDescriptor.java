@@ -81,8 +81,7 @@ public class CubeDescriptor implements Serializable {
 		return sb.toString();
 	}
 	
-	public void loadFromClassPath(String resourceName) throws OLAPEngineException {
-		ClassLoader classLoader = CubeDescriptor.class.getClassLoader();
+	public void loadFromClassPath(String resourceName, ClassLoader classLoader) throws OLAPEngineException {
 		InputStream in = null;
 		try {
 			in = classLoader.getResourceAsStream(resourceName);
