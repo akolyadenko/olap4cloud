@@ -17,7 +17,7 @@ public class TestCubeUtils {
 	
 	public static CubeDescriptor createTestCubeDescriptor() throws Exception {
 		CubeDescriptor descr = new CubeDescriptor();
-		descr.loadFromClassPath("testcube.xml");
+		descr.loadFromClassPath("testcube.xml", TestCubeUtils.class.getClassLoader());
 		return descr;
 	}
 
