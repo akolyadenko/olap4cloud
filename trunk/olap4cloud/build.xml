@@ -23,7 +23,7 @@
 		<jar destfile = "olap4cloud-test.jar" basedir = "test/classes">
 			<fileset dir = "test/classes"/>
 			<fileset dir = "test/resource"/>
-			<fileset dir = "classes"/>
+			<!-- fileset dir = "classes"/ -->
 		</jar>
 	</target>
 	
