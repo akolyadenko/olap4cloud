@@ -27,7 +27,7 @@
 		</jar>
 	</target>
 	
-	<target name = "test.compile">
+	<target name = "test.compile" depends = "build">
 		<mkdir dir = "test/classes"/>
 		<javac destdir = "test/classes" classpathref="lib.path.ref" debug = "on">
 			<src path="test/src"/>
