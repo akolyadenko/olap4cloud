@@ -1,6 +1,6 @@
 1. What is olap4cloud?
 
-olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containging 
+olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing 
 grouping and aggregations.
 The typical query which can be served by olap4cloud looks like following: 
 select d3, sum(m1), min(m2) from facts where d1 in (1,2) and d2 in (2,3) group by d3;
