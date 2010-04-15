@@ -86,6 +86,8 @@ public class CubeDescriptor implements Serializable {
 		InputStream in = null;
 		try {
 			in = classLoader.getResourceAsStream(resourceName);
+			if(in == null)
+				throw new OLAPEngineException("Can't find " + resourceName + " in classpath.");
 			load(in);
 		} finally {
 			try {
