@@ -16,6 +16,8 @@ import org.olap4cloud.impl.CubeScan;
 import org.olap4cloud.impl.CubeScanAggregate;
 import org.olap4cloud.impl.CubeScanCondition;
 import org.olap4cloud.impl.CubeScanMR;
+import org.olap4cloud.impl.GenerateCubeIndexMR;
+import org.olap4cloud.impl.GenerateCubeMR;
 import org.olap4cloud.impl.OLAPEngineConstants;
 import org.olap4cloud.impl.aggr.CountCubeScanAggregate;
 import org.olap4cloud.impl.aggr.MaxCubeScanAggregate;
@@ -203,5 +205,8 @@ public class OLAPEngine {
 		throw new OLAPEngineException("Can't find dimension " + dimensionName);
 	}
 	
-	
+	public void generateCube(CubeDescriptor cubeDescriptor) throws OLAPEngineException {
+		GenerateCubeMR.generateCube(cubeDescriptor);
+		GenerateCubeIndexMR.generate(cubeDescriptor);
+	}
 }
