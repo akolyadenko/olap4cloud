@@ -49,7 +49,7 @@ public class OLAPEngine {
 		}
 	}
 	
-	CubeScan getCubeScan(CubeQuery query, CubeDescriptor cubeDescriptor) throws Exception{
+	private CubeScan getCubeScan(CubeQuery query, CubeDescriptor cubeDescriptor) throws Exception{
 		String methodName  = "getCubeScan() ";
 		CubeScan scan = new CubeScan();
 		List<CubeIndexEntry> index = null;

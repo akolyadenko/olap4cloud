@@ -1,5 +1,7 @@
 package org.olap4cloud.client;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -96,6 +98,25 @@ public class CubeDescriptor implements Serializable {
 				logger.error(e.getMessage(), e);
 				throw new OLAPEngineException(e);
 			}
+		}
+	}
+	
+	public void loadFromLocalFS(String filePath) throws OLAPEngineException {
+		FileInputStream in = null;
+		try {
+			in = new FileInputStream(filePath);
+			load(in);
+		} catch(Exception e) {
+			logger.debug(e.getMessage(), e);
+			throw new OLAPEngineException(e);
+		} finally {
+			if(in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					logger.debug(e.getMessage(), e);
+					throw new OLAPEngineException(e);
+				}
 		}
 	}
 	

@@ -3,21 +3,28 @@ package org.olap4cloud.test;
 import org.olap4cloud.client.CubeDescriptor;
 import org.olap4cloud.client.CubeDimension;
 import org.olap4cloud.client.CubeMeasure;
-import org.olap4cloud.client.OLAPEngine;
 import org.olap4cloud.impl.GenerateCubeIndexMR;
 import org.olap4cloud.impl.GenerateCubeMR;
 
 public class TestCubeUtils {
 
 	public static void generateTestCube() throws Exception {
-		CubeDescriptor cubeDescriptor = TestCubeUtils.createTestCubeDescriptor();
-		OLAPEngine engine = new OLAPEngine();
-		engine.generateCube(cubeDescriptor);
+//		DataImportHFileMR.main(new String[]{});
+		CubeDescriptor descr = TestCubeUtils.createTestCubeDescriptor();
+		GenerateCubeMR.generateCube(descr);
+		GenerateCubeIndexMR.generate(descr);
 	}
 	
-	public static CubeDescriptor createTestCubeDescriptor() throws Exception {
+	public static CubeDescriptor createTestCubeDescriptor() {
 		CubeDescriptor descr = new CubeDescriptor();
-		descr.loadFromClassPath("testcube.xml", TestCubeUtils.class.getClassLoader());
+		descr.setSourceDataDir("/data");
+		descr.setCubeName("testcube");
+		descr.getDimensions().add(new CubeDimension("d1"));
+		descr.getDimensions().add(new CubeDimension("d2"));
+		descr.getDimensions().add(new CubeDimension("d3"));
+		descr.getMeasures().add(new CubeMeasure("m1"));
+		descr.getMeasures().add(new CubeMeasure("m2"));
+		descr.getMeasures().add(new CubeMeasure("m3"));
 		return descr;
 	}
 
