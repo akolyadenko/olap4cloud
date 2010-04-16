@@ -1,6 +1,6 @@
 [UserGuide#What_is_olap4cloud What is olap4cloud?]
 
-=What is olap4cloud?=
+=What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
 
