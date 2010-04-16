@@ -1,5 +1,7 @@
 [UserGuide#What_is_olap4cloud What is olap4cloud?]
 
+[UserGuide#How_to_build How to build]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -12,3 +14,8 @@ The main features of olap4cloud which allows to outperform the brute-force map/r
  * data defragmentation - olap4cloud stores data in the order where rows with the same dimensions will be stored closely. 
  * intensive indexing - olap4cloud constructs special indexes. These indexes helps to locate where data stored and avoid full scan during query execution.
  * preaggregations - olap4cloud uses classic lattice model to construct aggregation cuboids. It allows to achieve lower latency on queries where aggregations are already calculated.
+
+=How to build=
+
+At this time the olap4cloud project is in the highly experimental stage. So we don't have any stable builds yet, 
+and recommended way to get the jar file is to get the fresh source code from SVN and build it.
