@@ -20,7 +20,7 @@
 
  * [UserGuide#CubeDescriptor CubeDescriptor]
 
-   # [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
+   * [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
 
 =What is olap4cloud=
 
