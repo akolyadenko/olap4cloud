@@ -6,6 +6,8 @@
 
  * [UserGuide#Getting_the_code Getting the code]
 
+ * [UserGuide#Build_the_code Build the code]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -30,3 +32,13 @@ You need to have installed svn client, jdk 6 and ant on your computer in order t
 ==Getting the code==
 
 Obtain the code by using the one of SVN checkout commands listed on Source tab (you will need an SVN client installed on your computer).
+
+==Build the code==
+
+olap4cloud can be built by simply running the "ant" command in the root directory of the project. 
+After build is done you will see the olap4cloud.jar file in the root directory of the project.
+
+Other helpful ant targets are:
+- clean - remove all compiled java classes and jars.
+- test.build - build tests
+- test.generate_test_data - generate test data for tests. Data files will be located under test/data directory. 
