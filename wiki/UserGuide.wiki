@@ -1,27 +1,16 @@
 [UserGuide#What_is_olap4cloud What is olap4cloud?]
-
 [UserGuide#How_to_build How to build]
-
- * [UserGuide#Prerequisites Prerequisites] 
-
- * [UserGuide#Getting_the_code Getting the code]
-
- * [UserGuide#Build_the_code Build the code]
-
+  * [UserGuide#Prerequisites Prerequisites] 
+  * [UserGuide#Getting_the_code Getting the code]
+  * [UserGuide#Build_the_code Build the code]
 [UserGuide#Installing Installing]
-
- * [UserGuide#Prerequisites Prerequisites]
-
- * [UserGuide#Installing_olap4cloud Installing olap4cloud]
-
+  * [UserGuide#Prerequisites Prerequisites]
+  * [UserGuide#Installing_olap4cloud Installing olap4cloud]
 [UserGuide#Main_concepts Main concepts]
-
 [UserGuide#Using_olap4cloud_API Using olap4cloud API]
-
  * [UserGuide#CubeDescriptor CubeDescriptor]
-
-   * [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
-
+  * [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
+  * hello
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
