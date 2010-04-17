@@ -15,6 +15,7 @@
   * [UserGuide#Initialize_CubeDescriptor_manually_in_java_code Initialize CubeDescriptor manually in java code]
   * [UserGuide#ETL_process ETL process]
  * [UserGuide#Query_API Query API]
+[UserGuide#Future_enhancements Future enhancements]
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
