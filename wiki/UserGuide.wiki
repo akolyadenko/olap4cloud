@@ -20,6 +20,8 @@
 
  * [UserGuide#CubeDescriptor CubeDescriptor]
 
+  # [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -98,3 +100,21 @@ The properties of cube defined by !CubeDescriptor includes:
 There are two ways to define !CubeDescriptor object:
  * in xml file(recommended way)
  * in java code
+
+==Defining CubeDescriptor in xml file==
+
+The following xml fragment defines the !CubeDescriptor:
+{{{
+<cube name = "testcube" sourcePath = "/data">
+	<dimension name = "d1"/>
+	<dimension name = "d2"/>
+	<dimension name = "d3"/>
+	<measure name = "m1"/>
+	<measure name = "m2"/>
+	<measure name = "m3"/>
+</cube>
+}}}
+The file then can be loaded by one of the following methods: 
+ * {{{CubeDescriptor.loadFromClassPath(String resourceName, ClassLoader classLoader)}}}
+ * {{{CubeDescriptor.loadFromLocalFS(String filePath)}}}
+ * {{{CubeDescriptor.load(InputStream in)}}}
