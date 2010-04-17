@@ -20,7 +20,7 @@
 
  * [UserGuide#CubeDescriptor CubeDescriptor]
 
-  # [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
+   # [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
 
 =What is olap4cloud=
 
@@ -101,7 +101,7 @@ There are two ways to define !CubeDescriptor object:
  * in xml file(recommended way)
  * in java code
 
-==Defining CubeDescriptor in xml file==
+===Defining !CubeDescriptor in xml file===
 
 The following xml fragment defines the !CubeDescriptor:
 {{{
