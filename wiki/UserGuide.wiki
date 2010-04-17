@@ -69,5 +69,5 @@ You need to add olap4cloud.jar to Hadoop classpath, for example you can define H
 The central object of olap4cloud is OLAP cube(http://en.wikipedia.org/wiki/OLAP_cube). In other words the main goals of olap4cloud is to manage and query cubes. However at this moment olap4cloud doesn't support dimension tables and hierarchies, therefore cube is just fact table(http://en.wikipedia.org/wiki/Fact_table) for now. Fact table contains dimensions and measures. At this moment all dimensions can have only java type long and measures should have java type double.
 
 The typical life cycle of cube is:
-1. Load data to cube using ETL module.
-2. Perform queries against the cube.
+ * Load data to cube using ETL module.
+ * Perform queries against the cube.
