@@ -1,4 +1,4 @@
-[UserGuide#What_is_olap4cloud What is olap4cloud?]
+[UserGuide#What_is_olap4cloud What is olap4cloud]
 [UserGuide#How_to_build How to build]
   * [UserGuide#Prerequisites Prerequisites] 
   * [UserGuide#Getting_the_code Getting the code]
