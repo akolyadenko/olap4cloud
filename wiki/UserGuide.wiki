@@ -13,6 +13,7 @@
  * [UserGuide#CubeDescriptor CubeDescriptor]
   * [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
   * [UserGuide#Initialize_CubeDescriptor_manually_in_java_code Initialize CubeDescriptor manually in java code]
+  * [UserGuide#ETL_process ETL process]
 
 =What is olap4cloud=
 
@@ -128,3 +129,13 @@ descr.getMeasures().add(new CubeMeasure("m1"));
 descr.getMeasures().add(new CubeMeasure("m2"));
 descr.getMeasures().add(new CubeMeasure("m3")); 
 }}}
+
+===ETL process===
+
+olap4cloud has simple ELT functionality implemented.
+To process the cube you need to call {{{OLAPEngine.generateCube(CubeDescriptor cubeDescriptor) method}}}. 
+Then it will load data from files in source directory to cube. 
+Data files must be formatted using a specific format: 
+ * rows must be delimited by '\n'
+ * values in rows must be delimited by '\t'
+ * each row must first contain dimension values in order defined in the cube descriptor xml file and then measures values in order defined in the cube descriptor xml file
