@@ -4,6 +4,8 @@
 
  * [UserGuide#Prerequisites Prerequisites] 
 
+ * [UserGuide#Getting_the_code Getting the code]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -24,3 +26,7 @@ At this time the olap4cloud project is in the highly experimental stage. So we d
 ==Prerequisites==
 
 You need to have installed svn client, jdk 6 and ant on your computer in order to build the olap4cloud.
+
+==Getting the code==
+
+Obtain the code by using the one of SVN checkout commands listed on Source tab (you will need an SVN client installed on your computer).
