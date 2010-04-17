@@ -158,3 +158,13 @@ This query is equivalent to following SQL query:
 {{{select d3, min(m1), max(m2), count(m3) from testcube where d1 = 1 group by d3;}}}
 
 The result object will contains set of rows. Each row contains list of result values and list of values for columns listed in 'group by' section.
+
+=Future enhancements=
+
+I have a number of ideas for enhancements:
+
+ * dimension tables and hierarchies
+ * query language
+ * user defined functions
+ * advanced analytical functions
+ * performance optimizations, compressions, heuristics, etc.
