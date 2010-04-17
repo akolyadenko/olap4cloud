@@ -18,6 +18,8 @@
 
 [UserGuide#Using_olap4cloud_API Using olap4cloud API]
 
+ * [UserGuide#CubeDescriptor CubeDescriptor]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -82,7 +84,7 @@ The entry point of the olap4cloud API is OLAPEngine class. It provides the metho
 
 ==!CubeDescriptor==
 
-!OLAPEngine methods require !CubeDescriptor object which contains definition of cube properties.
+OLAPEngine methods require !CubeDescriptor object which contains definition of cube properties.
 
 !CubeDescriptor class defines cube and their properties. 
 
