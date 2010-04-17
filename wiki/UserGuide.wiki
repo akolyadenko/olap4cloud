@@ -8,6 +8,10 @@
 
  * [UserGuide#Build_the_code Build the code]
 
+[UserGuide#Installing Installing]
+
+[UserGuide#Prerequisites Prerequisites]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -42,3 +46,12 @@ Other helpful ant targets are:
 - clean - remove all compiled java classes and jars.
 - test.build - build tests
 - test.generate_test_data - generate test data for tests. Data files will be located under test/data directory. 
+
+=Installing=
+
+==Prerequisites==
+
+You need to have Hadoop and HBase up and running on your cluster. 
+
+Additionally olap4cloud intensively uses Hadoop & HBase Map/Reduce facility, so you need to have Hadoop and HBase configured to be able run Map/Reduce jobs against HBase tables. 
+This part can be done using instructions available on the following address: http://hadoop.apache.org/hbase/docs/current/api/org/apache/hadoop/hbase/mapreduce/package-summary.html#classpath
