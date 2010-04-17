@@ -79,3 +79,20 @@ The typical life cycle of cube is:
 Currently olap4cloud provides only the Java API. The client program should have access to Hadoop Map/Reduce facility (i.e. it can be run by 'hadoop jar' command).
 
 The entry point of the olap4cloud API is OLAPEngine class. It provides the methods for cube manipulation and for query execution.
+
+==CubeDescriptor==
+
+OLAPEngine methods require CubeDescriptor object which contains definition of cube properties.
+
+CubeDescriptor class defines cube and their properties. 
+
+The properties of cube defined by CubeDescriptor includes:
+
+ * cube name
+ * data source directory - points to the HDFS directory where loaded into cube data should be located. It is used in ETL process.
+ * measures - measures of fact table. 
+ * dimensions - dimensions of fact table. The order of measures very critical: the measures which are used in queries more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should definitely be located at first place of the dimensions list.
+
+There are two ways to define CubeDescriptor object:
+ * in xml file(recommended way)
+ * in java code
