@@ -111,13 +111,13 @@ The file then can be loaded by one of the following methods:
  * {{{CubeDescriptor.loadFromLocalFS(String filePath)}}}
  * {{{CubeDescriptor.load(InputStream in)}}}
 
-===Initialize CubeDescriptor manually in java code===
+===Initialize !CubeDescriptor manually in java code===
 
-CubeDescriptor can alternatively be initialized in client java code.
+!CubeDescriptor can alternatively be initialized in client java code.
 
 In example following code initialize 'testcube' cube with 3 dimensions and measures.
 
-		CubeDescriptor descr = new CubeDescriptor();
+{{{		CubeDescriptor descr = new CubeDescriptor();
 		descr.setSourceDataDir("/data");
 		descr.setCubeName("testcube");
 		descr.getDimensions().add(new CubeDimension("d1"));
@@ -125,4 +125,4 @@ In example following code initialize 'testcube' cube with 3 dimensions and measu
 		descr.getDimensions().add(new CubeDimension("d3"));
 		descr.getMeasures().add(new CubeMeasure("m1"));
 		descr.getMeasures().add(new CubeMeasure("m2"));
-		descr.getMeasures().add(new CubeMeasure("m3"));
+		descr.getMeasures().add(new CubeMeasure("m3")); }}}
