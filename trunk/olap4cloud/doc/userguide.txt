@@ -37,7 +37,7 @@ Other helpful ant targets are:
 
 3. Installing.
 
-3.1. Prerequesites.
+3.1. Prerequisites.
 
 You need to have Hadoop and HBase up and running on your cluster. 
 
@@ -53,7 +53,7 @@ You need to add olap4cloud.jar to Hadoop classpath, for example you can define H
 4. Main concepts.
 
 The central object of olap4cloud is OLAP cube(http://en.wikipedia.org/wiki/OLAP_cube). In other words the main goals of olap4cloud 
-is to manage and query cubes. Hovewer at this moment olap4cloud doesn't support dimension tables and hierarchies, therefore 
+is to manage and query cubes. However at this moment olap4cloud doesn't support dimension tables and hierarchies, therefore 
 cube is just fact table(http://en.wikipedia.org/wiki/Fact_table) for now. Fact table contains dimensions and measures. 
 At this moment all dimensions can have only java type long and measures should have java type double.
 
@@ -78,8 +78,8 @@ CubeDescriptor class defines cube and their properties.
 The properties of cube defined by CubeDescriptor includes:
 
 - cube name
-- data source directory - points to the HDFS directory where loaded into cube data shouldbe located. It is used 
-during ETL process.
+- data source directory - points to the HDFS directory where loaded into cube data should be located. It is used 
+in ETL process.
 - measures - measures of fact table. 
 - dimensions - dimensions of fact table. The order of measures very critical: the measures which are used in queries 
 more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should 
@@ -125,7 +125,7 @@ In example following code initialize 'testcube' cube with 3 dimensions and measu
 
 5.2.ETL process
 
-olap4cloud has simple ELT functionality implemmented.
+olap4cloud has simple ELT functionality implemented.
 To process the cube you need to call OLAPEngine.generateCube(CubeDescriptor cubeDescriptor) method. 
 Then it will load data from files in source directory to cube. 
 Data files must be formatted using a specific format: 
@@ -137,7 +137,7 @@ order defined in the cube descriptor xml file
 5.3. Query API.
 
 Cube can be queried by OLAPEngine.executeQuery(CubeQuery query, CubeDescriptor cubeDescriptor) method. 
-Following example demonstartes how to construct query:
+Following example demonstrates how to construct query:
 
 		CubeQuery cubeQuery = new CubeQuery();
 		CubeQueryCondition condition = new CubeQueryCondition("d1");
