@@ -14,7 +14,7 @@
   * [UserGuide#Defining_CubeDescriptor_in_xml_file Defining CubeDescriptor in xml file]
   * [UserGuide#Initialize_CubeDescriptor_manually_in_java_code Initialize CubeDescriptor manually in java code]
   * [UserGuide#ETL_process ETL process]
-
+ * [UserGuide#Query_API Query API]
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -139,3 +139,22 @@ Data files must be formatted using a specific format:
  * rows must be delimited by '\n'
  * values in rows must be delimited by '\t'
  * each row must first contain dimension values in order defined in the cube descriptor xml file and then measures values in order defined in the cube descriptor xml file
+
+==Query API==
+
+Cube can be queried using {{{OLAPEngine.executeQuery(CubeQuery query, CubeDescriptor cubeDescriptor)}}} method. 
+Following example demonstrates how to construct query:
+{{{
+CubeQuery cubeQuery = new CubeQuery();
+CubeQueryCondition condition = new CubeQueryCondition("d1");
+condition.getDimensionValues().add(1l);
+cubeQuery.getConditions().add(condition);
+cubeQuery.getAggregates().add(new CubeQueryAggregate("min(m1)"));
+cubeQuery.getAggregates().add(new CubeQueryAggregate("max(m2)"));
+cubeQuery.getAggregates().add(new CubeQueryAggregate("count(m3)"));
+cubeQuery.getGroupBy().add("d3");
+}}}		
+This query is equivalent to following SQL query: 
+{{{select d3, min(m1), max(m2), count(m3) from testcube where d1 = 1 group by d3;}}}
+
+The result object will contains set of rows. Each row contains list of result values and list of values for columns listed in 'group by' section.
