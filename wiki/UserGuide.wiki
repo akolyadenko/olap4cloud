@@ -16,6 +16,8 @@
 
 [UserGuide#Main_concepts Main concepts]
 
+[UserGuide#Using_olap4cloud_API Using olap4cloud API]
+
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
@@ -71,3 +73,9 @@ The central object of olap4cloud is OLAP cube(http://en.wikipedia.org/wiki/OLAP_
 The typical life cycle of cube is:
  * Load data to cube using ETL module.
  * Perform queries against the cube.
+
+=Using olap4cloud API=
+
+Currently olap4cloud provides only the Java API. The client program should have access to Hadoop Map/Reduce facility (i.e. it can be run by 'hadoop jar' command).
+
+The entry point of the olap4cloud API is OLAPEngine class. It provides the methods for cube manipulation and for query execution.
