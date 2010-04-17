@@ -80,19 +80,19 @@ Currently olap4cloud provides only the Java API. The client program should have 
 
 The entry point of the olap4cloud API is OLAPEngine class. It provides the methods for cube manipulation and for query execution.
 
-==CubeDescriptor==
+==!CubeDescriptor==
 
-OLAPEngine methods require CubeDescriptor object which contains definition of cube properties.
+!OLAPEngine methods require !CubeDescriptor object which contains definition of cube properties.
 
-CubeDescriptor class defines cube and their properties. 
+!CubeDescriptor class defines cube and their properties. 
 
-The properties of cube defined by CubeDescriptor includes:
+The properties of cube defined by !CubeDescriptor includes:
 
  * cube name
  * data source directory - points to the HDFS directory where loaded into cube data should be located. It is used in ETL process.
  * measures - measures of fact table. 
  * dimensions - dimensions of fact table. The order of measures very critical: the measures which are used in queries more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should definitely be located at first place of the dimensions list.
 
-There are two ways to define CubeDescriptor object:
+There are two ways to define !CubeDescriptor object:
  * in xml file(recommended way)
  * in java code
