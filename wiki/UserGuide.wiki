@@ -10,7 +10,7 @@
 
 [UserGuide#Installing Installing]
 
-[UserGuide#Prerequisites Prerequisites]
+ * [UserGuide#Prerequisites Prerequisites]
 
 =What is olap4cloud=
 
