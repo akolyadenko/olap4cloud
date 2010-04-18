@@ -18,7 +18,7 @@
 [UserGuide#Future_enhancements Future enhancements]
 =What is olap4cloud=
 
-olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP-like queries containing grouping and aggregations.
+olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP queries containing grouping and aggregations.
 
 The typical query which can be served by olap4cloud looks like following: 
 
@@ -49,7 +49,7 @@ After build is done you will see the olap4cloud.jar file in the root directory o
 Other helpful ant targets are:
 - clean - remove all compiled java classes and jars.
 - test.build - build tests
-- test.generate_test_data - generate test data for tests. Data files will be located under test/data directory. 
+- test.generate_test_data - generate test data the for tests. Data files will be located under test/data directory. 
 
 =Installing=
 
@@ -57,7 +57,7 @@ Other helpful ant targets are:
 
 You need to have Hadoop and HBase up and running on your cluster. 
 
-Additionally olap4cloud intensively uses Hadoop & HBase Map/Reduce facility, so you need to have Hadoop and HBase configured to be able run Map/Reduce jobs against HBase tables. 
+Additionally olap4cloud intensively uses Hadoop & HBase Map/Reduce facility, so you need to have Hadoop and HBase configured to be able to run Map/Reduce jobs against HBase tables. 
 This part can be done using instructions available on the following address: http://hadoop.apache.org/hbase/docs/current/api/org/apache/hadoop/hbase/mapreduce/package-summary.html#classpath
 
 ==Installing olap4cloud==
@@ -68,7 +68,7 @@ You need to add olap4cloud.jar to Hadoop classpath, for example you can define H
 
 The central object of olap4cloud is OLAP cube(http://en.wikipedia.org/wiki/OLAP_cube). In other words the main goals of olap4cloud is to manage and query cubes. However at this moment olap4cloud doesn't support dimension tables and hierarchies, therefore cube is just fact table(http://en.wikipedia.org/wiki/Fact_table) for now. Fact table contains dimensions and measures. At this moment all dimensions can have only java type long and measures should have java type double.
 
-The typical life cycle of cube is:
+The typical life cycle of the cube is:
  * Load data to cube using ETL module.
  * Perform queries against the cube.
 
@@ -84,12 +84,12 @@ OLAPEngine methods require !CubeDescriptor object which contains definition of c
 
 !CubeDescriptor class defines cube and their properties. 
 
-The properties of cube defined by !CubeDescriptor includes:
+The properties of cube defined by !CubeDescriptor include:
 
  * cube name
  * data source directory - points to the HDFS directory where loaded into cube data should be located. It is used in ETL process.
  * measures - measures of fact table. 
- * dimensions - dimensions of fact table. The order of measures very critical: the measures which are used in queries more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should definitely be located at first place of the dimensions list.
+ * dimensions - dimensions of fact table. The order of measures very critical: the dimensions which are used in queries more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should definitely be located at first place of the dimensions list.
 
 There are two ways to define !CubeDescriptor object:
  * in xml file(recommended way)
@@ -117,7 +117,7 @@ The file then can be loaded by one of the following methods:
 
 !CubeDescriptor can alternatively be initialized in client java code.
 
-In example following code initialize 'testcube' cube with 3 dimensions and measures.
+In example following code initializes 'testcube' cube with 3 dimensions and measures.
 
 {{{
 CubeDescriptor descr = new CubeDescriptor();
@@ -134,7 +134,7 @@ descr.getMeasures().add(new CubeMeasure("m3"));
 ===ETL process===
 
 olap4cloud has simple ELT functionality implemented.
-To process the cube you need to call {{{OLAPEngine.generateCube(CubeDescriptor cubeDescriptor) method}}}. 
+To process the cube you need to call {{{OLAPEngine.generateCube(CubeDescriptor cubeDescriptor)}}} method. 
 Then it will load data from files in source directory to cube. 
 Data files must be formatted using a specific format: 
  * rows must be delimited by '\n'
