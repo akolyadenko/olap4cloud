@@ -127,11 +127,13 @@ public class GenerateAggregationCubeMR {
 
 		static Logger logger = Logger.getLogger(GenerateAggregationCubeCombiner.class);
 		
-		Map<byte[], List<CubeScanAggregate>> aggregatesByColumn = new HashMap<byte[], List<CubeScanAggregate>>();
+		Map<String, List<CubeScanAggregate>> aggregatesByColumn = new HashMap<String, List<CubeScanAggregate>>();
 		
 		AggregationCubeDescriptor aggCube;
 		
 		Pair<byte[], byte[]> columns[];
+		
+		String sColumns[];
 		
 		byte outValue[];
 		
@@ -148,20 +150,21 @@ public class GenerateAggregationCubeMR {
 				CubeDescriptor dataCube = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_DATA_CUBE_DESCRIPTOR));
 				for(CubeScanAggregate aggregate: aggCube.getAggregates()) {
-					byte columnName[] = Bytes.toBytes(aggregate.getColumnName());
-					List<CubeScanAggregate> aggregates = aggregatesByColumn.get(columnName);
+					List<CubeScanAggregate> aggregates = aggregatesByColumn.get(aggregate.getColumnName());
 					if(aggregates == null) {
 						aggregates = new ArrayList<CubeScanAggregate>();
-						aggregatesByColumn.put(columnName, aggregates);
+						aggregatesByColumn.put(aggregate.getColumnName(), aggregates);
 					}
 					aggregates.add(aggregate);
 				}
 				columns = new Pair[dataCube.getMeasures().size()];
+				sColumns = new String[dataCube.getMeasures().size()];
 				for(int i = 0; i < dataCube.getMeasures().size(); i ++) {
 					String measureName = dataCube.getMeasures().get(i).getName();
 					columns[i] = new Pair<byte[], byte[]>(
 							Bytes.toBytes(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + measureName), 
 							Bytes.toBytes(measureName));
+					sColumns[i] = measureName;
 				}
 				outN = aggCube.getAggregates().size();
 				outValue = new byte[outN * 8];
@@ -181,7 +184,7 @@ public class GenerateAggregationCubeMR {
 				for(int i = 0; i < columns.length; i ++) {
 					double measureValue = Bytes.toDouble(value.getValue(columns[i].getFirst()
 							, columns[i].getSecond()));
-					for(CubeScanAggregate aggregate: aggregatesByColumn.get(columns[i].getSecond())) 
+					for(CubeScanAggregate aggregate: aggregatesByColumn.get(sColumns[i])) 
 						aggregate.collect(measureValue);
 				}
 			}
