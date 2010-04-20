@@ -51,6 +51,7 @@ public class GenerateAggregationCubeMR {
 					DataUtils.objectToString(dataCube));
 			job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_AGG_CUBE_DESCRIPTOR, 
 					DataUtils.objectToString(aggCube));
+			job.waitForCompletion(true);
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new OLAPEngineException(e);
