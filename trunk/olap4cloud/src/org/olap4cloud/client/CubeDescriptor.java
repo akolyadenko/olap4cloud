@@ -200,7 +200,7 @@ public class CubeDescriptor implements Serializable {
 		if(aggregationCubes != null)
 			return;
 		aggregationCubes = new ArrayList<CubeDescriptor>();
-		for(int i = getDimensions().size(); i > 0; i ++) {
+		for(int i = getDimensions().size(); i > 0; i --) {
 			List<Integer> dimensionIndexes = new ArrayList<Integer>();
 			for(int curDimension = 0; curDimension <= getDimensions().size(); curDimension ++)
 				generateAggregationCubesWithNumberOfDimensions(i, curDimension, dimensionIndexes);
