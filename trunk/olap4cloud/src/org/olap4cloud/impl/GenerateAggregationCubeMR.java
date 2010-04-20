@@ -145,7 +145,7 @@ public class GenerateAggregationCubeMR {
 			try {
 				aggCube = (AggregationCubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 					.get(OLAPEngineConstants.JOB_CONF_PROP_AGG_CUBE_DESCRIPTOR));
-				CubeDescriptor dataCube = (AggregationCubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
+				CubeDescriptor dataCube = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_DATA_CUBE_DESCRIPTOR));
 				for(CubeScanAggregate aggregate: aggCube.getAggregates()) {
 					byte columnName[] = Bytes.toBytes(aggregate.getColumnName());
