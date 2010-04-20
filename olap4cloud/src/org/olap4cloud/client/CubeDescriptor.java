@@ -33,6 +33,10 @@ public class CubeDescriptor implements Serializable {
 	List<CubeMeasure> measures = new ArrayList<CubeMeasure>();
 	
 	List<CubeDimension> dimensions = new ArrayList<CubeDimension>();
+	
+	List<CubeDescriptor> aggregationCubes = null;
+	
+	int aggregationsCount = -1;
 
 	public List<CubeMeasure> getMeasures() {
 		return measures;
@@ -70,6 +74,18 @@ public class CubeDescriptor implements Serializable {
 
 	public void setSourceDataDir(String sourceDataDir) {
 		this.sourceDataDir = sourceDataDir;
+	}
+	
+	public int getAggregationsCount() {
+		return aggregationsCount;
+	}
+
+	public void setAggregationsCount(int aggregationsCount) {
+		this.aggregationsCount = aggregationsCount;
+	}
+	
+	public String getCubeName() {
+		return cubeName;
 	}
 	
 	@Override
@@ -147,6 +163,8 @@ public class CubeDescriptor implements Serializable {
 				throw new OLAPEngineException("Bad configuration file: <cube> element does not have 'sourcePath' " +
 						"attribute");
 			setSourceDataDir(sourcePath);
+			String sAggregationsCount = root.getAttribute("aggregationsCount");
+			setAggregationsCount(Integer.parseInt(sAggregationsCount));
 			NodeList dimensions = root.getElementsByTagName("dimension");
 			for(int i = 0; i < dimensions.getLength(); i ++) {
 				Element dimension = (Element)dimensions.item(i);
@@ -169,5 +187,52 @@ public class CubeDescriptor implements Serializable {
 			logger.error(e.getMessage(), e);
 			throw new OLAPEngineException(e);
 		}
+	}
+	
+	public List<CubeDescriptor> getAggregationCubes() {
+		if(aggregationCubes == null)
+			initAggregationCubes();
+		return aggregationCubes;
+	}
+
+	private synchronized void initAggregationCubes() {
+		String methodName = "initAggregationCubes() ";
+		if(aggregationCubes != null)
+			return;
+		aggregationCubes = new ArrayList<CubeDescriptor>();
+		for(int i = getDimensions().size(); i > 0; i ++) {
+			List<Integer> dimensionIndexes = new ArrayList<Integer>();
+			for(int curDimension = 0; curDimension <= getDimensions().size(); curDimension ++)
+				generateAggregationCubesWithNumberOfDimensions(i, curDimension, dimensionIndexes);
+		}
+		if(logger.isDebugEnabled()) {
+			StringBuilder sb = new StringBuilder();
+			for(CubeDescriptor descr: getAggregationCubes())
+				sb.append(" ").append(descr.getCubeName());
+			logger.debug(methodName + "generated aggregation cubes: " + sb.toString());
+		}
+	}
+
+	private void generateAggregationCubesWithNumberOfDimensions(int numberOfDimensions,
+			int curDimension, List<Integer> dimensionIndexes) {
+		if(curDimension >= getDimensions().size())
+			return;
+		dimensionIndexes.add(curDimension);
+		if(dimensionIndexes.size() == numberOfDimensions) {
+			CubeDescriptor aggCubeDescriptor = new CubeDescriptor();
+			StringBuilder aggCubeName = new StringBuilder(getCubeName());
+			aggCubeName.append("_aggregate");
+			aggCubeDescriptor.setMeasures(getMeasures());
+			for(int i: dimensionIndexes)
+				aggCubeDescriptor.getDimensions().add(new CubeDimension(getDimensions().get(i).getName()));
+			for(CubeDimension dimension: aggCubeDescriptor.getDimensions())
+				aggCubeName.append("_" + dimension.getName());
+			aggCubeDescriptor.setCubeName(aggCubeName.toString());
+			getAggregationCubes().add(aggCubeDescriptor);
+			return;
+		}
+		for(int nextDimension = curDimension + 1; nextDimension < getDimensions().size(); nextDimension ++)
+			generateAggregationCubesWithNumberOfDimensions(nextDimension, curDimension, dimensionIndexes);
+		dimensionIndexes.remove(dimensionIndexes.size() - 1);
 	}
 }
