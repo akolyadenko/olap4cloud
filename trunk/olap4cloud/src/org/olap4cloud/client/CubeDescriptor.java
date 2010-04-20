@@ -232,7 +232,7 @@ public class CubeDescriptor implements Serializable {
 			return;
 		}
 		for(int nextDimension = curDimension + 1; nextDimension < getDimensions().size(); nextDimension ++)
-			generateAggregationCubesWithNumberOfDimensions(nextDimension, curDimension, dimensionIndexes);
+			generateAggregationCubesWithNumberOfDimensions(numberOfDimensions, nextDimension, dimensionIndexes);
 		dimensionIndexes.remove(dimensionIndexes.size() - 1);
 	}
 }
