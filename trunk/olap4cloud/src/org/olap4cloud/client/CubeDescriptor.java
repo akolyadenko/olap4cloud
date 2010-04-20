@@ -229,10 +229,11 @@ public class CubeDescriptor implements Serializable {
 				aggCubeName.append("_" + dimension.getName());
 			aggCubeDescriptor.setCubeName(aggCubeName.toString());
 			getAggregationCubes().add(aggCubeDescriptor);
+			dimensionIndexes.remove(dimensionIndexes.size() - 1);
 			return;
 		}
 		for(int nextDimension = curDimension + 1; nextDimension < getDimensions().size(); nextDimension ++)
 			generateAggregationCubesWithNumberOfDimensions(numberOfDimensions, nextDimension, dimensionIndexes);
-		dimensionIndexes.remove(curDimension); //(dimensionIndexes.size() - 1);
+		dimensionIndexes.remove(dimensionIndexes.size() - 1);
 	}
 }
