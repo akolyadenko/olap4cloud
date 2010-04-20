@@ -215,6 +215,8 @@ public class CubeDescriptor implements Serializable {
 
 	private void generateAggregationCubesWithNumberOfDimensions(int numberOfDimensions,
 			int curDimension, List<Integer> dimensionIndexes) {
+		if(getAggregationsCount() != -1 && getAggregationCubes().size() == getAggregationsCount())
+			return;
 		if(curDimension >= getDimensions().size())
 			return;
 		dimensionIndexes.add(curDimension);
