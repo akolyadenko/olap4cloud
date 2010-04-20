@@ -137,6 +137,7 @@ public class CubeDescriptor implements Serializable {
 	}
 	
 	public void load(InputStream in) throws OLAPEngineException {
+		String methodName = "load() ";
 		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 					.newInstance();
@@ -164,6 +165,9 @@ public class CubeDescriptor implements Serializable {
 						"attribute");
 			setSourceDataDir(sourcePath);
 			String sAggregationsCount = root.getAttribute("aggregationsCount");
+			if(sAggregationsCount == null)
+				throw new OLAPEngineException("Bad configuration file: <cube> element does not have 'aggregationsCount' " +
+						"attribute");
 			setAggregationsCount(Integer.parseInt(sAggregationsCount));
 			NodeList dimensions = root.getElementsByTagName("dimension");
 			for(int i = 0; i < dimensions.getLength(); i ++) {
