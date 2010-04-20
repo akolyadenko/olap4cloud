@@ -20,7 +20,11 @@ public abstract class CubeScanAggregate implements Serializable {
 	
 	Pair<byte[], byte[]> column;
 	
+	String aggregateName;
+	
 	int columnNumber = -1;
+	
+	String columnName;
 	
 	public void setColumnNumber(int columnNumber) {
 		this.columnNumber = columnNumber;
@@ -29,12 +33,12 @@ public abstract class CubeScanAggregate implements Serializable {
 	public CubeScanAggregate(String aggregate, CubeDescriptor cubeDescriptor) throws OLAPEngineException {
 		String methodName = "constructor() ";
 		StringTokenizer st = new StringTokenizer(aggregate, "()", false);
-		st.nextToken();
+		aggregateName = st.nextToken();
 		String measureName = st.nextToken();
 		for(CubeMeasure measure: cubeDescriptor.getMeasures()) {
 			if(measureName.equals(measure.getName())) {
 				String family = OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + measure.getName();
-				String columnName = measure.getName();
+				columnName = measure.getName();
 				if(logger.isDebugEnabled()) logger.debug(methodName + "family =  " + family + " columnName = "
 						+ columnName);
 				column = new Pair<byte[], byte[]>(Bytes.toBytes(family), Bytes.toBytes(columnName));
@@ -44,6 +48,14 @@ public abstract class CubeScanAggregate implements Serializable {
 		if(column == null)
 			throw new OLAPEngineException("Invalid measure in " + aggregate);
 		reset();
+	}
+	
+	public String getAggregateName() {
+		return aggregateName;
+	}
+
+	public String getColumnName() {
+		return columnName;
 	}
 	
 	public Pair<byte[], byte[]> getColumn() {

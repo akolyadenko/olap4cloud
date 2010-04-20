@@ -12,7 +12,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.olap4cloud.impl.AggregationCubeDescriptor;
+import org.olap4cloud.impl.CubeScanAggregate;
 import org.olap4cloud.impl.OLAPEngineConstants;
+import org.olap4cloud.impl.aggr.CountCubeScanAggregate;
+import org.olap4cloud.impl.aggr.MaxCubeScanAggregate;
+import org.olap4cloud.impl.aggr.MinCubeScanAggregate;
+import org.olap4cloud.impl.aggr.SumCubeScanAggregate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,7 +40,7 @@ public class CubeDescriptor implements Serializable {
 	
 	List<CubeDimension> dimensions = new ArrayList<CubeDimension>();
 	
-	List<CubeDescriptor> aggregationCubes = null;
+	List<AggregationCubeDescriptor> aggregationCubes = null;
 	
 	int aggregationsCount = -1;
 
@@ -193,17 +199,17 @@ public class CubeDescriptor implements Serializable {
 		}
 	}
 	
-	public List<CubeDescriptor> getAggregationCubes() {
+	public List<AggregationCubeDescriptor> getAggregationCubes() throws OLAPEngineException {
 		if(aggregationCubes == null)
 			initAggregationCubes();
 		return aggregationCubes;
 	}
 
-	private synchronized void initAggregationCubes() {
+	private synchronized void initAggregationCubes() throws OLAPEngineException {
 		String methodName = "initAggregationCubes() ";
 		if(aggregationCubes != null)
 			return;
-		aggregationCubes = new ArrayList<CubeDescriptor>();
+		aggregationCubes = new ArrayList<AggregationCubeDescriptor>();
 		for(int i = getDimensions().size(); i > 0; i --) {
 			List<Integer> dimensionIndexes = new ArrayList<Integer>();
 			for(int curDimension = 0; curDimension <= getDimensions().size(); curDimension ++)
@@ -218,17 +224,29 @@ public class CubeDescriptor implements Serializable {
 	}
 
 	private void generateAggregationCubesWithNumberOfDimensions(int numberOfDimensions,
-			int curDimension, List<Integer> dimensionIndexes) {
+			int curDimension, List<Integer> dimensionIndexes) throws OLAPEngineException {
 		if(getAggregationsCount() != -1 && getAggregationCubes().size() == getAggregationsCount())
 			return;
 		if(curDimension >= getDimensions().size())
 			return;
 		dimensionIndexes.add(curDimension);
 		if(dimensionIndexes.size() == numberOfDimensions) {
-			CubeDescriptor aggCubeDescriptor = new CubeDescriptor();
+			AggregationCubeDescriptor aggCubeDescriptor = new AggregationCubeDescriptor();
 			StringBuilder aggCubeName = new StringBuilder(getCubeName());
 			aggCubeName.append("_aggregate");
-			aggCubeDescriptor.setMeasures(getMeasures());
+			for(CubeMeasure measure: getMeasures()) {
+				aggCubeDescriptor.getAggregates().add(new SumCubeScanAggregate("sum(" + measure.getName() + 
+						")", this));
+				aggCubeDescriptor.getAggregates().add(new MinCubeScanAggregate("min(" + measure.getName() + 
+						")", this));
+				aggCubeDescriptor.getAggregates().add(new MaxCubeScanAggregate("max(" + measure.getName() + 
+						")", this));
+				aggCubeDescriptor.getAggregates().add(new CountCubeScanAggregate("count(" + measure.getName() + 
+						")", this));
+			}
+			for(CubeScanAggregate aggregate: aggCubeDescriptor.getAggregates()) 
+				aggCubeDescriptor.getMeasures().add(new CubeMeasure(aggregate.getColumnName() + 
+						"_" + aggregate.getAggregateName()));
 			for(int i: dimensionIndexes)
 				aggCubeDescriptor.getDimensions().add(new CubeDimension(getDimensions().get(i).getName()));
 			for(CubeDimension dimension: aggCubeDescriptor.getDimensions())
