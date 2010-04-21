@@ -43,7 +43,7 @@ public class GenerateAggregationCubeMR {
 			scan.setCaching(1000);
 			TableMapReduceUtil.initTableMapperJob(dataCube.getCubeDataTable(),
 					scan, GenerateAggregationCubeMapper.class,
-					ImmutableBytesWritable.class, ImmutableBytesWritable.class, job);
+					ImmutableBytesWritable.class, Result.class, job);
 			TableMapReduceUtil.initTableReducerJob(aggCube.getCubeDataTable()
 					, GenerateAggregationCubeReducer.class, job);
 			job.setCombinerClass(GenerateAggregationCubeCombiner.class);
