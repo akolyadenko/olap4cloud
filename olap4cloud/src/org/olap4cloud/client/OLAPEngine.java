@@ -2,7 +2,10 @@ package org.olap4cloud.client;
 
 import java.io.EOFException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Get;
@@ -44,13 +47,61 @@ public class OLAPEngine {
 		try {
 			if(logger.isDebugEnabled()) logger.debug(methodName + "cubeDescriptor = " 
 					+ cubeDescriptor.toString());
-			CubeScan scan = getCubeScan(query, cubeDescriptor);
-			return CubeScanMR.scan(scan, cubeDescriptor);
+			List<String> usedDimensions = getUsedDimensions(query);
+			AggregationCubeDescriptor aggCube = getBestAggregationCube(usedDimensions, cubeDescriptor);
+			if(aggCube == null) {
+				if(logger.isDebugEnabled()) logger.debug(methodName + "can't find aggregation cube. " +
+						"Use data cube instead");
+				CubeScan scan = getCubeScan(query, cubeDescriptor);
+				return CubeScanMR.scan(scan, cubeDescriptor);
+			} else {
+				if(logger.isDebugEnabled()) logger.debug(methodName + " use aggregation cube " 
+						+ aggCube.getCubeName());
+				aggregateMeasures(query);
+				CubeScan scan = getCubeScan(query, aggCube);
+				return CubeScanMR.scan(scan, aggCube);
+			}
 		} catch(Exception e) {
 			throw new OLAPEngineException(e);
 		}
 	}
 	
+	private void aggregateMeasures(CubeQuery query) {
+		for(CubeQueryAggregate aggr: query.getAggregates()) {
+			StringTokenizer st = new StringTokenizer(aggr.getAggregate(), "()", false);
+			String op = st.nextToken();
+			String name = st.nextToken();
+			aggr.setAggregate(op + "(" + name + "_" + op + ")");
+		}
+	}
+
+	private AggregationCubeDescriptor getBestAggregationCube(
+			List<String> usedDimensions, CubeDescriptor dataCube) throws Exception {
+		AggregationCubeDescriptor bestAggCube = null;
+		for(AggregationCubeDescriptor aggCube: dataCube.getAggregationCubes()) {
+			boolean dimNotFound = false;
+			for(String dimName: usedDimensions) 
+				if(!aggCube.containsDimensions(dimName)) {
+					dimNotFound = true;
+					break;
+				}
+			if(!dimNotFound && (bestAggCube == null || bestAggCube.getDimensions().size() 
+					> aggCube.getDimensions().size())) 
+				bestAggCube = aggCube;
+		}
+		return bestAggCube;
+	}
+
+	private List<String> getUsedDimensions(CubeQuery query) {
+		Set<String> dims = new HashSet<String>();
+		dims.addAll(query.getGroupBy());
+		for(CubeQueryCondition condition: query.getConditions()) 
+			dims.add(condition.getDimensionName());
+		List<String> ret = new ArrayList<String>();
+		ret.addAll(dims);
+		return ret;
+	}
+
 	private CubeScan getCubeScan(CubeQuery query, CubeDescriptor cubeDescriptor) throws Exception{
 		String methodName  = "getCubeScan() ";
 		CubeScan scan = new CubeScan();
