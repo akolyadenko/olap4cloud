@@ -76,25 +76,34 @@ public class GenerateAggregationCubeMR {
 		admin.createTable(tableDescr);
 	}
 
-	public static class GenerateAggregationCubeMapper extends TableMapper<ImmutableBytesWritable, Result> {
+	public static class GenerateAggregationCubeMapper extends TableMapper<ImmutableBytesWritable
+			, ImmutableBytesWritable> {
 		
 		static Logger logger = Logger.getLogger(GenerateAggregationCubeMapper.class);
 		
 		int aggDimensionIndexes[];
 		
-		int keyOutN = 0;
+		int keyOutN;
+		
+		int valueOutN;
 		
 		byte outKey[];
 		
+		byte outValue[];
+		
 		ImmutableBytesWritable outKeyWritable = new ImmutableBytesWritable();
 		
+		ImmutableBytesWritable outValueWritable = new ImmutableBytesWritable();
+		
+		Pair<byte[], byte[]> aggColumns[];
+		
 		protected void setup(org.apache.hadoop.mapreduce.Mapper<ImmutableBytesWritable
-				,org.apache.hadoop.hbase.client.Result,ImmutableBytesWritable,Result>.Context context) 
+				,org.apache.hadoop.hbase.client.Result,ImmutableBytesWritable,ImmutableBytesWritable>.Context context) 
 					throws java.io.IOException ,InterruptedException {
 			try {
 				CubeDescriptor dataCube = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 					.get(OLAPEngineConstants.JOB_CONF_PROP_DATA_CUBE_DESCRIPTOR));
-				CubeDescriptor aggCube = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
+				AggregationCubeDescriptor aggCube = (AggregationCubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_AGG_CUBE_DESCRIPTOR));
 				aggDimensionIndexes = new int[aggCube.getDimensions().size()];
 				for(int i = 0; i < aggDimensionIndexes.length; i ++) {
@@ -108,6 +117,15 @@ public class GenerateAggregationCubeMR {
 				}
 				keyOutN = aggDimensionIndexes.length;
 				outKey = new byte[(keyOutN + 1) * 8];
+				valueOutN = aggCube.getAggregates().size();
+				outValue = new byte[valueOutN * 8];
+				aggColumns = new Pair[valueOutN];
+				for(int i = 0; i < valueOutN; i ++) {
+					String columnName = aggCube.getAggregates().get(i).getColumnName();
+					aggColumns[i] = new Pair<byte[], byte[]>(
+							Bytes.toBytes(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + columnName)
+							, Bytes.toBytes(columnName));
+				}
 			} catch(Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new InterruptedException(e.getMessage());
@@ -116,26 +134,27 @@ public class GenerateAggregationCubeMR {
 		
 		protected void map(ImmutableBytesWritable keyWritable, org.apache.hadoop.hbase.client.Result value
 				, org.apache.hadoop.mapreduce.Mapper<ImmutableBytesWritable,org.apache.hadoop.hbase.client.Result
-				,ImmutableBytesWritable,Result>.Context context) throws java.io.IOException ,InterruptedException {
+				,ImmutableBytesWritable,ImmutableBytesWritable>.Context context) throws java.io.IOException ,InterruptedException {
 			byte key[] = keyWritable.get();
 			for(int i = 0; i < keyOutN; i ++)
 				Bytes.putBytes(outKey, i * 8, key, aggDimensionIndexes[i] * 8, 8);
 			Bytes.putLong(outKey, keyOutN * 8, 0);
 			outKeyWritable.set(outKey);
-			context.write(outKeyWritable, value);
+			for(int i = 0; i < valueOutN; i ++)
+				Bytes.putBytes(outValue, i * 8
+						, value.getValue(aggColumns[i].getFirst(), aggColumns[i].getSecond())
+						, 0, 8);
+			outValueWritable.set(outValue);
+			context.write(outKeyWritable, outValueWritable);
 		};
 	}
 	
 	public static class GenerateAggregationCubeCombiner extends Reducer<ImmutableBytesWritable
-	, org.apache.hadoop.hbase.client.Result, ImmutableBytesWritable, ImmutableBytesWritable> {
+	, ImmutableBytesWritable, ImmutableBytesWritable, ImmutableBytesWritable> {
 
 		static Logger logger = Logger.getLogger(GenerateAggregationCubeCombiner.class);
 		
-		Map<String, List<CubeScanAggregate>> aggregatesByColumn = new HashMap<String, List<CubeScanAggregate>>();
-		
 		AggregationCubeDescriptor aggCube;
-		
-		Pair<byte[], byte[]> columns[];
 		
 		String sColumns[];
 		
@@ -145,7 +164,7 @@ public class GenerateAggregationCubeMR {
 		
 		ImmutableBytesWritable outValueWritable = new ImmutableBytesWritable();
 		
-		protected void setup(org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable,Result
+		protected void setup(org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable,ImmutableBytesWritable
 				,ImmutableBytesWritable,ImmutableBytesWritable>.Context context) 
 				throws java.io.IOException ,InterruptedException {
 			try {
@@ -153,23 +172,6 @@ public class GenerateAggregationCubeMR {
 					.get(OLAPEngineConstants.JOB_CONF_PROP_AGG_CUBE_DESCRIPTOR));
 				CubeDescriptor dataCube = (CubeDescriptor)DataUtils.stringToObject(context.getConfiguration()
 						.get(OLAPEngineConstants.JOB_CONF_PROP_DATA_CUBE_DESCRIPTOR));
-				for(CubeScanAggregate aggregate: aggCube.getAggregates()) {
-					List<CubeScanAggregate> aggregates = aggregatesByColumn.get(aggregate.getColumnName());
-					if(aggregates == null) {
-						aggregates = new ArrayList<CubeScanAggregate>();
-						aggregatesByColumn.put(aggregate.getColumnName(), aggregates);
-					}
-					aggregates.add(aggregate);
-				}
-				columns = new Pair[dataCube.getMeasures().size()];
-				sColumns = new String[dataCube.getMeasures().size()];
-				for(int i = 0; i < dataCube.getMeasures().size(); i ++) {
-					String measureName = dataCube.getMeasures().get(i).getName();
-					columns[i] = new Pair<byte[], byte[]>(
-							Bytes.toBytes(OLAPEngineConstants.DATA_CUBE_MEASURE_FAMILY_PREFIX + measureName), 
-							Bytes.toBytes(measureName));
-					sColumns[i] = measureName;
-				}
 				outN = aggCube.getAggregates().size();
 				outValue = new byte[outN * 8];
 			} catch(Exception e) {
@@ -178,19 +180,15 @@ public class GenerateAggregationCubeMR {
 			}
 		};
 		
-		protected void reduce(ImmutableBytesWritable inKey, java.lang.Iterable<Result> values
+		protected void reduce(ImmutableBytesWritable inKey, java.lang.Iterable<ImmutableBytesWritable> values
 				, org.apache.hadoop.mapreduce.Reducer<ImmutableBytesWritable,Result,ImmutableBytesWritable
 				,ImmutableBytesWritable>.Context context) throws java.io.IOException ,InterruptedException {
 			for(CubeScanAggregate aggregate: aggCube.getAggregates())
 				aggregate.reset();
-			for(Iterator<Result> iterator = values.iterator(); iterator.hasNext(); ) {
-				Result value = iterator.next();
-				for(int i = 0; i < columns.length; i ++) {
-					double measureValue = Bytes.toDouble(value.getValue(columns[i].getFirst()
-							, columns[i].getSecond()));
-					for(CubeScanAggregate aggregate: aggregatesByColumn.get(sColumns[i])) 
-						aggregate.collect(measureValue);
-				}
+			for(Iterator<ImmutableBytesWritable> iterator = values.iterator(); iterator.hasNext(); ) {
+				byte value[] = iterator.next().get();
+				for(int i = 0; i < outN; i ++)
+					aggCube.getAggregates().get(i).collect(Bytes.toDouble(value, i * 8));
 			}
 			for(int i = 0; i < outN; i ++)
 				Bytes.putDouble(outValue, i * 8, aggCube.getAggregates().get(i).getResult());
