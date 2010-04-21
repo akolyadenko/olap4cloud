@@ -212,6 +212,7 @@ public class OLAPEngine {
 		GenerateCubeIndexMR.generate(cubeDescriptor);
 		for(AggregationCubeDescriptor aggCube: cubeDescriptor.getAggregationCubes()) {
 			GenerateAggregationCubeMR.generateCube(aggCube, cubeDescriptor);
+			GenerateCubeIndexMR.generate(aggCube);
 		}
 	}
 }
