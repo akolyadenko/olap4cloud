@@ -260,4 +260,11 @@ public class CubeDescriptor implements Serializable {
 			generateAggregationCubesWithNumberOfDimensions(numberOfDimensions, nextDimension, dimensionIndexes);
 		dimensionIndexes.remove(dimensionIndexes.size() - 1);
 	}
+	
+	public boolean containsDimensions(String dimName) {
+		for(CubeDimension dim: getDimensions())
+			if(dimName.equals(dim.getName()))
+				return true;
+		return false;
+	}
 }
