@@ -70,8 +70,12 @@ public class OLAPEngine {
 		for(CubeQueryAggregate aggr: query.getAggregates()) {
 			StringTokenizer st = new StringTokenizer(aggr.getAggregate(), "()", false);
 			String op = st.nextToken();
+			String op2 = op;
+			if(op.equalsIgnoreCase("count"))
+				op = "sum";
 			String name = st.nextToken();
-			aggr.setAggregate(op + "(" + name + "_" + op + ")");
+			
+			aggr.setAggregate(op + "(" + name + "_" + op2 + ")");
 		}
 	}
 
