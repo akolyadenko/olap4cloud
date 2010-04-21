@@ -47,6 +47,7 @@ public class GenerateAggregationCubeMR {
 			TableMapReduceUtil.initTableReducerJob(aggCube.getCubeDataTable()
 					, GenerateAggregationCubeReducer.class, job);
 			job.setCombinerClass(GenerateAggregationCubeCombiner.class);
+			
 			job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_DATA_CUBE_DESCRIPTOR, 
 					DataUtils.objectToString(dataCube));
 			job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_AGG_CUBE_DESCRIPTOR, 
