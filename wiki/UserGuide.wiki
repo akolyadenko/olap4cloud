@@ -48,9 +48,9 @@ olap4cloud can be built by simply running the "ant" command in the root director
 After build is done you will see the olap4cloud.jar file in the root directory of the project.
 
 Other helpful ant targets are:
-- clean - remove all compiled java classes and jars.
-- test.build - build tests
-- test.generate_test_data - generate test data the for tests. Data files will be located under test/data directory. 
+ * clean - remove all compiled java classes and jars.
+ * test.build - build tests
+ * test.generate_test_data - generate test data the for tests. Data files will be located under test/data directory. 
 
 =Installing=
 
