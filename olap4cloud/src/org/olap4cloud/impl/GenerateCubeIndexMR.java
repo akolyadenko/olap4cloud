@@ -67,7 +67,7 @@ public class GenerateCubeIndexMR {
 				if(logger.isDebugEnabled())
 					logger.debug(methodName + "added entry to index for key " + LogUtils.describe(inKey.get()) 
 							+ " index size is " + index.size() + " indexentry: " + LogUtils.describe(e));
-				if(index.size() > 1000)
+				if(index.size() > 10000)
 					index = reduceIndex(index);
 			}
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -86,7 +86,7 @@ public class GenerateCubeIndexMR {
 		}
 
 		private Set<CubeIndexEntry> reduceIndex(Set<CubeIndexEntry> index) {
-			while(index.size() > 900) {
+			while(index.size() > 9000) {
 				int maxLen = 0;
 				for(CubeIndexEntry e: index) 
 					if(maxLen < e.getLength())
