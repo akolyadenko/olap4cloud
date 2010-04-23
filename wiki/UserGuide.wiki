@@ -91,6 +91,7 @@ The properties of cube defined by !CubeDescriptor include:
  * data source directory - points to the HDFS directory where loaded into cube data should be located. It is used in ETL process.
  * measures - measures of fact table. 
  * dimensions - dimensions of fact table. The order of measures very critical: the dimensions which are used in queries more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should definitely be located at first place of the dimensions list.
+ * number of aggregation cubes - defines how many aggregation cubes will be generated. Each additional cube can significantly increase the preaggregation time. Recommended value is '1'. Another values: '-1' - all possible aggregation cubes will be generated; '0' - no aggregation cubes will be generated. 
 
 There are two ways to define !CubeDescriptor object:
  * in xml file(recommended way)
