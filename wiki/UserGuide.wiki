@@ -101,7 +101,7 @@ There are two ways to define !CubeDescriptor object:
 
 The following xml fragment defines the !CubeDescriptor:
 {{{
-<cube name = "testcube" sourcePath = "/data">
+<cube name = "testcube" sourcePath = "/data" aggregationsCount = "1">
 	<dimension name = "d1"/>
 	<dimension name = "d2"/>
 	<dimension name = "d3"/>
@@ -125,6 +125,7 @@ In example following code initializes 'testcube' cube with 3 dimensions and meas
 CubeDescriptor descr = new CubeDescriptor();
 descr.setSourceDataDir("/data");
 descr.setCubeName("testcube");
+descr.setAggregationsCount(1);
 descr.getDimensions().add(new CubeDimension("d1"));
 descr.getDimensions().add(new CubeDimension("d2"));
 descr.getDimensions().add(new CubeDimension("d3"));
