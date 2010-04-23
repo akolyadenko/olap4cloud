@@ -17,6 +17,10 @@
   * [UserGuide#ETL_process ETL process]
  * [UserGuide#Query_API Query API]
 [UserGuide#Future_enhancements Future enhancements]
+[UserGuide#Performance_benchmarks Performance benchmarks]
+ * [UserGuide#Data_set Data set]
+ * [UserGuide#Hardware Hardware]
+ * [UserGuide#Results Results]
 =What is olap4cloud=
 
 olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP queries containing grouping and aggregations.
