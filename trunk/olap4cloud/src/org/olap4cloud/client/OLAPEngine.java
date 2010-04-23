@@ -263,7 +263,7 @@ public class OLAPEngine {
 	}
 	
 	public void generateCube(CubeDescriptor cubeDescriptor) throws OLAPEngineException {
-//		GenerateCubeMR.generateCube(cubeDescriptor);
+		GenerateCubeMR.generateCube(cubeDescriptor);
 		GenerateCubeIndexMR.generate(cubeDescriptor);
 		for(AggregationCubeDescriptor aggCube: cubeDescriptor.getAggregationCubes()) {
 			GenerateAggregationCubeMR.generateCube(aggCube, cubeDescriptor);
