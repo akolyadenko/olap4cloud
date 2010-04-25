@@ -192,7 +192,7 @@ for(long i = 10; i < 300000000; i ++)
 			+ "\t" + (Math.random() * 10000) + "\n");
 }}}
 
-Briefly the fact table contains 3 dimensions with values in [0..10], [0..100] and [0..10000] ranges and 3 measures with values in [0..100], [0..1000] and [0..10000].
+Briefly the fact table contains 3 dimensions with values in {{{[0..10], [0..100]}}} and {{{[0..10000]}}} ranges and 3 measures with values in {{{[0..100], [0..1000]}}} and {{{[0..10000]}}}.
 Additionally fact table contains 300 millions of rows of generated data.
 
 ==Hardware==
