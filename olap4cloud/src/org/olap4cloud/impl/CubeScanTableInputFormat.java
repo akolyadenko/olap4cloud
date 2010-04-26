@@ -70,8 +70,8 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	private boolean acceptRange(byte[] startRow, byte[] stopRow,
 			CubeScan cubeScan) {
 		for(Pair<byte[], byte[]> range: cubeScan.getRanges()) 
-			if(DataUtils.compareRowKeys(startRow, range.getSecond()) < 0 
-					&& DataUtils.compareRowKeys(stopRow, range.getFirst()) > 0)
+			if(DataUtils.compareRowKeys(startRow, range.getSecond()) <= 0 
+					&& DataUtils.compareRowKeys(stopRow, range.getFirst()) >= 0)
 				return true;
 		return false;
 	}
