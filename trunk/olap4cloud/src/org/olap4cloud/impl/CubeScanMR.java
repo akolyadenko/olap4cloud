@@ -55,7 +55,7 @@ public class CubeScanMR {
 		FileOutputFormat.setOutputPath(job, new Path(outPath));
 		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_DESCRIPTOR
 				, DataUtils.objectToString(cubeDescriptor));
-		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY
+		job.getConfiguration().set(OLAPEngineConstants.JOB_CONF_PROP_CUBE_SCAN
 				, DataUtils.objectToString(scan));
 		job.getConfiguration().setInt("mapred.map.tasks", 10000);
 		job.waitForCompletion(true);
@@ -115,7 +115,7 @@ public class CubeScanMR {
 				,ImmutableBytesWritable>.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
-						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
+						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_SCAN));
 				cubeScanFilter = new CubeScanFilter(cubeScan);
 				outValues = new byte[cubeScan.getColumns().size() * 8];
 				groupBy = cubeScan.getGroupBy();
@@ -178,7 +178,7 @@ public class CubeScanMR {
 				,ImmutableBytesWritable,ImmutableBytesWritable>.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
-						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
+						.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_SCAN));
 				outValues = new byte[cubeScan.getCubeScanAggregates().size() * 8];
 				inValues = new double[cubeScan.getColumns().size()];
 				inN = inValues.length;
@@ -243,7 +243,7 @@ public class CubeScanMR {
 			.Context context) throws IOException ,InterruptedException {
 			try {
 				cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
-					.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_QUERY));
+					.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_SCAN));
 				aggregates = cubeScan.getCubeScanAggregates();
 				inN = aggregates.size();
 				inValues = new double[inN];

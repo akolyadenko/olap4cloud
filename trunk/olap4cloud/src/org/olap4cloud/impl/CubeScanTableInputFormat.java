@@ -11,13 +11,14 @@ import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.log4j.Logger;
+import org.olap4cloud.util.DataUtils;
 
 public class CubeScanTableInputFormat extends TableInputFormat{
 	
 	static Logger logger = Logger.getLogger(CubeScanTableInputFormat.class);
 	
 	@Override
-	public List<InputSplit> getSplits(JobContext arg0) throws IOException {
+	public List<InputSplit> getSplits(JobContext context) throws IOException {
 	    Pair<byte[][], byte[][]> keys = getHTable().getStartEndKeys();
 	    if (keys == null || keys.getFirst() == null || 
 	        keys.getFirst().length == 0) {
@@ -26,6 +27,14 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	    if (getHTable() == null) {
 	      throw new IOException("No table was provided.");
 	    }
+	    CubeScan cubeScan = null;
+	    try {
+	    	cubeScan = (CubeScan)DataUtils.stringToObject(context.getConfiguration()
+	    			.get(OLAPEngineConstants.JOB_CONF_PROP_CUBE_SCAN));
+	    } catch(Exception e) {
+	    	logger.error(e.getMessage(), e);
+	    	throw new IOException(e);
+	    }
 	    int count = 0;
 	    List<InputSplit> splits = new ArrayList<InputSplit>(keys.getFirst().length); 
 	    for (int i = 0; i < keys.getFirst().length; i++) {
@@ -33,6 +42,8 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	        getServerAddress().getHostname();
 	      byte[] startRow = getScan().getStartRow();
 	      byte[] stopRow = getScan().getStopRow();
+	      if(!acceptRange(startRow, stopRow, cubeScan))
+	    	  continue;
 	      // determine if the given start an stop key fall into the region
 	      if ((startRow.length == 0 || keys.getSecond()[i].length == 0 ||
 	           Bytes.compareTo(startRow, keys.getSecond()[i]) < 0) &&
@@ -54,5 +65,14 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	    }
 	    return splits;
 
+	}
+
+	private boolean acceptRange(byte[] startRow, byte[] stopRow,
+			CubeScan cubeScan) {
+		for(Pair<byte[], byte[]> range: cubeScan.getRanges()) 
+			if(DataUtils.compareRowKeys(startRow, range.getSecond()) < 0 
+					&& DataUtils.compareRowKeys(stopRow, range.getFirst()) > 0)
+				return true;
+		return false;
 	}
 }
