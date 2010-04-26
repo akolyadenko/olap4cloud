@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.log4j.Logger;
 import org.olap4cloud.util.DataUtils;
+import org.olap4cloud.util.LogUtils;
 
 public class CubeScanTableInputFormat extends TableInputFormat{
 	
@@ -69,10 +70,16 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 
 	private boolean acceptRange(byte[] startRow, byte[] stopRow,
 			CubeScan cubeScan) {
-		for(Pair<byte[], byte[]> range: cubeScan.getRanges()) 
+		String methodName = "acceptRange() ";
+		for(Pair<byte[], byte[]> range: cubeScan.getRanges()) {
+			if(logger.isDebugEnabled()) logger.debug(methodName + "check startRow = " 
+					+ LogUtils.describe(startRow) + ", stopRow = " + LogUtils.describe(stopRow)
+					+ " and range = [" + LogUtils.describe(range.getFirst()) + ", " 
+					+ LogUtils.describe(range.getSecond()) + "]");
 			if(DataUtils.compareRowKeys(startRow, range.getSecond()) <= 0 
 					&& DataUtils.compareRowKeys(stopRow, range.getFirst()) >= 0)
 				return true;
+		}
 		return false;
 	}
 }
