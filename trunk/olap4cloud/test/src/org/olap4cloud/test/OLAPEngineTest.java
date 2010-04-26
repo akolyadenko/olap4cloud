@@ -19,7 +19,7 @@ public class OLAPEngineTest {
 		CubeDescriptor cubeDescriptor = TestCubeUtils.createTestCubeDescriptor();
 		cubeDescriptor.getAggregationCubes();
 		CubeQuery cubeQuery = new CubeQuery();
-		CubeQueryCondition condition = new CubeQueryCondition("d1");
+		CubeQueryCondition condition = new CubeQueryCondition("d3");
 		condition.getDimensionValues().add(1l);
 		cubeQuery.getConditions().add(condition);
 //		condition = new CubeQueryCondition("d2");
@@ -28,7 +28,7 @@ public class OLAPEngineTest {
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("min(m1)"));
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("max(m2)"));
 		cubeQuery.getAggregates().add(new CubeQueryAggregate("count(m3)"));
-		cubeQuery.getGroupBy().add("d3");
+		cubeQuery.getGroupBy().add("d1");
 		OLAPEngine olapEngine = new OLAPEngine();
 		CubeQueryResult r = olapEngine.executeQuery(cubeQuery, cubeDescriptor);
 		for(CubeQueryResultRow row: r.getRows()) {
