@@ -57,15 +57,40 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	          Bytes.compareTo(keys.getSecond()[i], stopRow) <= 0) &&
 	          keys.getSecond()[i].length > 0 ? 
 	            keys.getSecond()[i] : stopRow;
-	        InputSplit split = new TableSplit(getHTable().getTableName(),
-	          splitStart, splitStop, regionLocation);
-	        splits.add(split);
-	        if (logger.isDebugEnabled()) 
-	          logger.debug("getSplits: split -> " + (count++) + " -> " + split);
+//	        InputSplit split = new TableSplit(getHTable().getTableName(),
+//	          splitStart, splitStop, regionLocation);
+	        splits.addAll(generateSplits(splitStart, splitStop, regionLocation, cubeScan));
+//	        if (logger.isDebugEnabled()) 
+//	          logger.debug("getSplits: split -> " + (count++) + " -> " + split);
 	      }
 	    }
 	    return splits;
 
+	}
+
+	private List<InputSplit> generateSplits(byte[] regionStart, byte[] regionStop,
+			String regionLocation, CubeScan cubeScan) {
+		List<InputSplit> r = new ArrayList<InputSplit>();
+		for(Pair<byte[], byte[]> range: cubeScan.getRanges()) {
+			if(DataUtils.compareRowKeys(regionStart, range.getSecond()) <= 0 
+					&& DataUtils.compareRowKeys(regionStop, range.getFirst()) >= 0) {
+				byte splitStart[] = null;
+				byte splitStop[] = null;
+				if(DataUtils.compareRowKeys(regionStart, range.getFirst()) > 0)
+					splitStart = regionStart;
+				else
+					splitStart = range.getFirst();
+				if(DataUtils.compareRowKeys(regionStop, range.getSecond()) < 0)
+					splitStop = regionStop;
+				else
+					splitStop = range.getSecond();
+				InputSplit split = new TableSplit(getHTable().getTableName(), splitStart, splitStop, regionLocation);
+				r.add(split);
+				if (logger.isDebugEnabled()) 
+			          logger.debug("getSplits: split -> " + split);
+			}
+		}
+		return r;
 	}
 
 	private boolean acceptRange(byte[] startRow, byte[] stopRow,
