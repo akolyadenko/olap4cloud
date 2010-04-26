@@ -47,7 +47,7 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 			}
 		return getLength() - o.getLength();
 	}
-	
+ 	
 	public boolean contain(CubeIndexEntry e) {
 		if(e.length < length)
 			return false;
