@@ -43,7 +43,7 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	        getServerAddress().getHostname();
 	      byte[] startRow = getScan().getStartRow();
 	      byte[] stopRow = getScan().getStopRow();
-	      if(!acceptRange(startRow, stopRow, cubeScan))
+	      if(!acceptRange(keys.getFirst()[i], keys.getSecond()[i], cubeScan))
 	    	  continue;
 	      // determine if the given start an stop key fall into the region
 	      if ((startRow.length == 0 || keys.getSecond()[i].length == 0 ||
