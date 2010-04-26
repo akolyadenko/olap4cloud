@@ -13,7 +13,7 @@ public class MaxCubeScanAggregate extends CubeScanAggregate {
 	
 	@Override
 	public void collect(double v) {
-		if(value == Double.NaN || v > value);
+		if(v > value)
 			value = v;
 	}
 
@@ -24,7 +24,7 @@ public class MaxCubeScanAggregate extends CubeScanAggregate {
 
 	@Override
 	public void reset() {
-		value = Double.NaN;
+		value = Double.NEGATIVE_INFINITY;
 	}
 
 }
