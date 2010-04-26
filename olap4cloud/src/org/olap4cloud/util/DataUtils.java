@@ -8,9 +8,13 @@ import java.io.ObjectOutputStream;
 
 import org.apache.hadoop.hbase.util.Base64;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.log4j.Logger;
 
 
 public class DataUtils {
+	
+	static Logger logger = Logger.getLogger(DataUtils.class);
+	
 	public static byte[] pack(long l[]) {
 		byte r[] = new byte[l.length * 8];
 		for(int i = 0; i < l.length; i ++)
@@ -49,9 +53,15 @@ public class DataUtils {
 	}
 	
 	public static int compareRowKeys(byte b1[], byte b2[]) {
+		String methodName = "compareRowKeys() ";
 		for(int i = 0; i < b1.length && i < b2.length; i ++)
-			if(b1[i] != b2[i])
+			if(b1[i] != b2[i]) {
+				if(logger.isDebugEnabled()) logger.debug(methodName + "b1[" + i + "] = " + b1[i]
+				         + " != b2[" + i + "]  = " + b2[i]);
 				return b1[i] - b2[i];
+			}
+		if(logger.isDebugEnabled()) logger.debug(methodName + "b1.length = " + b1.length + " != "
+				+ " b2.length = " + b2.length);
 		return b1.length - b2.length;
 	}
 }
