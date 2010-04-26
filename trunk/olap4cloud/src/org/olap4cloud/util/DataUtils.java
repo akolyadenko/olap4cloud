@@ -53,7 +53,7 @@ public class DataUtils {
 	}
 	
 	public static int compareRowKeys(byte b1[], byte b2[]) {
-		String methodName = "compareRowKeys() ";
+/*		String methodName = "compareRowKeys() ";
 		for(int i = 0; i < b1.length && i < b2.length; i ++)
 			if(b1[i] != b2[i]) {
 				if(logger.isDebugEnabled()) logger.debug(methodName + "b1[" + i + "] = " + b1[i]
@@ -62,6 +62,7 @@ public class DataUtils {
 			}
 		if(logger.isDebugEnabled()) logger.debug(methodName + "b1.length = " + b1.length + " != "
 				+ " b2.length = " + b2.length);
-		return b1.length - b2.length;
+		return b1.length - b2.length; */
+		return Bytes.compareTo(b1, b2);
 	}
 }

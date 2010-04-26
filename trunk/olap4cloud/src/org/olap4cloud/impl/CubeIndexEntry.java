@@ -5,6 +5,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Comparator;
 
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Writable;
 import org.apache.log4j.Logger;
 import org.olap4cloud.util.LogUtils;
@@ -41,11 +42,12 @@ public class CubeIndexEntry implements Writable, Comparable<CubeIndexEntry> {
 
 	@Override
 	public int compareTo(CubeIndexEntry o) {
-		for(int i = 0; i < o.getLength() && i < getLength(); i ++) 
+/*		for(int i = 0; i < o.getLength() && i < getLength(); i ++) 
 			if(getData()[i] != o.getData()[i]) {
 				return getData()[i] - o.getData()[i];
 			}
-		return getLength() - o.getLength();
+		return getLength() - o.getLength(); */
+		return Bytes.compareTo(getData(), o.getData());
 	}
  	
 	public boolean contain(CubeIndexEntry e) {
