@@ -17,8 +17,10 @@ public class MinCubeScanAggregate extends CubeScanAggregate {
 	
 	@Override
 	public void collect(double v) {
+		if(logger.isDebugEnabled()) logger.debug("collect() v = " + v + " value = " + value);
 		if(value == Double.NaN || v < value)
 			value = v;
+		if(logger.isDebugEnabled()) logger.debug("collect() after aggregation v = " + v + " value = " + value);
 	}
 
 	@Override
