@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableSplit;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.log4j.Logger;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
@@ -108,5 +112,13 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 		}
 		if(logger.isDebugEnabled()) logger.debug(methodName + "start and stop rows don't match any range.");
 		return false;
+	}
+	
+	@Override
+	public RecordReader<ImmutableBytesWritable, Result> createRecordReader(
+			InputSplit split, TaskAttemptContext context) throws IOException {
+		String methodName = "createRecordReader() ";
+		logger.debug(methodName + "split = " +  split);
+		return super.createRecordReader(split, context);
 	}
 }
