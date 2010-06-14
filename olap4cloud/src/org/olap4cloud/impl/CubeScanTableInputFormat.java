@@ -61,12 +61,12 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	          Bytes.compareTo(keys.getSecond()[i], stopRow) <= 0) &&
 	          keys.getSecond()[i].length > 0 ? 
 	            keys.getSecond()[i] : stopRow;
-//	        InputSplit split = new TableSplit(getHTable().getTableName(),
-//	          splitStart, splitStop, regionLocation);
-//	        splits.add(split);
-//	        if (logger.isDebugEnabled()) 
-//	          logger.debug("getSplits: split -> " + (count++) + " -> " + split);
-	        splits.addAll(generateSplits(splitStart, splitStop, regionLocation, cubeScan));	      
+	        InputSplit split = new TableSplit(getHTable().getTableName(),
+	          splitStart, splitStop, regionLocation);
+	        splits.add(split);
+	        if (logger.isDebugEnabled()) 
+	          logger.debug("getSplits: split -> " + (count++) + " -> " + split);
+//	        splits.addAll(generateSplits(splitStart, splitStop, regionLocation, cubeScan));	      
 	      }
 	    }
 	    return splits;
