@@ -3,6 +3,7 @@ package org.olap4cloud.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -36,7 +37,7 @@ public class DataUtils {
 		return r;
 	}
 	
-	public static String objectToString(Object o) throws Exception {
+	public static String objectToString(Object o) throws IOException {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		ObjectOutputStream oout = new ObjectOutputStream(bout);
 		oout.writeObject(o);
@@ -45,11 +46,16 @@ public class DataUtils {
 		return Base64.encodeBytes(bout.toByteArray());
 	}
 	
-	public static Object stringToObject(String str) throws Exception {
+	public static Object stringToObject(String str) throws IOException {
 		byte buf[] = Base64.decode(str);
 		ByteArrayInputStream bin = new ByteArrayInputStream(buf);
 		ObjectInputStream oin = new ObjectInputStream(bin);
-		return oin.readObject();
+		try {
+			return oin.readObject();
+		} catch (ClassNotFoundException e) {
+			logger.error(e.getMessage(), e);
+			throw new IOException(e);
+		}
 	}
 	
 	public static int compareRowKeys(byte b1[], byte b2[]) {

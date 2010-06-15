@@ -3,36 +3,31 @@ package org.olap4cloud.impl;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.InputSplit;
+import org.olap4cloud.util.DataUtils;
+import org.olap4cloud.util.LogUtils;
 
 public class CubeScanTableSplit extends InputSplit implements Writable, Comparable<CubeScanTableSplit> {
 
 	private byte[] tableName;
-	private byte[] startRow;
-	private byte[] endRow;
 	private String regionLocation;
+	List<Pair<byte[], byte[]>> splitRanges = null;
 
 	public CubeScanTableSplit() {
-		this(HConstants.EMPTY_BYTE_ARRAY, HConstants.EMPTY_BYTE_ARRAY, HConstants.EMPTY_BYTE_ARRAY, "");
+		this(HConstants.EMPTY_BYTE_ARRAY, new ArrayList<Pair<byte[], byte[]>>(), "");
 	}
 
-	public CubeScanTableSplit(byte[] tableName, byte[] startRow, byte[] endRow, final String location) {
+	public CubeScanTableSplit(byte[] tableName, List<Pair<byte[], byte[]>> splitRanges, final String location) {
 		this.tableName = tableName;
-		this.startRow = startRow;
-		this.endRow = endRow;
 		this.regionLocation = location;
-	}
-
-	public byte[] getStartRow() {
-		return startRow;
-	}
-
-	public byte[] getEndRow() {
-		return endRow;
+		this.splitRanges = splitRanges;
 	}
 
 	@Override
@@ -45,30 +40,44 @@ public class CubeScanTableSplit extends InputSplit implements Writable, Comparab
 		return new String[] { regionLocation };
 	}
 
+	public List<Pair<byte[], byte[]>> getSplitRanges() {
+		return splitRanges;
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		tableName = Bytes.readByteArray(in);
-		startRow = Bytes.readByteArray(in);
-		endRow = Bytes.readByteArray(in);
 		regionLocation = Bytes.toString(Bytes.readByteArray(in));
+		splitRanges = (List<Pair<byte[], byte[]>>)DataUtils.stringToObject(Bytes.toString(Bytes.readByteArray(in)));
 	}
 
 	@Override
 	public void write(DataOutput out) throws IOException {
 		Bytes.writeByteArray(out, tableName);
-		Bytes.writeByteArray(out, startRow);
-		Bytes.writeByteArray(out, endRow);
-		Bytes.writeByteArray(out, Bytes.toBytes(regionLocation));
+		Bytes.writeByteArray(out, Bytes.toBytes(DataUtils.objectToString(splitRanges)));
 	}
 
 	@Override
 	public String toString() {
-		return regionLocation + ":" + Bytes.toStringBinary(startRow) + "," + Bytes.toStringBinary(endRow);
+		StringBuilder r = new StringBuilder();
+		r.append("regionLocation = ").append(regionLocation).append(" ranges: ");
+		for(Pair<byte[], byte[]> p: getSplitRanges()) {
+			r.append("\t[").append(LogUtils.describe(p.getFirst())).append("\t:\t")
+				.append(LogUtils.describe(p.getSecond())).append("]");
+		}
+		return r.toString();
 	}
 
 	@Override
 	public int compareTo(CubeScanTableSplit split) {
-		return Bytes.compareTo(getStartRow(), split.getStartRow());
+		if(getSplitRanges().size() == 0 && split.getSplitRanges().size() == 0)
+			return 0;
+		if(getSplitRanges().size() == 0 && split.getSplitRanges().size() > 0)
+			return -1;
+		if(getSplitRanges().size() > 0 && split.getSplitRanges().size() == 0)
+			return -1;
+		return Bytes.compareTo(getSplitRanges().get(0).getFirst(), split.getSplitRanges().get(0).getFirst());
 	}
 
 }
