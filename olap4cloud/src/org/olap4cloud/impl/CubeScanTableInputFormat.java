@@ -186,7 +186,7 @@ public class CubeScanTableInputFormat extends TableInputFormat {
 			if(finish)
 				return false;
 			value = null;
-			while(!finish && value != null) {
+			while(!finish && value == null) {
 				moveToNextRange();
 				if(!finish)
 					value = scanner.next();
