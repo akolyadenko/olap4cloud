@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableSplit;
@@ -14,13 +17,20 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
 import org.olap4cloud.util.DataUtils;
 import org.olap4cloud.util.LogUtils;
 
 public class CubeScanTableInputFormat extends TableInputFormat{
 	
+	private CubeScanTableRecordReader cubeScanTableRecordReader = null;
+	
+	private Scan scan = null;
+	
 	static Logger logger = Logger.getLogger(CubeScanTableInputFormat.class);
+	
+	private HTable table = null;
 	
 	@Override
 	public List<InputSplit> getSplits(JobContext context) throws IOException {
@@ -61,7 +71,7 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	          Bytes.compareTo(keys.getSecond()[i], stopRow) <= 0) &&
 	          keys.getSecond()[i].length > 0 ? 
 	            keys.getSecond()[i] : stopRow;
-	        InputSplit split = new TableSplit(getHTable().getTableName(),
+	        InputSplit split = new CubeScanTableSplit(getHTable().getTableName(),
 	          splitStart, splitStop, regionLocation);
 	        splits.add(split);
 	        if (logger.isDebugEnabled()) 
@@ -117,8 +127,164 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	@Override
 	public RecordReader<ImmutableBytesWritable, Result> createRecordReader(
 			InputSplit split, TaskAttemptContext context) throws IOException {
-		String methodName = "createRecordReader() ";
-		logger.debug(methodName + "split = " +  split);
-		return super.createRecordReader(split, context);
+	    TableSplit tSplit = (TableSplit) split;
+	    CubeScanTableRecordReader trr = this.cubeScanTableRecordReader;
+	    // if no table record reader was provided use default
+	    if (trr == null) {
+	      trr = new CubeScanTableRecordReader();
+	    }
+	    Scan sc = new Scan(this.scan);
+	    sc.setStartRow(tSplit.getStartRow());
+	    sc.setStopRow(tSplit.getEndRow());
+	    trr.setScan(sc);
+	    trr.setHTable(table);
+	    trr.init();
+	    return trr;
+
 	}
+	
+	  protected class CubeScanTableRecordReader
+	  extends RecordReader<ImmutableBytesWritable, Result> {
+	    
+	    private ResultScanner scanner = null;
+	    private Scan scan = null;
+	    private HTable htable = null;
+	    private byte[] lastRow = null;
+	    private ImmutableBytesWritable key = null;
+	    private Result value = null;
+
+	    /**
+	     * Restart from survivable exceptions by creating a new scanner.
+	     *
+	     * @param firstRow  The first row to start at.
+	     * @throws IOException When restarting fails.
+	     */
+	    public void restart(byte[] firstRow) throws IOException {
+	      Scan newScan = new Scan(scan);
+	      newScan.setStartRow(firstRow);
+	      this.scanner = this.htable.getScanner(newScan);
+	    }
+
+	    /**
+	     * Build the scanner. Not done in constructor to allow for extension.
+	     *
+	     * @throws IOException When restarting the scan fails. 
+	     */
+	    public void init() throws IOException {
+	      restart(scan.getStartRow());
+	    }
+
+	    /**
+	     * Sets the HBase table.
+	     * 
+	     * @param htable  The {@link HTable} to scan.
+	     */
+	    public void setHTable(HTable htable) {
+	      this.htable = htable;
+	    }
+
+	    /**
+	     * Sets the scan defining the actual details like columns etc.
+	     *  
+	     * @param scan  The scan to set.
+	     */
+	    public void setScan(Scan scan) {
+	      this.scan = scan;
+	    }
+
+	    /**
+	     * Closes the split.
+	     * 
+	     * @see org.apache.hadoop.mapreduce.RecordReader#close()
+	     */
+	    @Override
+	    public void close() {
+	      this.scanner.close();
+	    }
+
+	    /**
+	     * Returns the current key.
+	     *  
+	     * @return The current key.
+	     * @throws IOException
+	     * @throws InterruptedException When the job is aborted.
+	     * @see org.apache.hadoop.mapreduce.RecordReader#getCurrentKey()
+	     */
+	    @Override
+	    public ImmutableBytesWritable getCurrentKey() throws IOException,
+	        InterruptedException {
+	      return key;
+	    }
+
+	    /**
+	     * Returns the current value.
+	     * 
+	     * @return The current value.
+	     * @throws IOException When the value is faulty.
+	     * @throws InterruptedException When the job is aborted.
+	     * @see org.apache.hadoop.mapreduce.RecordReader#getCurrentValue()
+	     */
+	    @Override
+	    public Result getCurrentValue() throws IOException, InterruptedException {
+	      return value;
+	    }
+
+	    /**
+	     * Initializes the reader.
+	     * 
+	     * @param inputsplit  The split to work with.
+	     * @param context  The current task context.
+	     * @throws IOException When setting up the reader fails.
+	     * @throws InterruptedException When the job is aborted.
+	     * @see org.apache.hadoop.mapreduce.RecordReader#initialize(
+	     *   org.apache.hadoop.mapreduce.InputSplit, 
+	     *   org.apache.hadoop.mapreduce.TaskAttemptContext)
+	     */
+	    @Override
+	    public void initialize(InputSplit inputsplit,
+	        TaskAttemptContext context) throws IOException,
+	        InterruptedException {
+	    }
+
+	    /**
+	     * Positions the record reader to the next record.
+	     *  
+	     * @return <code>true</code> if there was another record.
+	     * @throws IOException When reading the record failed.
+	     * @throws InterruptedException When the job was aborted.
+	     * @see org.apache.hadoop.mapreduce.RecordReader#nextKeyValue()
+	     */
+	    @Override
+	    public boolean nextKeyValue() throws IOException, InterruptedException {
+	      if (key == null) key = new ImmutableBytesWritable();
+	      if (value == null) value = new Result();
+	      try {
+	        value = this.scanner.next();
+	      } catch (IOException e) {
+	        logger.debug("recovered from " + StringUtils.stringifyException(e));  
+	        restart(lastRow);
+	        scanner.next();    // skip presumed already mapped row
+	        value = scanner.next();
+	      }
+	      if (value != null && value.size() > 0) {
+	        key.set(value.getRow());
+	        lastRow = key.get();
+	        return true;
+	      }
+	      return false;
+	    }
+
+	    /**
+	     * The current progress of the record reader through its data.
+	     * 
+	     * @return A number between 0.0 and 1.0, the fraction of the data read.
+	     * @see org.apache.hadoop.mapreduce.RecordReader#getProgress()
+	     */
+	    @Override
+	    public float getProgress() {
+	      // Depends on the total number of tuples
+	      return 0;
+	    }
+	  }
+
 }
