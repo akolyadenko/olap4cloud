@@ -26,11 +26,7 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	
 	private CubeScanTableRecordReader cubeScanTableRecordReader = null;
 	
-	private Scan scan = null;
-	
 	static Logger logger = Logger.getLogger(CubeScanTableInputFormat.class);
-	
-	private HTable table = null;
 	
 	@Override
 	public List<InputSplit> getSplits(JobContext context) throws IOException {
@@ -133,11 +129,11 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	    if (trr == null) {
 	      trr = new CubeScanTableRecordReader();
 	    }
-	    Scan sc = new Scan(this.scan);
+	    Scan sc = new Scan(getScan());
 	    sc.setStartRow(tSplit.getStartRow());
 	    sc.setStopRow(tSplit.getEndRow());
 	    trr.setScan(sc);
-	    trr.setHTable(table);
+	    trr.setHTable(getHTable());
 	    trr.init();
 	    return trr;
 
