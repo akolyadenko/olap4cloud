@@ -123,7 +123,7 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 	@Override
 	public RecordReader<ImmutableBytesWritable, Result> createRecordReader(
 			InputSplit split, TaskAttemptContext context) throws IOException {
-	    TableSplit tSplit = (TableSplit) split;
+	    CubeScanTableSplit tSplit = (CubeScanTableSplit) split;
 	    CubeScanTableRecordReader trr = this.cubeScanTableRecordReader;
 	    // if no table record reader was provided use default
 	    if (trr == null) {
