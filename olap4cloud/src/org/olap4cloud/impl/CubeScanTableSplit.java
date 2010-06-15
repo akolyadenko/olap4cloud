@@ -3,6 +3,8 @@ package org.olap4cloud.impl;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -13,6 +15,10 @@ public class CubeScanTableSplit extends InputSplit implements Writable, Comparab
 	private byte[] startRow;
 	private byte[] endRow;
 	private String regionLocation;
+
+	public CubeScanTableSplit() {
+		this(HConstants.EMPTY_BYTE_ARRAY, HConstants.EMPTY_BYTE_ARRAY, HConstants.EMPTY_BYTE_ARRAY, "");
+	}
 
 	public CubeScanTableSplit(byte[] tableName, byte[] startRow, byte[] endRow, final String location) {
 		this.tableName = tableName;
