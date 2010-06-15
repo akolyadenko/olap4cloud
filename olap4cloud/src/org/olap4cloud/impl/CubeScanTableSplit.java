@@ -55,6 +55,7 @@ public class CubeScanTableSplit extends InputSplit implements Writable, Comparab
 	@Override
 	public void write(DataOutput out) throws IOException {
 		Bytes.writeByteArray(out, tableName);
+		Bytes.writeByteArray(out, Bytes.toBytes(regionLocation));
 		Bytes.writeByteArray(out, Bytes.toBytes(DataUtils.objectToString(splitRanges)));
 	}
 
