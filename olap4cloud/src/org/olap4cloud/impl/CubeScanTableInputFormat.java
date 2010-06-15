@@ -10,7 +10,6 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
-import org.apache.hadoop.hbase.mapreduce.TableSplit;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -90,12 +89,12 @@ public class CubeScanTableInputFormat extends TableInputFormat{
 					splitStop = regionStop;
 				else
 					splitStop = range.getSecond();
-				InputSplit split = new CubeScanTableSplit(getHTable().getTableName(), splitStart, splitStop, regionLocation);
-				r.add(split);
-				if (logger.isDebugEnabled()) 
-			          logger.debug("getSplits: split -> " + split);
 			}
 		}
+		InputSplit split = new CubeScanTableSplit(getHTable().getTableName(), regionStart, regionStop, regionLocation);
+		r.add(split);
+		if (logger.isDebugEnabled()) 
+			logger.debug("getSplits: split -> " + split);
 		return r;
 	}
 
