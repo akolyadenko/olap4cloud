@@ -64,7 +64,7 @@ public class CubeScanTableSplit extends InputSplit implements Writable, Comparab
 		StringBuilder r = new StringBuilder();
 		r.append("regionLocation = ").append(regionLocation).append(" ranges: ");
 		for(Pair<byte[], byte[]> p: getSplitRanges()) {
-			r.append("\t[").append(LogUtils.describe(p.getFirst())).append("\t:\t")
+			r.append("\n[").append(LogUtils.describe(p.getFirst())).append("\t:\t")
 				.append(LogUtils.describe(p.getSecond())).append("]");
 		}
 		return r.toString();
