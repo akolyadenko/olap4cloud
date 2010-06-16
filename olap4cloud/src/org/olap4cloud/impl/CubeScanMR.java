@@ -135,10 +135,12 @@ public class CubeScanMR {
 				Context context) throws IOException, InterruptedException {
 			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
 				return;
+			byte inKey[] = key.get();
 			String methodName = "CubeScanMRMapper.map() ";
 			if(cubeScanFilter.filterRowKey(key.get(), 0, -1))
                 return;
-			if(logger.isDebugEnabled()) logger.debug(methodName + "map key: " + LogUtils.describe(key.get()));
+			if(logger.isDebugEnabled())
+				logger.debug(methodName + "process key: " + LogUtils.describeKey(inKey));
 			int n = cubeScan.getColumns().size();
 			for(int i = 0; i < n; i ++) {
 				Pair<byte[], byte[]> column = cubeScan.getColumns().get(i);
@@ -146,7 +148,6 @@ public class CubeScanMR {
 				if(logger.isDebugEnabled()) logger.debug(methodName + " map measure: " + Bytes.toDouble(val));
 				Bytes.putBytes(outValues, i * 8, val, 0, 8);
 			}
-			byte inKey[] = key.get();
 			for(int i = 0; i < groupBy.length; i ++)
 				Bytes.putBytes(outKey, i * 8, inKey, groupBy[i] * 8, 8);
 			outKeyWritable.set(outKey);
