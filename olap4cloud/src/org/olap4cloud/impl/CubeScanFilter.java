@@ -10,6 +10,7 @@ import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 import org.olap4cloud.util.DataUtils;
+import org.olap4cloud.util.LogUtils;
 
 public class CubeScanFilter implements Filter {
 	
@@ -43,6 +44,8 @@ public class CubeScanFilter implements Filter {
 
 	@Override
 	public boolean filterRowKey(byte[] buf, int keyOffset, int length) {
+		String methodName = "filterRowKey() ";
+		if(logger.isDebugEnabled()) logger.debug(methodName + "filter key: " + LogUtils.describeKey(buf));
 		for(CubeScanCondition condition: scan.getConditions()) {
 			long dimValue = Bytes.toLong(buf, keyOffset + 8 * condition.getDimensionNumber());
 			if(Arrays.binarySearch(condition.getValues(), dimValue) < 0)
