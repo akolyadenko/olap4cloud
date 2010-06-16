@@ -85,7 +85,8 @@ public class GenerateCubeMR {
 				byte putValue[] = Bytes.toBytes(Double.parseDouble(tokens[dimensionN + i]));
 				put.add(measureFamilies[i], measureNames[i], 
 						putValue);
-				if(logger.isDebugEnabled()) logger.debug(methodName + "added value: " + LogUtils.describe(putValue)
+				if(logger.isDebugEnabled()) logger.debug(methodName + " key = " + LogUtils.describeKey(cubeKey) 
+						+ " added value: " + LogUtils.describe(putValue)
 						+ " to column: " + LogUtils.describe(measureFamilies[i]) + " : "
 						+ LogUtils.describe(measureNames[i]));
 			}
