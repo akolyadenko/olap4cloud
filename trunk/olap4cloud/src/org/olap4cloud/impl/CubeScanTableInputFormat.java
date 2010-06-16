@@ -185,7 +185,7 @@ public class CubeScanTableInputFormat extends TableInputFormat {
 		public boolean nextKeyValue() throws IOException, InterruptedException {
 			if(finish)
 				return false;
-			value = null;
+			value = scanner.next();
 			while(!finish && value == null) {
 				moveToNextRange();
 				if(!finish)
