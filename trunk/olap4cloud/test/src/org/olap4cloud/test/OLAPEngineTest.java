@@ -22,6 +22,9 @@ public class OLAPEngineTest {
 		CubeQueryCondition condition = new CubeQueryCondition("d3");
 		condition.getDimensionValues().add(1l);
 		cubeQuery.getConditions().add(condition);
+		condition = new CubeQueryCondition("d1");
+		condition.getDimensionValues().add(0l);
+		cubeQuery.getConditions().add(condition);
 //		condition = new CubeQueryCondition("d2");
 //		condition.getDimensionValues().add(1l);
 //		cubeQuery.getConditions().add(condition);
