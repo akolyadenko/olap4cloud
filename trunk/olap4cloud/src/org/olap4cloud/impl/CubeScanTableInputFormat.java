@@ -154,7 +154,7 @@ public class CubeScanTableInputFormat extends TableInputFormat {
 				Scan scan = new Scan();
 				scan.setStartRow(range.getFirst());
 				scan.setStopRow(range.getSecond());
-				scan.setCaching(10000);
+//				scan.setCaching(10000);
 				close();
 				scanner = table.getScanner(scan);
 			} else
