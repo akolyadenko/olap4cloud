@@ -11,6 +11,7 @@ public class TestCubeUtils {
 
 	public static void generateTestCube() throws Exception {
 //		DataImportHFileMR.main(new String[]{});
+		//
 		CubeDescriptor descr = TestCubeUtils.createTestCubeDescriptor();
 		OLAPEngine engine = new OLAPEngine();
 		engine.generateCube(descr);
