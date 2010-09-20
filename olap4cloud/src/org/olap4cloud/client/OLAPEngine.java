@@ -74,8 +74,9 @@ public class OLAPEngine {
 			if(op.equalsIgnoreCase("count"))
 				op = "sum";
 			String name = st.nextToken();
-			
-			aggr.setAggregate(op + "(" + name + "_" + op2 + ")");
+			String newAggregate = op + "(" + name + "_" + op2 + ")";
+			logger.debug("change aggregate to " + newAggregate);
+			aggr.setAggregate(newAggregate);
 		}
 	}
 
