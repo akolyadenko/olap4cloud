@@ -74,5 +74,7 @@ public abstract class CubeScanAggregate implements Serializable {
 	
 	public abstract double getResult();
 	
-	public abstract void collect(double v);
+	public abstract void combine(double v);
+	
+	public abstract void reduce(double v);
 }

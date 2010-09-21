@@ -207,7 +207,7 @@ public class CubeScanMR {
 				for(int i = 0; i < inN; i ++)
 					inValues[i] = Bytes.toDouble(buf, i * 8);
 				for(CubeScanAggregate aggregate: aggregates)
-					aggregate.collect(inValues[aggregate.getColumnNuber()]);
+					aggregate.combine(inValues[aggregate.getColumnNuber()]);
 				if(logger.isDebugEnabled()) logger.debug(methodName + " combined values: " + LogUtils.describe(inValues));
 			}
 			for(int i = 0; i < outN; i ++)
@@ -268,7 +268,7 @@ public class CubeScanMR {
 			for(ImmutableBytesWritable inWritable: inVals) {
 				byte buf[] = inWritable.get();
 				for(int i = 0; i < inN; i ++)
-					aggregates.get(i).collect(Bytes.toDouble(buf, i * 8));
+					aggregates.get(i).reduce(Bytes.toDouble(buf, i * 8));
 			}
 			outKeySB.setLength(0);
 			byte inKeyVal[] = inKey.get();

@@ -13,8 +13,13 @@ public class CountCubeScanAggregate extends CubeScanAggregate {
 	}
 	
 	@Override
-	public void collect(double v) {
+	public void combine(double v) {
 		value += 1;
+	}
+	
+	@Override
+	public void reduce(double v) {
+		value += v;
 	}
 
 	@Override
