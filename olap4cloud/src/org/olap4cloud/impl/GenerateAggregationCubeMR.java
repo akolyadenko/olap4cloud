@@ -187,7 +187,7 @@ public class GenerateAggregationCubeMR {
 			for(Iterator<ImmutableBytesWritable> iterator = values.iterator(); iterator.hasNext(); ) {
 				byte value[] = iterator.next().get();
 				for(int i = 0; i < outN; i ++)
-					aggCube.getAggregates().get(i).collect(Bytes.toDouble(value, i * 8));
+					aggCube.getAggregates().get(i).combine(Bytes.toDouble(value, i * 8));
 			}
 			for(int i = 0; i < outN; i ++)
 				Bytes.putDouble(outValue, i * 8, aggCube.getAggregates().get(i).getResult());
@@ -237,7 +237,7 @@ public class GenerateAggregationCubeMR {
 				byte inValue[] = iterator.next().get();
 				for (int i = 0; i < inN; i++) {
 					double value = Bytes.toDouble(inValue, i * 8);
-					aggCube.getAggregates().get(i).collect(value);
+					aggCube.getAggregates().get(i).reduce(value);
 				}
 			}
 			Put put = new Put(inKey.get());

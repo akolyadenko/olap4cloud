@@ -12,7 +12,6 @@ public class SumCubeScanAggregate extends CubeScanAggregate {
 		super(s, cubeDescriptor);
 	}
 	
-	@Override
 	public void collect(double v) {
 		value += v;		
 	}
@@ -25,6 +24,16 @@ public class SumCubeScanAggregate extends CubeScanAggregate {
 	@Override
 	public void reset() {
 		value = 0;
+	}
+
+	@Override
+	public void combine(double v) {
+		collect(v);
+	}
+
+	@Override
+	public void reduce(double v) {
+		collect(v);
 	}
 
 }

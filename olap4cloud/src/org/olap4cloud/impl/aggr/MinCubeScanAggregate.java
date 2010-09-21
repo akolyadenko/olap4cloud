@@ -15,8 +15,7 @@ public class MinCubeScanAggregate extends CubeScanAggregate {
 		super(s, cubeDescriptor);
 	}
 	
-	@Override
-	public void collect(double v) {
+	private void collect(double v) {
 		if(v < value)
 			value = v;
 	}
@@ -29,6 +28,18 @@ public class MinCubeScanAggregate extends CubeScanAggregate {
 	@Override
 	public void reset() {
 		value = Double.POSITIVE_INFINITY;
+	}
+
+	@Override
+	public void combine(double v) {
+		collect(v);
+		
+	}
+
+	@Override
+	public void reduce(double v) {
+		collect(v);
+		
 	}
 
 }
