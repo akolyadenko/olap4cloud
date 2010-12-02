@@ -204,5 +204,5 @@ Nodes have in average 2Gz processors and 1.7Gb of memory.
 
 Bellow you can find some results of comparison with other products(only Hive results are available at this moment, but I will add other products measurements in future):
 
-|| *Query* || *Hive* || *olap4cloud* ||
-|| select d3, sum(m1), sum(m2), sum(m3) from facts where d1 = 1 and d2 = 1 group by d3 || 23m45s || 26s ||
+|| *Query* || *Hive* || *olap4cloud* without aggregations || *olap4cloud* without aggregations ||
+|| select d3, sum(m1), sum(m2), sum(m3) from facts where d1 = 1 and d2 = 1 group by d3 || 23m45s || 26s || 5s ||
