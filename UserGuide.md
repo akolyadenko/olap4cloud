@@ -1,0 +1,208 @@
+[What is olap4cloud](UserGuide#What_is_olap4cloud.md)
+
+[How to build](UserGuide#How_to_build.md)
+  * [Prerequisites](UserGuide#Prerequisites.md)
+  * [Getting the code](UserGuide#Getting_the_code.md)
+  * [Build the code](UserGuide#Build_the_code.md)
+[Installing](UserGuide#Installing.md)
+  * [Prerequisites](UserGuide#Prerequisites.md)
+  * [Installing olap4cloud](UserGuide#Installing_olap4cloud.md)
+[Main concepts](UserGuide#Main_concepts.md)
+
+[Using olap4cloud API](UserGuide#Using_olap4cloud_API.md)
+  * [CubeDescriptor](UserGuide#CubeDescriptor.md)
+    * [Defining CubeDescriptor in xml file](UserGuide#Defining_CubeDescriptor_in_xml_file.md)
+    * [Initialize CubeDescriptor manually in java code](UserGuide#Initialize_CubeDescriptor_manually_in_java_code.md)
+    * [ETL process](UserGuide#ETL_process.md)
+  * [Query API](UserGuide#Query_API.md)
+[Future enhancements](UserGuide#Future_enhancements.md)
+
+[Performance benchmarks](UserGuide#Performance_benchmarks.md)
+  * [Data set](UserGuide#Data_set.md)
+  * [Hardware](UserGuide#Hardware.md)
+  * [Results](UserGuide#Results.md)
+# What is olap4cloud #
+
+olap4cloud is Hadoop & HBase based OLAP engine. It constructed to serve the OLAP queries containing grouping and aggregations.
+
+The typical query which can be served by olap4cloud looks like following:
+
+select d3, sum(m1), min(m2) from facts where d1 in (1,2) and d2 in (2,3) group by d3;
+
+The main features of olap4cloud which allows to outperform the brute-force map/reduce competitors(Hive, Pig) are:
+  * data defragmentation - olap4cloud stores data in the order where rows with the same dimensions will be stored closely.
+  * intensive indexing - olap4cloud constructs special indexes. These indexes helps to locate where data stored and avoid full scan during query execution.
+  * preaggregations - olap4cloud uses classic lattice model to construct aggregation cuboids. It allows to achieve lower latency on queries where aggregations are already calculated.
+
+# How to build #
+
+At this time the olap4cloud project is in the highly experimental stage. So we don't have any stable builds yet, and recommended way to get the jar file is to get the fresh source code from SVN and build it.
+
+## Prerequisites ##
+
+You need to have installed svn client, jdk 6 and ant on your computer in order to build the olap4cloud.
+
+## Getting the code ##
+
+Obtain the code by using the one of SVN checkout commands listed on Source tab (you will need an SVN client installed on your computer).
+
+## Build the code ##
+
+olap4cloud can be built by simply running the "ant" command in the root directory of the project.
+After build is done you will see the olap4cloud.jar file in the root directory of the project.
+
+Other helpful ant targets are:
+  * clean - remove all compiled java classes and jars.
+  * test.build - build tests
+  * test.generate\_test\_data - generate test data the for tests. Data files will be located under test/data directory.
+
+# Installing #
+
+## Prerequisites ##
+
+You need to have Hadoop and HBase up and running on your cluster.
+
+Additionally olap4cloud intensively uses Hadoop & HBase Map/Reduce facility, so you need to have Hadoop and HBase configured to be able to run Map/Reduce jobs against HBase tables.
+This part can be done using instructions available on the following address: http://hadoop.apache.org/hbase/docs/current/api/org/apache/hadoop/hbase/mapreduce/package-summary.html#classpath
+
+## Installing olap4cloud ##
+
+You need to add olap4cloud.jar to Hadoop classpath, for example you can define HADOOP\_CLASSPATH variable in hadoop-env.sh.
+
+# Main concepts #
+
+The central object of olap4cloud is OLAP cube(http://en.wikipedia.org/wiki/OLAP_cube). In other words the main goals of olap4cloud is to manage and query cubes. However at this moment olap4cloud doesn't support dimension tables and hierarchies, therefore cube is just fact table(http://en.wikipedia.org/wiki/Fact_table) for now. Fact table contains dimensions and measures. At this moment all dimensions can have only java type long and measures should have java type double.
+
+The typical life cycle of the cube is:
+  * Load data to cube using ETL module.
+  * Perform queries against the cube.
+
+# Using olap4cloud API #
+
+Currently olap4cloud provides only the Java API. The client program should have access to Hadoop Map/Reduce facility (i.e. it can be run by 'hadoop jar' command).
+
+The entry point of the olap4cloud API is OLAPEngine class. It provides the methods for cube manipulation and for query execution.
+
+## CubeDescriptor ##
+
+OLAPEngine methods require CubeDescriptor object which contains definition of cube properties.
+
+CubeDescriptor class defines cube and their properties.
+
+The properties of cube defined by CubeDescriptor include:
+
+  * cube name
+  * data source directory - points to the HDFS directory where loaded into cube data should be located. It is used in ETL process.
+  * measures - measures of fact table.
+  * dimensions - dimensions of fact table. The order of measures very critical: the dimensions which are used in queries more often should be located at the beginning of the list. I.e. if each query contains dimension 'productId', it should definitely be located at first place of the dimensions list.
+  * number of aggregation cubes - defines how many aggregation cubes will be generated. Each additional cube can significantly increase the preaggregation time. Recommended value is '1'. Another values: '-1' - all possible aggregation cubes will be generated; '0' - no aggregation cubes will be generated.
+
+There are two ways to define CubeDescriptor object:
+  * in xml file(recommended way)
+  * in java code
+
+### Defining CubeDescriptor in xml file ###
+
+The following xml fragment defines the CubeDescriptor:
+```
+<cube name = "testcube" sourcePath = "/data" aggregationsCount = "1">
+	<dimension name = "d1"/>
+	<dimension name = "d2"/>
+	<dimension name = "d3"/>
+	<measure name = "m1"/>
+	<measure name = "m2"/>
+	<measure name = "m3"/>
+</cube>
+```
+The file then can be loaded by one of the following methods:
+  * `CubeDescriptor.loadFromClassPath(String resourceName, ClassLoader classLoader)`
+  * `CubeDescriptor.loadFromLocalFS(String filePath)`
+  * `CubeDescriptor.load(InputStream in)`
+
+### Initialize CubeDescriptor manually in java code ###
+
+CubeDescriptor can alternatively be initialized in client java code.
+
+In example following code initializes 'testcube' cube with 3 dimensions and measures.
+
+```
+CubeDescriptor descr = new CubeDescriptor();
+descr.setSourceDataDir("/data");
+descr.setCubeName("testcube");
+descr.setAggregationsCount(1);
+descr.getDimensions().add(new CubeDimension("d1"));
+descr.getDimensions().add(new CubeDimension("d2"));
+descr.getDimensions().add(new CubeDimension("d3"));
+descr.getMeasures().add(new CubeMeasure("m1"));
+descr.getMeasures().add(new CubeMeasure("m2"));
+descr.getMeasures().add(new CubeMeasure("m3")); 
+```
+
+### ETL process ###
+
+olap4cloud has simple ELT functionality implemented.
+To process the cube you need to call `OLAPEngine.generateCube(CubeDescriptor cubeDescriptor)` method.
+Then it will load data from files in source directory to cube.
+Data files must be formatted using a specific format:
+  * rows must be delimited by '\n'
+  * values in rows must be delimited by '\t'
+  * each row must first contain dimension values in order defined in the cube descriptor xml file and then measures values in order defined in the cube descriptor xml file
+
+## Query API ##
+
+Cube can be queried using `OLAPEngine.executeQuery(CubeQuery query, CubeDescriptor cubeDescriptor)` method.
+Following example demonstrates how to construct query:
+```
+CubeQuery cubeQuery = new CubeQuery();
+CubeQueryCondition condition = new CubeQueryCondition("d1");
+condition.getDimensionValues().add(1l);
+cubeQuery.getConditions().add(condition);
+cubeQuery.getAggregates().add(new CubeQueryAggregate("min(m1)"));
+cubeQuery.getAggregates().add(new CubeQueryAggregate("max(m2)"));
+cubeQuery.getAggregates().add(new CubeQueryAggregate("count(m3)"));
+cubeQuery.getGroupBy().add("d3");
+```
+This query is equivalent to following SQL query:
+`select d3, min(m1), max(m2), count(m3) from testcube where d1 = 1 group by d3;`
+
+The result object will contains set of rows. Each row contains list of result values and list of values for columns listed in 'group by' section.
+
+# Future enhancements #
+
+I have a number of ideas for enhancements:
+
+  * dimension tables and hierarchies
+  * query language
+  * user defined functions
+  * advanced analytical functions
+  * performance optimizations, compressions, heuristics, etc.
+
+# Performance benchmarks #
+
+## Data set ##
+
+The data set for benchmarks has been generated by simple java program:
+
+```
+for(long i = 10; i < 300000000; i ++)
+	w.write((long)(Math.random() * 10) + "\t" + (long)(Math.random() * 100)
+			+ "\t" + (long)(Math.random() * 10000) 
+			+ "\t" + (Math.random() * 100) + "\t" + (Math.random() * 1000)
+			+ "\t" + (Math.random() * 10000) + "\n");
+```
+
+Briefly the fact table contains 3 dimensions with values in `[0..10], [0..100]` and `[0..10000]` ranges and 3 measures with values in `[0..100], [0..1000]` and `[0..10000]`.
+Additionally fact table contains 300 millions of rows of generated data.
+
+## Hardware ##
+
+I don't have access to the real-world clusters, so I used my home computers and laptops to create the test cluster.
+Nodes have in average 2Gz processors and 1.7Gb of memory.
+
+## Results ##
+
+Bellow you can find some results of comparison with other products(only Hive results are available at this moment, but I will add other products measurements in future):
+
+| **Query** | **Hive** | **olap4cloud** without aggregations | **olap4cloud** with aggregations |
+|:----------|:---------|:------------------------------------|:---------------------------------|
+| select d3, sum(m1), sum(m2), sum(m3) from facts where d1 = 1 and d2 = 1 group by d3 | 23m45s | 26s | 5s |
