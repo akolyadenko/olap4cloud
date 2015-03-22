@@ -7,3 +7,5 @@ olap4cloud is supposed to work faster then competitors(Hive, Pig) because of the
 * data defragmentation
 * intensive indexing
 * preaggregations
+
+User guide: https://github.com/akolyadenko/olap4cloud/blob/wiki/UserGuide.md
